@@ -36,3 +36,14 @@ $ run_local.sh
 ### To run local, we need to have .env file
 
 Create .env file in `backend` folder
+
+# Others
+
+## Install metamask 
+1. Install chrome extension from https://metamask.io/
+2. Generate a new wallet.
+3. Switch to Goerli testnet.
+4. Get some ETH from faucet. 
+- Method 1: https://goerli.net/
+- Method 2: https://faucet.goerli.mudit.blog/ Requires public post on twitter or facebook. 
+
