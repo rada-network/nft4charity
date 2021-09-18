@@ -1,14 +1,49 @@
-import { Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
+import { CreateCampaignRequest } from "./requests/createCampaign.request";
+import { Campaign } from "./campaign.schema";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
 
 @Injectable()
 export class CampaignsService {
-  private readonly campaigns = [{ id: 1, name: "Campaign 1", userId: 1 }];
+  constructor(
+    @InjectModel(Campaign.name) private readonly campaignModel: Model<Campaign>,
+  ) {}
 
-  findAll(): any[] {
-    return this.campaigns;
+  async findAll(): Promise<Campaign[]> {
+    return this.campaignModel.find().exec();
   }
 
-  findOneById(id: number): any {
-    return this.campaigns.find((campaign) => campaign.id === id);
+  async findOneById(id: string): Promise<Campaign> {
+    const campaign = await this.campaignModel.findOne({ _id: id });
+    if (!campaign) {
+      throw new NotFoundException();
+    }
+    return campaign;
+  }
+
+  async create(req: CreateCampaignRequest): Promise<Campaign> {
+    const startedAt = new Date();
+    const endedAt = startedAt;
+    const existCampaign = await this.campaignModel.findOne({
+      userId: req.userId,
+      name: req.name,
+    });
+
+    if (existCampaign) {
+      throw new BadRequestException({
+        description: "Campaign already exists.",
+      });
+    }
+
+    return new this.campaignModel({
+      ...req,
+      startedAt,
+      endedAt,
+    }).save();
   }
 }
