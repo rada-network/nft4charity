@@ -9,12 +9,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
-<<<<<<< HEAD
     environment:
       - MACHINE_NAME=kimworkbook
       - MONGODB_URL=mongodb://mongodb
-=======
->>>>>>> f8bf8a02c154d9c7283460f4d7c98828c6f63791
     volumes:
       - ./backend:/app
       - /app/node_modules
