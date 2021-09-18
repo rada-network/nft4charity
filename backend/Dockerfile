@@ -3,7 +3,8 @@ LABEL maintainer="dev@rada.io"
 
 WORKDIR /app
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --ignore-scripts
+#RUN yarn install --frozen-lockfile --ignore-scripts
+RUN yarn install --ignore-scripts
 
 FROM node:14-alpine as builder
 WORKDIR /app
