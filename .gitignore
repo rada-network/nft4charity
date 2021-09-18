@@ -38,5 +38,3 @@ mongo-data/
 
 # PlantUML Docs
 out/
-
-run_local.sh
