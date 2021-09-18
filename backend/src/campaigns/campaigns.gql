@@ -1,0 +1,28 @@
+type Query {
+  campaigns: [Campaign]
+  campaign(id: ID!): Campaign
+}
+
+type Mutation {
+  createCampaign(createCampaignRequest: CreateCampaignRequest): Campaign
+}
+
+type Subscription {
+  campaignCreated: Campaign
+}
+
+type User {
+  id: Int!
+  name: String!
+  campaigns: [Campaign!]
+}
+
+type Campaign {
+  id: Int
+  name: String
+  user: User
+}
+
+input CreateCampaignRequest {
+  name: String
+}
