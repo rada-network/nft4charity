@@ -1,3 +1,7 @@
+# Yarn
+yarn.lock
+docker-compose.local.yml
+
 # compiled output
 /dist
 /node_modules
