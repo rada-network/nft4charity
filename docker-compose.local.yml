@@ -4,8 +4,6 @@ services:
   backend:
     container_name: backend
     restart: always
-    depends_on:
-      - mongodb
     build:
       context: backend
       dockerfile: Dockerfile
@@ -17,19 +15,6 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
-    networks:
-      - nft4c-net
-  
-  mongodb:
-    image: mongo
-    container_name: mongodb
-    volumes:
-      - ./mongo-data:/data/db
-    ports:
-      - "27017:27017"
-    networks:
-      - nft4c-net
+
 volumes:
   mongo-data:
-networks:
-  nft4c-net:
