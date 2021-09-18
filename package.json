@@ -1,0 +1,35 @@
+{
+  "name": "nft4charity",
+  "version": "1.0.0",
+  "description": "",
+  "author": "dev@rada.io",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "install:all": "yarn install && concurrently \"yarn --cwd backend install\"",
+    "format:all": "concurrently \"yarn --cwd backend format\"",
+    "format:check:all": "concurrently \"yarn --cwd backend format:check\"",
+    "lint:all": "concurrently \"yarn --cwd backend lint\"",
+    "lint:check:all": "concurrently \"yarn --cwd backend lint:check\"",
+    "pretty:all": "concurrently \"yarn --cwd backend pretty\"",
+    "pretty:check:all": "concurrently \"yarn --cwd backend pretty:check\"",
+    "typecheck": "concurrently \"yarn --cwd backend tsc\"",
+    "postinstall": "husky install",
+    "preinstall": "npx only-allow yarn",
+    "lint:commit": "commitlint --from=HEAD~1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^12.1.4",
+    "@commitlint/config-conventional": "^12.1.4",
+    "concurrently": "^6.2.0",
+    "husky": "^7.0.1",
+    "lint-staged": "^11.0.1"
+  },
+  "lint-staged": {
+    "backend/**/!(.eslintrc).{js,ts}": [
+      "yarn --cwd backend prettier",
+      "yarn --cwd backend eslint"
+    ],
+    "backend/**/*.{json,md}": "yarn --cwd backend prettier"
+  }
+}

@@ -4,32 +4,17 @@ services:
   backend:
     container_name: backend
     restart: always
-    depends_on:
-      - mongodb
     build:
       context: backend
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+<<<<<<< HEAD
     environment:
       - MACHINE_NAME=kimworkbook
       - MONGODB_URL=mongodb://mongodb
+=======
+>>>>>>> f8bf8a02c154d9c7283460f4d7c98828c6f63791
     volumes:
       - ./backend:/app
       - /app/node_modules
-    networks:
-      - nft4c-net
-  
-  mongodb:
-    image: mongo
-    container_name: mongodb
-    volumes:
-      - ./mongo-data:/data/db
-    ports:
-      - "27017:27017"
-    networks:
-      - nft4c-net
-volumes:
-  mongo-data:
-networks:
-  nft4c-net:
