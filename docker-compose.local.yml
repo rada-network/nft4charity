@@ -9,9 +9,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    environment:
-      - MACHINE_NAME=S4V-THANGLE
-      - MONGODB_URL=mongodb://mongodb
     volumes:
       - ./backend:/app
       - /app/node_modules

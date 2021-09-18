@@ -1,0 +1,15 @@
+@startuml
+
+actor "Web App" as fe
+participant "Backend" as be
+database "MDB" as db
+
+group User creates campaign
+
+fe -> be: [POST]  /graphql (mutation CreateCampaign($req: CreateCampaignRequest))
+be -> db: campaign.create({\n  name,\n  userId,\n  startedAt,\n  endedAt\n})
+be --> fe: {campaign}
+
+end
+
+@enduml
