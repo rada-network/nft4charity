@@ -24,7 +24,6 @@ export class UsersService {
 
   async create(req: CreateUserRequest): Promise<User> {
     const createdAt = new Date();
-    console.log(req);
     return new this.userModel({
       ...req,
       createdAt,
