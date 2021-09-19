@@ -1,10 +1,10 @@
 type Query {
-  campaigns: [Campaign]
-  campaign(id: String!): Campaign
+  users: [User]
+  user(id: String!): User
 }
 
 type Mutation {
-  createCampaign(req: CreateCampaignRequest): Campaign
+  createUser(req: CreateUserRequest): User
 }
 
 type User {
@@ -19,7 +19,6 @@ type Campaign {
   user: User
 }
 
-input CreateCampaignRequest {
+input CreateUserRequest {
   name: String
-  userId: String!
 }

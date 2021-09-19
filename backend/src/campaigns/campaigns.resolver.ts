@@ -13,8 +13,8 @@ import { CreateCampaignRequest } from "./requests/createCampaign.request";
 @Resolver("Campaign")
 export class CampaignsResolver {
   constructor(
-    private readonly campaignService: CampaignsService,
     private readonly userService: UsersService,
+    private readonly campaignService: CampaignsService,
   ) {}
 
   @Query("campaigns")
