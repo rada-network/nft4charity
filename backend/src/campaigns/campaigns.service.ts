@@ -3,10 +3,10 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { CreateCampaignRequest } from "./requests/createCampaign.request";
-import { Campaign } from "./campaign.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import { Campaign } from "./campaign.schema";
+import { CreateCampaignRequest } from "./requests/createCampaign.request";
 
 @Injectable()
 export class CampaignsService {
