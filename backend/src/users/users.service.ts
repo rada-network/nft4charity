@@ -10,11 +10,11 @@ export class UsersService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
-  findAll(): any {
+  async findAll(): Promise<User[]> {
     return this.userModel.find().exec();
   }
 
-  async findOneById(id: string): Promise<any> {
+  async findOneById(id: string): Promise<User> {
     const user = await this.userModel.findOne({ _id: id });
     if (!user) {
       throw new NotFoundException();

@@ -46,4 +46,8 @@ export class CampaignsService {
       endedAt,
     }).save();
   }
+
+  async findByUserId(userId: string): Promise<Campaign[]> {
+    return this.campaignModel.find({ userId });
+  }
 }
