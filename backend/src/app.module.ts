@@ -10,8 +10,8 @@ import { CampaignsModule } from "./campaigns/campaigns.module";
     CampaignsModule,
     ConfigModule.forRoot(),
     GraphQLModule.forRoot({
-      autoSchemaFile: true,
-      // autoSchemaFile: join(process.cwd(), "src/schema.gql"), // uncomment this to generate schema file
+      // autoSchemaFile: true,
+      autoSchemaFile: join(process.cwd(), "src/schema.gql"), // uncomment this to generate schema file
       // typePaths: ["./**/*.gql"],
       installSubscriptionHandlers: true,
     }),

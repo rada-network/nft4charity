@@ -26,19 +26,19 @@ async function bootstrap() {
     },
     servers: [
       {
-        url: "http://localhost:8080/api",
+        url: "http://localhost:8080/rest",
       },
     ],
   });
 
   app.use(
-    "/api",
+    "/rest",
     useSofa({
-      basePath: "/api",
+      basePath: "/rest",
       schema,
       onRoute(info) {
         openApi.addRoute(info, {
-          basePath: "/api",
+          basePath: "/rest",
         });
       },
     }),

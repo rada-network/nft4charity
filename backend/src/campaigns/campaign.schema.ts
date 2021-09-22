@@ -2,22 +2,22 @@ import { Field, ObjectType } from "@nestjs/graphql";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
 
-@Schema()
 @ObjectType()
+@Schema()
 export class Campaign extends Document {
   @Prop({ required: true })
   userId: string;
 
-  @Prop({ required: true })
   @Field()
+  @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true })
   @Field()
+  @Prop({ required: true })
   startedAt: Date;
 
-  @Prop({ required: true })
   @Field()
+  @Prop({ required: true })
   endedAt: Date;
 }
 
