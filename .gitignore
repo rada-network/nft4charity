@@ -38,3 +38,7 @@ mongo-data/
 
 # PlantUML Docs
 out/
+
+# GraphQL & Swagger generated file
+**/schema.gql
+**/swagger.yml

@@ -36,3 +36,7 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# GraphQL & Swagger generated file
+src/schema.gql
+src/swagger.yml
