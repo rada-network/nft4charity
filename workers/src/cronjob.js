@@ -3,7 +3,7 @@ const cron = require("node-cron");
 
 const mongoose = require("mongoose");
 const walletSchema = require("./wallet.js");
-const Wallet = mongoose.model("message", walletSchema);
+const Wallet = mongoose.model("wallet", walletSchema);
 const transactionSchema = require("./transaction.js");
 const Transaction = mongoose.model("transaction", transactionSchema);
 
@@ -23,17 +23,34 @@ const mdbOptions = {
 mongoose.connect(MONGODB_URL, mdbOptions);
 
 // Run job every ? mins
-const cronCheckInterval = 3; //mins
+const cronCheckInterval = 1; //mins
 cron.schedule(`*/${cronCheckInterval} * * * *`, async () => {
   console.warn(`Cron job every ${cronCheckInterval} minutes`);
   try {
-    const data = "test";
-    await saveToDb(data);
+    const wallets = await findAndUpdate();
+    //await saveToDb(wallets);
   } catch (error) {
     console.error(error);
     throw error;
   }
 });
+
+async function findAndUpdate() {
+  try {
+    Wallet.findById("6151be392b65bbc7754c77b6", async function (err, foundDocs) {
+      if (foundDocs != null) {
+        console.log(foundDocs);
+      } else {
+        console.log("no found docs");
+      }
+    });
+  } catch (error) {
+    console.error("Failed to save to MDB ", error);
+  }
+}
+async function getWallets() {
+  // get all public wallet adress from campaigns where campaign status is still active
+}
 
 async function saveToDb(data) {
   console.log(data);

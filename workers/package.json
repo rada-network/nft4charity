@@ -16,7 +16,7 @@
     "uuid": "^8.3.2"
   },
   "scripts": {
-    "start": "nodemon cronjob.js",
+    "start": "node cronjob.js",
     "format": "yarn pretty && yarn lint",
     "format:check": "yarn pretty:check & yarn lint:check",
     "lint": "eslint \"*/*.js\" --fix --max-warnings=0",
