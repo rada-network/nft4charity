@@ -10,6 +10,7 @@ const transactionSchema = new mongoose.Schema({
   transactionId: { type: String, required: true },
   status: { type: String, required: true },
   networkFee: { type: String, required: true },
+  timeStamp: { type: Number, required: true },
 });
 
 module.exports = transactionSchema;
