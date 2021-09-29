@@ -15,3 +15,15 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
+
+  cronjob:
+    container_name: cronjob
+    restart: always
+    build:
+      context: workers
+      dockerfile: Dockerfile
+    environment:
+      - CRON_CHECK_INTERVAL_IN_MINUTES=5
+      - MONGODB_URL=MONGODB_URL
+      - ETHER_SCAN_API_BASE_URL=ETHER_SCAN_API_BASE_URL
+      - ETHER_SCAN_API_KEY=ETHER_SCAN_API_KEY

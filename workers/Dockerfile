@@ -4,9 +4,12 @@ LABEL maintainer="nft4charity.dev@rada.io"
 WORKDIR /usr/src/app
 
 COPY package*.json ./
+
+COPY src/campaign.js ./
+COPY src/cronjob.js ./
 COPY src/transaction.js ./
 COPY src/wallet.js ./
-COPY src/cronjob.js ./
+
 RUN npm install
 
 COPY . .

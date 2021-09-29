@@ -1,10 +1,14 @@
 const dotenv = require("dotenv");
 const cron = require("node-cron");
 const axios = require("axios").default;
-
 const mongoose = require("mongoose");
+
+const campaignSchema = require("./campaign.js");
+const Campaign = mongoose.model("campaign", campaignSchema);
+
 const walletSchema = require("./wallet.js");
 const Wallet = mongoose.model("wallet", walletSchema);
+
 const transactionSchema = require("./transaction.js");
 const Transaction = mongoose.model("transaction", transactionSchema);
 
@@ -25,68 +29,81 @@ const mdbOptions = {
 mongoose.connect(MONGODB_URL, mdbOptions);
 
 // Run job every ? mins
-const cronCheckInterval = 1; //mins
+const cronCheckInterval = process.env.CRON_CHECK_INTERVAL_IN_MINUTES;
+
 cron.schedule(`*/${cronCheckInterval} * * * *`, async () => {
   console.warn(`Cron job every ${cronCheckInterval} minutes`);
   try {
-    const wallets = await findAndUpdate();
-    //await saveToDb(wallets);
+    const wallets = await getWallets();
+    const walletAddress = wallets.map((w) => w.address);
+    let dict = wallets.reduce((a, x) => ({ ...a, [x.address]: x._id }), {});
+    if (walletAddress.length > 0) {
+      const resp = await fetchAllAddresses(walletAddress);
+      if (resp.length > 0) {
+        resp.map((item) => {
+          if (isValid(item)) {
+            const walletId = dict[item.result[0].to];
+            let allTransactions = [];
+            item.result.map((r) => {
+              allTransactions.push(mapToDoc(walletId, r));
+            });
+            saveToMDB(allTransactions);
+          }
+        });
+      }
+    }
   } catch (error) {
     console.error(error);
     throw error;
   }
 });
 
-async function findAndUpdate() {
+function mapToDoc(walletId, r) {
+  return {
+    sourceAddress: r.from,
+    walletId: walletId,
+    description: "Donate for campaign name",
+    currency: "ETH",
+    timeStamp: r.timeStamp,
+    amount: r.value / WEI_TO_ETH_RATE,
+    status: r.txreceipt_status,
+    networkFee: r.gasPrice / WEI_TO_ETH_RATE,
+    transactionId: r.hash,
+  };
+}
+
+async function saveToMDB(docs) {
+  console.log("saveToMDB");
   try {
-    const walletId = "6151be392b65bbc7754c77b6";
-    Wallet.findById(walletId, async function (err, foundDocs) {
-      if (foundDocs != null) {
-        const walletAddress = foundDocs.address;
-        const API_URL = getUrl(walletAddress);
-        getAllTransactions(API_URL).then((resp) => {
-          if (resp.data.status == "1") {
-            const result = resp.data.result;
-            result.map((r) => {
-              if (r.hash) {
-                const doc = {
-                  transaction: r.hash,
-                  sourceAddress: r.from,
-                  walletId: walletId,
-                  description: "Donate for campaign name",
-                  currency: "ETH",
-                  timeStamp: r.timeStamp,
-                  amount: r.value / WEI_TO_ETH_RATE,
-                  status: r.txreceipt_status,
-                  networkFee: r.gasPrice / WEI_TO_ETH_RATE,
-                  transactionId: r.hash
-                };
-                Transaction.insertMany(doc)
-                  .then((savedResp) => {
-                    console.warn("Success to save to MDB ", savedResp);
-                  })
-                  .catch((error) => {
-                    console.error("Failed to save to MDB ", error);
-                    throw error;
-                  });
-              }
-            });
-          }
-        });
-      } else {
-        console.log("no found docs");
-      }
-    });
+    await Transaction.bulkWrite(
+      docs.map((d) => {
+        return {
+          updateOne: {
+            filter: { transactionId: d.transactionId },
+            update: { $set: d },
+            upsert: true,
+          },
+        };
+      }),
+      { ordered: false }
+    );
+
+    return Promise.resolve(true);
   } catch (error) {
     console.error("Failed to save to MDB ", error);
   }
 }
 
-async function getAllTransactions(url) {
+function fetchAllAddresses(addresses) {
+  return Promise.all(addresses.map(fetchTransactionsByAddress));
+}
+
+async function fetchTransactionsByAddress(walletAddress) {
+  const API_URL = getUrl(walletAddress);
   return axios
-    .get(url)
+    .get(API_URL)
     .then(function (response) {
-      return response;
+      return response.data;
     })
     .catch(function (error) {
       console.log(error);
@@ -94,16 +111,25 @@ async function getAllTransactions(url) {
 }
 
 async function getWallets() {
-  // get all public wallet adress from campaigns where campaign status is still active
-}
+  const campaigns = await Campaign.find({
+    endedAt: {
+      $gte: new Date(),
+    },
+  });
+  if (campaigns.length > 0) {
+    const campaignIds = campaigns.map((d) => d._id);
+    return await Wallet.find({ campaignId: { $in: campaignIds } });
+  }
 
-async function saveToDb(data) {
-  console.log(data);
-  console.warn(`[CRONJOB] Starting to save into MDB`);
+  return null;
 }
 
 function getUrl(walletAddress) {
   return `${ETHER_SCAN_API_BASE_URL}/api/?module=account&action=txlist&address=${walletAddress}&&startblock=0&endblock=99999999&sort=asc&apikey=${ETHER_SCAN_API_KEY}`;
+}
+
+function isValid(item) {
+  return item.status == "1" && item.result.length > 0;
 }
 
 console.warn("start cronjob");

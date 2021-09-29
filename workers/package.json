@@ -5,6 +5,7 @@
   "main": "src/cronjob.js",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.21.4",
     "dotenv": "^10.0.0",
     "eslint": "^7.31.0",
     "eslint-config-prettier": "^8.3.0",
@@ -13,11 +14,11 @@
     "node-cron": "^3.0.0",
     "nodemon": "^2.0.12",
     "prettier": "^2.3.2",
-    "uuid": "^8.3.2",
-    "axios": "^0.21.4"
+    "uuid": "^8.3.2"
   },
   "scripts": {
     "start": "node cronjob.js",
+    "cronjob": "nodemon cronjob.js",
     "format": "yarn pretty && yarn lint",
     "format:check": "yarn pretty:check & yarn lint:check",
     "lint": "eslint \"*/*.js\" --fix --max-warnings=0",
