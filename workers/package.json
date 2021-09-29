@@ -1,0 +1,31 @@
+{
+  "name": "nft4charity",
+  "version": "1.0.0",
+  "description": "NFT4Charity cronjob",
+  "main": "src/cronjob.js",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.4",
+    "dotenv": "^10.0.0",
+    "eslint": "^7.31.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "mongoose": "^5.13.3",
+    "node-cron": "^3.0.0",
+    "nodemon": "^2.0.12",
+    "prettier": "^2.3.2",
+    "uuid": "^8.3.2"
+  },
+  "scripts": {
+    "start": "node cronjob.js",
+    "cronjob": "nodemon cronjob.js",
+    "format": "yarn pretty && yarn lint",
+    "format:check": "yarn pretty:check & yarn lint:check",
+    "lint": "eslint \"*/*.js\" --fix --max-warnings=0",
+    "lint:check": "eslint \"*/*.js\"",
+    "pretty": "prettier --write \"*/*.js\" --end-of-line lf",
+    "pretty:check": "prettier --check \"*/*.js\" --end-of-line lf",
+    "prettier": "prettier --write --end-of-line lf",
+    "eslint": "eslint --fix --max-warnings=0"
+  }
+}
