@@ -1,3 +1,4 @@
+import { resolve } from "path";
 import { Injectable } from "@nestjs/common";
 import { GqlModuleOptions, GqlOptionsFactory } from "@nestjs/graphql";
 
@@ -5,9 +6,9 @@ import { GqlModuleOptions, GqlOptionsFactory } from "@nestjs/graphql";
 export class GraphqlService implements GqlOptionsFactory {
   async createGqlOptions(): Promise<GqlModuleOptions> {
     return {
-      autoSchemaFile: true,
       // typePaths: ["./**/*.gql"],
-      // autoSchemaFile: resolve(process.cwd(), "src/schema.gql"),
+      // autoSchemaFile: true,
+      autoSchemaFile: resolve(process.cwd(), "src/schema.gql"),
       installSubscriptionHandlers: true,
     };
   }
