@@ -13,6 +13,7 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
   );
+
   await app.listen(8080, "0.0.0.0");
 
   app.use(urlencoded({ extended: true }));
@@ -43,6 +44,6 @@ async function bootstrap() {
       },
     }),
   );
-  openApi.save("src/swagger.yml");
+  // openApi.save("src/swagger.yml");
 }
 bootstrap();
