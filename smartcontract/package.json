@@ -1,0 +1,20 @@
+{
+  "name": "RADA",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "compile": "truffle compile",
+    "migrate": "truffle migrate --network bscTestnet",
+    "verify": "truffle run verify Name@Address --network bscTestnet"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.3.2",
+    "@truffle/hdwallet-provider": "^1.5.0"
+  },
+  "devDependencies": {
+    "truffle-plugin-verify": "^0.5.15"
+  }
+}
