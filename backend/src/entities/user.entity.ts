@@ -14,6 +14,11 @@ export class User {
   @Column()
   @Expose()
   @Field()
+  name: string;
+
+  @Column()
+  @Expose()
+  @Field()
   firstName: string;
 
   @Column()
