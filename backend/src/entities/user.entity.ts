@@ -28,8 +28,8 @@ export class User {
 
   @Column()
   @Expose()
-  @Field({ nullable: true })
-  password?: string;
+  @Field()
+  password: string;
 
   @Column()
   @Expose()

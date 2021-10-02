@@ -1,6 +1,7 @@
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { CreateUserDto } from "src/dtos";
+import { Serialize } from "src/common";
+import { CreateUserDto, UserDto } from "src/dtos";
 import { getMongoRepository } from "typeorm";
 import { User } from "../entities";
 
@@ -11,6 +12,7 @@ export class UserResolver {
     return getMongoRepository(User).find();
   }
 
+  @Serialize(UserDto)
   @Query((returns) => User) // eslint-disable-line
   async user(@Args("id") id: string): Promise<User> {
     const user = await getMongoRepository(User).findOne({ _id: id });

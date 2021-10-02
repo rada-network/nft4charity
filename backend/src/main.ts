@@ -1,3 +1,4 @@
+import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { GraphQLSchemaHost } from "@nestjs/graphql";
 import {
@@ -13,7 +14,7 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
   );
-
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(8080, "0.0.0.0");
 
   app.use(urlencoded({ extended: true }));
