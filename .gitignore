@@ -42,3 +42,5 @@ out/
 # GraphQL & Swagger generated file
 **/schema.gql
 **/swagger.yml
+
+*.tmp.yml

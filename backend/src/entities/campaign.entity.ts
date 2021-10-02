@@ -48,6 +48,10 @@ export class Campaign {
   @Field()
   updatedAt: Date;
 
+  @Expose()
+  @Column()
+  userId: string;
+
   constructor(campaign: Partial<Campaign>) {
     Object.assign(
       this,

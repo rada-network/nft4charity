@@ -5,9 +5,9 @@ import { Column, Entity, ObjectIdColumn } from "typeorm";
 
 const commonOptions = { nullable: true };
 
-@Entity({ name: "wallets" })
+@Entity({ name: "transactions" })
 @ObjectType()
-export class Wallet {
+export class Transaction {
   @Expose()
   @Field()
   @ObjectIdColumn()
@@ -16,22 +16,22 @@ export class Wallet {
   @Column()
   @Expose()
   @Field()
-  address?: string;
+  walletId: string;
+
+  @Column()
+  @Expose()
+  @Column()
+  amount?: number;
 
   @Column()
   @Expose()
   @Field()
-  currency?: string;
-
-  @Column()
-  @Expose()
-  @Column()
-  campaignId: string;
+  sourceAddress?: string;
 
   @Column()
   @Expose()
   @Field()
-  platform: string;
+  transactionId: string;
 
   @Column({ ...commonOptions })
   @Expose()
@@ -53,10 +53,10 @@ export class Wallet {
   @Field()
   updatedAt: Date;
 
-  constructor(wallet: Partial<Wallet>) {
+  constructor(transaction: Partial<Transaction>) {
     Object.assign(
       this,
-      plainToClass(Wallet, wallet, {
+      plainToClass(Transaction, transaction, {
         excludeExtraneousValues: true,
       }),
     );
