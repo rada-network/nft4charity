@@ -1,6 +1,6 @@
 import { NotFoundException } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
-import CreateCampaignDto from "src/dtos/campaign/createCampaign.dto";
+import CreateCampaignDto from "src/dtos/campaigns/createCampaign.dto";
 import { Campaign } from "src/entities";
 import { getMongoRepository } from "typeorm";
 

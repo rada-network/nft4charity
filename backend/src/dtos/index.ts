@@ -1,2 +1,3 @@
-export * from "./campaign";
+export * from "./campaigns";
 export * from "./users";
+export * from "./wallets";
