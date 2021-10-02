@@ -1,6 +1,11 @@
 # Description
 
-NFT4Charity is a project from RADA DAO group to support TTMB using NFT and blockchain technology.
+NFT4Charity is an open sourced blockchain project to help make Charity Campaigns BETTER. 
+
+Our immediate goal is the raise $1M for Covid campaigns in Vietnam. Our long term goal is to demonstrate how blockchain can make the world more transparent and open and kind.
+
+Recently, we have seen inexperienced fundraisers who, despite their good intent, lose their reputation and in some case, being sued for fraud. With Blockchain & NFT, we can track all transactions and also make charitable campaigns more community-driven. We want to create an open source project that any one can run to raise money for their community in a Transparent way.
+
 
 # Installation
 
