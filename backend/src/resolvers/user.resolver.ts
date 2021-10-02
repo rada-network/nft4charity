@@ -23,8 +23,8 @@ export class UserResolver {
 
   @Mutation((returns) => User) // eslint-disable-line
   async createUser(@Args("user") userInput: CreateUserDto): Promise<User> {
-    const { name } = userInput;
-    const user = await getMongoRepository(User).findOne({ name });
+    const { email } = userInput;
+    const user = await getMongoRepository(User).findOne({ email });
     if (user) {
       throw new BadRequestException("User already exist!");
     }

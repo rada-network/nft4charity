@@ -3,10 +3,8 @@ import { Expose, plainToClass } from "class-transformer";
 import { Column, Entity, ObjectIdColumn } from "typeorm";
 import { uuidv4 } from "../utils";
 
+@Entity({ name: "users" })
 @ObjectType()
-@Entity({
-  name: "users",
-})
 export class User {
   @Expose()
   @Field()
@@ -16,7 +14,22 @@ export class User {
   @Column()
   @Expose()
   @Field()
-  name: string;
+  firstName: string;
+
+  @Column()
+  @Expose()
+  @Field()
+  lastName: string;
+
+  @Column()
+  @Expose()
+  @Field()
+  email: string;
+
+  @Column()
+  @Expose()
+  @Field({ nullable: true })
+  password?: string;
 
   @Column()
   @Expose()
