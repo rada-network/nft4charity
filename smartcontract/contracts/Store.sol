@@ -21,23 +21,22 @@ contract Store is Ownable, ReentrancyGuard {
         uint slot;
         uint price;
     }
-
     struct Donor {
         address add;
         uint amount;
     }
-    struct Donee {
+    struct Distributer {
         address add;
         uint amount;
     }
     
     mapping(address => bool) public ableToCreateCampaign;
     mapping(uint => Donor[]) public donorsOfCampaign;
-    mapping(uint => Donee[]) public doneesOfCampaign;
+    mapping(uint => Distributer[]) public distributersOfCampaign;
     mapping(uint => Campaign) public campaigns;
-    uint public campaign_count;
-    uint public thres_hold;
     
+    uint public campaign_count;
+
     modifier isOwnerOfCampaign(address _add, uint campaign_id) {
         require(_add == campaigns[campaign_id].owner);
         _;
@@ -55,20 +54,25 @@ contract Store is Ownable, ReentrancyGuard {
         uint newPrice
     );
     event Donated(
-        address _donor,
-        uint _campaign_id,
-        uint _amount
+        address donor,
+        uint campaign_id,
+        uint amount
     );
-    event Doneed(
-        address _donee,
-        uint _campaign_id,
-        uint _amount
+    event Distributed(
+        address distributer,
+        uint campaign_id,
+        uint amount
     );
+    event DistributerAdded(
+        address distributer,
+        uint campaign_id,
+    );
+
     function setNFTContractAddress(address _rada_nft_address, address _rada_token_address) public onlyOwner {
         nftToken = RadaNFTToken(_rada_nft_address);
         radaToken = RadaToken(_rada_token_address);
     }
-
+     
     function createCampaign(string memory _name, string memory _uri, uint _slot, uint _price) public {
         require(nftToken.isWhitelister(msg.sender) == true);
         
@@ -77,12 +81,13 @@ contract Store is Ownable, ReentrancyGuard {
         
         nftToken.mint(msg.sender, _uri, _slot);
 
-    } 
+    }
+
     function donating(uint _campaign_id, uint _amount) public isWorkingCampaign(_campaign_id) {
         require(radaToken.balanceOf(msg.sender) >= _amount);
 
         Campaign storage c = campaigns[_campaign_id];
-        
+
         c.current += _amount;
         
         radaToken.transferFrom(msg.sender, c.owner, _amount);
@@ -102,21 +107,23 @@ contract Store is Ownable, ReentrancyGuard {
         c.price = _price;
         emit PriceUpdated(msg.sender, _campaign_id, oldPrice, _price);
     }
+    function addDistributer(uint _campaign_id, address _distributer) public isOwnerOfCampaign(msg.sender, _campaign_id){
+        distributersOfCampaign[_campaign_id].push(Distributer(_distributer, _campaign_id));
+    }
 
-    function distributing(uint _campaign_id, address _receiver, uint _amount) isOwnerOfCampaign(msg.sender, _campaign_id) public  {
+    function distributing(uint _campaign_id, address _distributer, uint _amount) public isOwnerOfCampaign(msg.sender, _campaign_id) {
         
         require(campaigns[_campaign_id].current > _amount);
         
         Campaign storage c = campaigns[_campaign_id];
         
-        radaToken.transferFrom(msg.sender, _receiver, _amount);
+        radaToken.transferFrom(msg.sender, _distributer, _amount);
 
         c.current -= _amount;
 
-        doneesOfCampaign[_campaign_id].push(Donee(_receiver, _amount));
         
-        emit Doneed(_receiver, _campaign_id, _amount);
+        emit Distributed(_distributer, _campaign_id, _amount);
 
     }
-   
+    
 }
