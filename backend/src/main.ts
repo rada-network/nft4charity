@@ -5,9 +5,13 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from "@nestjs/platform-fastify";
+import { SwaggerModule } from "@nestjs/swagger";
 import { json, urlencoded } from "body-parser";
 import { OpenAPI, useSofa } from "sofa-api";
 import { AppModule } from "./app.module";
+import { REST_BASE_ROUTE } from "./environments";
+
+const baseRouteRest = REST_BASE_ROUTE;
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -15,10 +19,11 @@ async function bootstrap() {
     new FastifyAdapter(),
   );
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(8080, "0.0.0.0");
+  app.use(baseRouteRest, urlencoded({ extended: true }));
+  app.use(baseRouteRest, json());
 
-  app.use(urlencoded({ extended: true }));
-  app.use(json());
+  await app.init();
+
   const { schema } = app.get(GraphQLSchemaHost);
   const openApi = OpenAPI({
     schema,
@@ -28,23 +33,27 @@ async function bootstrap() {
     },
     servers: [
       {
-        url: "http://localhost:8080/rest",
+        url: `http://localhost:8080`,
       },
     ],
   });
 
   app.use(
-    "/rest",
+    baseRouteRest,
     useSofa({
-      basePath: "/rest",
+      basePath: baseRouteRest,
       schema,
       onRoute(info) {
         openApi.addRoute(info, {
-          basePath: "/rest",
+          basePath: baseRouteRest,
         });
       },
     }),
   );
-  // openApi.save("src/swagger.yml");
+
+  const openApiDoc = openApi.get();
+  SwaggerModule.setup("apidocs", app, openApiDoc);
+
+  await app.listen(8080, "0.0.0.0");
 }
 bootstrap();
