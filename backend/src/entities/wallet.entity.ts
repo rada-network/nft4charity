@@ -1,9 +1,6 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { Expose, plainToClass } from "class-transformer";
-import { uuidv4 } from "src/utils";
 import { Column, Entity, ObjectIdColumn } from "typeorm";
-
-const commonOptions = { nullable: true };
 
 @Entity({ name: "wallets" })
 @ObjectType()
@@ -16,7 +13,7 @@ export class Wallet {
   @Column()
   @Expose()
   @Field()
-  address?: string;
+  address: string;
 
   @Column()
   @Expose()
@@ -25,23 +22,13 @@ export class Wallet {
 
   @Column()
   @Expose()
-  @Column()
-  campaignId: string;
-
-  @Column()
-  @Expose()
   @Field()
   platform: string;
 
-  @Column({ ...commonOptions })
+  @Column({ default: false })
   @Expose()
-  @Field({ ...commonOptions })
-  startedAt?: Date;
-
-  @Column({ ...commonOptions })
-  @Expose()
-  @Field({ ...commonOptions })
-  endedAt?: Date;
+  @Field({ defaultValue: false })
+  isVerified: boolean;
 
   @Column()
   @Expose()
@@ -53,6 +40,16 @@ export class Wallet {
   @Field()
   updatedAt: Date;
 
+  @Column()
+  @Expose()
+  @Field()
+  userId: string;
+
+  @Column({ nullable: true, default: null })
+  @Expose()
+  @Field({ nullable: true, defaultValue: null })
+  campaignId?: string;
+
   constructor(wallet: Partial<Wallet>) {
     Object.assign(
       this,
@@ -61,7 +58,6 @@ export class Wallet {
       }),
     );
 
-    this._id = this._id || uuidv4();
     this.createdAt = this.createdAt || new Date();
     this.updatedAt = new Date();
   }
