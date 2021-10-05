@@ -1,9 +1,6 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { Expose, plainToClass } from "class-transformer";
-import { uuidv4 } from "src/utils";
 import { Column, Entity, ObjectIdColumn } from "typeorm";
-
-const commonOptions = { nullable: true };
 
 @Entity({ name: "transactions" })
 @ObjectType()
@@ -13,45 +10,50 @@ export class Transaction {
   @ObjectIdColumn()
   _id: string;
 
+  @Column({ nullable: true })
+  @Expose()
+  @Field({ nullable: true })
+  sourceAddress?: string;
+
   @Column()
   @Expose()
   @Field()
   walletId: string;
 
-  @Column()
+  @Column({ nullable: true })
   @Expose()
-  @Column()
-  amount?: number;
+  @Field({ nullable: true })
+  description?: string;
+
+  @Column({ nullable: true })
+  @Expose()
+  @Field({ nullable: true })
+  currency?: string;
 
   @Column()
   @Expose()
   @Field()
-  sourceAddress?: string;
+  amount: number;
+
+  @Column({ nullable: true })
+  @Expose()
+  @Field({ nullable: true })
+  status?: string;
+
+  @Column({ nullable: true })
+  @Expose()
+  @Field({ nullable: true })
+  networkFee?: number;
 
   @Column()
   @Expose()
   @Field()
   transactionId: string;
 
-  @Column({ ...commonOptions })
-  @Expose()
-  @Field({ ...commonOptions })
-  startedAt?: Date;
-
-  @Column({ ...commonOptions })
-  @Expose()
-  @Field({ ...commonOptions })
-  endedAt?: Date;
-
   @Column()
   @Expose()
   @Field()
   createdAt: Date;
-
-  @Column()
-  @Expose()
-  @Field()
-  updatedAt: Date;
 
   constructor(transaction: Partial<Transaction>) {
     Object.assign(
@@ -61,8 +63,6 @@ export class Transaction {
       }),
     );
 
-    this._id = this._id || uuidv4();
     this.createdAt = this.createdAt || new Date();
-    this.updatedAt = new Date();
   }
 }
