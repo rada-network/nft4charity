@@ -1,7 +1,6 @@
 import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
 import { Expose, plainToClass } from "class-transformer";
 import { Column, Entity, ObjectID, ObjectIdColumn } from "typeorm";
-import { ObjectId } from "mongodb";
 
 @Entity({ name: "campaigns" })
 @ObjectType()

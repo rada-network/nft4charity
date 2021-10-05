@@ -12,14 +12,14 @@ export class UserResolver {
     return getMongoRepository(User).find();
   }
 
-  @Serialize(UserDto)
   @Query(() => User)
   async user(@Args("id") id: string): Promise<User> {
     const user = await getMongoRepository(User).findOne(id);
 
     if (!user) {
-      throw new NotFoundException();
+      throw new NotFoundException("User not found.");
     }
+
     return user;
   }
 
