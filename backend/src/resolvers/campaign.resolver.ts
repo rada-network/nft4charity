@@ -9,17 +9,16 @@ import {
 } from "@nestjs/graphql";
 import CreateCampaignDto from "src/dtos/campaigns/createCampaign.dto";
 import { Campaign, User } from "src/entities";
-import { Wallet } from "src/entities/wallet.entity";
 import { getMongoRepository } from "typeorm";
 
-@Resolver(() => Campaign) // eslint-disable-line
+@Resolver(() => Campaign)
 export class CampaignResolver {
-  @Query(() => [Campaign]) // eslint-disable-line
+  @Query(() => [Campaign])
   async campaigns(): Promise<Campaign[]> {
     return getMongoRepository(Campaign).find();
   }
 
-  @Query(() => Campaign) // eslint-disable-line
+  @Query(() => Campaign)
   async campaign(@Args("id") id: string): Promise<Campaign> {
     const campaign = await getMongoRepository(Campaign).findOne(id);
 
@@ -31,39 +30,33 @@ export class CampaignResolver {
   }
 
   @ResolveField(() => User)
-  async user(@Parent() campaign): Promise<User> {
+  async user(@Parent() campaign: Campaign): Promise<User> {
     const user = await getMongoRepository(User).findOne(campaign.userId);
+
     if (!user) {
-      throw new NotFoundException("User not found.");
+      throw new NotFoundException("User not found!");
     }
 
     return user;
   }
 
-  @ResolveField(() => [Wallet])
-  async wallet(@Parent() campaign): Promise<Wallet[]> {
-    const campaignId = campaign._id.toString();
-    const wallets = await getMongoRepository(Wallet).find({
-      campaignId: campaignId,
-    });
-    if (!wallets) {
-      throw new NotFoundException("Wallets are not found.");
-    }
-
-    return wallets;
-  }
-
-  @Mutation(() => Campaign) // eslint-disable-line
+  @Mutation(() => Campaign)
   async createCampaign(
     @Args("campaign") campaignInput: CreateCampaignDto,
   ): Promise<Campaign> {
+    const { userId } = campaignInput;
+    const user = await getMongoRepository(User).findOne(userId);
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
     const now = new Date();
     const newCampaign = getMongoRepository(Campaign).create({
       ...campaignInput,
       createdAt: now,
       updatedAt: now,
     });
-
     return getMongoRepository(Campaign).save(newCampaign);
   }
 }

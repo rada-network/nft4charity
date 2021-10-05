@@ -1,38 +1,52 @@
-import { Field, InputType } from "@nestjs/graphql";
+import { Field, InputType, Int } from "@nestjs/graphql";
 import {
   IsDate,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
-  Max,
-  Min,
+  IsUrl,
 } from "class-validator";
 
 @InputType()
 export default class CreateCampaignDto {
   @Field()
+  @IsNotEmpty()
   @IsString()
-  @Min(3)
-  @Max(20)
   name: string;
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
   @IsOptional()
   description?: string;
 
-  @Field()
+  @Field(() => Int, { nullable: true })
   @IsNumber()
   @IsOptional()
-  goad?: number;
+  goal?: number;
 
-  @Field()
+  @Field({ nullable: true })
   @IsDate()
   @IsOptional()
   startedAt?: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @IsDate()
   @IsOptional()
   endedAt?: Date;
+
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  userId: string;
+
+  @Field({ nullable: true })
+  @IsUrl()
+  @IsOptional()
+  coverImgUrl?: string;
+
+  @Field({ nullable: true })
+  @IsUrl()
+  @IsOptional()
+  thumbnailImgUrl?: string;
 }

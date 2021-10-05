@@ -5,17 +5,17 @@ import { CreateUserDto, UserDto } from "src/dtos";
 import { getMongoRepository } from "typeorm";
 import { User } from "../entities";
 
-@Resolver((of) => User) // eslint-disable-line
+@Resolver(() => User)
 export class UserResolver {
-  @Query((returns) => [User]) // eslint-disable-line
+  @Query(() => [User])
   async users(): Promise<User[]> {
     return getMongoRepository(User).find();
   }
 
   @Serialize(UserDto)
-  @Query((returns) => User) // eslint-disable-line
+  @Query(() => User)
   async user(@Args("id") id: string): Promise<User> {
-    const user = await getMongoRepository(User).findOne({ _id: id });
+    const user = await getMongoRepository(User).findOne(id);
 
     if (!user) {
       throw new NotFoundException();
@@ -23,7 +23,7 @@ export class UserResolver {
     return user;
   }
 
-  @Mutation((returns) => User) // eslint-disable-line
+  @Mutation(() => User)
   async createUser(@Args("user") userInput: CreateUserDto): Promise<User> {
     const { email } = userInput;
     const user = await getMongoRepository(User).findOne({ email });

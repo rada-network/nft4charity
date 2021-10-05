@@ -1,42 +1,50 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
 import { Expose, plainToClass } from "class-transformer";
-import { uuidv4 } from "src/utils";
-import { Column, Entity, ObjectIdColumn } from "typeorm";
-
-const commonOptions = { nullable: true };
+import { Column, Entity, ObjectID, ObjectIdColumn } from "typeorm";
+import { ObjectId } from "mongodb";
 
 @Entity({ name: "campaigns" })
 @ObjectType()
 export class Campaign {
   @Expose()
-  @Field()
+  @Field(() => ID)
   @ObjectIdColumn()
-  _id: string;
+  _id: ObjectID;
 
   @Column()
   @Expose()
   @Field()
   name: string;
 
-  @Column({ ...commonOptions })
+  @Column({ nullable: true })
   @Expose()
-  @Field({ ...commonOptions })
+  @Field({ nullable: true })
   description?: string;
 
-  @Column({ ...commonOptions })
+  @Column({ nullable: true })
   @Expose()
-  @Field({ ...commonOptions })
+  @Field(() => Int, { nullable: true })
   goal?: number;
 
-  @Column({ ...commonOptions })
+  @Column({ nullable: true })
   @Expose()
-  @Field({ ...commonOptions })
+  @Field({ nullable: true })
   startedAt?: Date;
 
-  @Column({ ...commonOptions })
+  @Column({ nullable: true })
   @Expose()
-  @Field({ ...commonOptions })
+  @Field({ nullable: true })
   endedAt?: Date;
+
+  @Column({ nullable: true })
+  @Expose()
+  @Field({ nullable: true })
+  coverImgUrl?: string;
+
+  @Column({ nullable: true })
+  @Expose()
+  @Field({ nullable: true })
+  thumbnailImgUrl?: string;
 
   @Column()
   @Expose()
@@ -48,8 +56,9 @@ export class Campaign {
   @Field()
   updatedAt: Date;
 
-  @Expose()
   @Column()
+  @Expose()
+  @Field()
   userId: string;
 
   constructor(campaign: Partial<Campaign>) {
@@ -60,7 +69,6 @@ export class Campaign {
       }),
     );
 
-    this._id = this._id || uuidv4();
     this.createdAt = this.createdAt || new Date();
     this.updatedAt = new Date();
   }

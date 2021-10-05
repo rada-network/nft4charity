@@ -1,20 +1,15 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { Expose, plainToClass } from "class-transformer";
-import { Column, Entity, ObjectIdColumn } from "typeorm";
+import { Column, Entity, ObjectID, ObjectIdColumn } from "typeorm";
 import { uuidv4 } from "../utils";
 
 @Entity({ name: "users" })
 @ObjectType()
 export class User {
   @Expose()
-  @Field()
+  @Field(() => ID)
   @ObjectIdColumn()
-  _id: string;
-
-  @Column()
-  @Expose()
-  @Field()
-  name: string;
+  _id: ObjectID;
 
   @Column()
   @Expose()
@@ -54,7 +49,6 @@ export class User {
       }),
     );
 
-    this._id = this._id || uuidv4();
     this.createdAt = this.createdAt || new Date();
     this.updatedAt = new Date();
   }
