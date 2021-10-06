@@ -12,7 +12,7 @@ import {
 } from "faker";
 import { resolve } from "path";
 import { ConnectionOptions, createConnection } from "typeorm";
-import { Campaign, Transaction, User, Wallet } from "./entities";
+import { Campaign, Transaction, User, Wallet } from "../entities";
 
 const numberOfUsers = 3;
 const numberOfCampaigns = 5;
