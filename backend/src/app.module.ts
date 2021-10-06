@@ -1,21 +1,24 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { GraphQLModule } from "@nestjs/graphql";
-import { MongooseModule } from "@nestjs/mongoose";
-import { join } from "path";
-import { CampaignsModule } from "./campaigns/campaigns.module";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
+import { GraphqlService, TypeOrmService } from "./config";
+import { DateScalar } from "./config/graphql/scalars";
+import * as Resolvers from "./resolvers";
 
 @Module({
   imports: [
-    CampaignsModule,
     ConfigModule.forRoot(),
-    GraphQLModule.forRoot({
-      // autoSchemaFile: true,
-      autoSchemaFile: join(process.cwd(), "src/schema.gql"), // uncomment this to generate schema file
-      // typePaths: ["./**/*.gql"],
-      installSubscriptionHandlers: true,
+    GraphQLModule.forRootAsync({
+      useClass: GraphqlService,
     }),
-    MongooseModule.forRoot(`${process.env.MONGODB_URL}`),
+    TypeOrmModule.forRootAsync({
+      useClass: TypeOrmService,
+    }),
   ],
+  controllers: [AppController],
+  providers: [AppService, ...Object.values(Resolvers), DateScalar],
 })
 export class AppModule {}
