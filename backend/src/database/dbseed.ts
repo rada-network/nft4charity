@@ -28,7 +28,7 @@ if (!process.env.MONGODB_SEEDING_URL) {
 const config: ConnectionOptions = {
   type: "mongodb",
   url: process.env.MONGODB_SEEDING_URL || "",
-  entities: [resolve(__dirname, "./**/*.entity{.ts,.js}")],
+  entities: [resolve(__dirname, "../**/*.entity{.ts,.js}")],
   synchronize: true,
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -126,9 +126,9 @@ async function seed() {
       sourceAddress: boolean() ? finance.ethereumAddress() : null,
       description: boolean() ? lorem.sentence() : null,
       currency: boolean() ? "ETH" : null,
-      amount: float(2),
+      amount: number({ min: 100, max: 1500 }) / 10000000,
       status: boolean() ? `${number() % 2}` : null,
-      networkFee: boolean() ? float(7) : null,
+      networkFee: boolean() ? number({ min: 100, max: 1500 }) / 10000000 : null,
       transactionId: hexaDecimal(64),
     });
 

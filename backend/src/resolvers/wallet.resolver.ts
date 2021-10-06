@@ -1,6 +1,7 @@
-import { NotFoundException } from "@nestjs/common";
+import { Logger, NotFoundException } from "@nestjs/common";
 import {
   Args,
+  Float,
   Mutation,
   Parent,
   Query,
@@ -58,6 +59,17 @@ export class WalletResolver {
     }
 
     return walletRepo.find();
+  }
+
+  @ResolveField(() => Float)
+  async balance(@Parent() wallet: Wallet): Promise<number> {
+    const transactions = await getMongoRepository(Transaction).find({
+      walletId: wallet._id.toString(),
+    });
+
+    return transactions.reduce((acc, cur) => {
+      return acc + cur.amount;
+    }, 0);
   }
 
   @ResolveField(() => User)
