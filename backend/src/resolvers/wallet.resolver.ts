@@ -9,31 +9,20 @@ import {
 } from "@nestjs/graphql";
 import { CreateWalletDto, WalletFilterDto } from "src/dtos";
 import { Campaign, Transaction, User, Wallet } from "src/entities";
-import { getMongoRepository, SelectQueryBuilder } from "typeorm";
+import { FindManyOptions, getMongoRepository } from "typeorm";
 
 type entryType = [key: string, value: string | number | boolean];
 
-function buildFilterQuery<T>(
-  query: SelectQueryBuilder<T>,
-  table: string,
+function buildFilterOptions(
   entries: entryType[],
-): SelectQueryBuilder<T> {
-  let isFirstWhere = true;
+): Partial<Wallet> | FindManyOptions<Wallet> {
+  const filterOptions: Partial<Wallet> | FindManyOptions<Wallet> = {};
 
   entries.forEach(([key, value]) => {
-    if (value) {
-      const queryString = `${table}.${key} = :${key}`;
-      const queryObj = { [key]: value };
-      if (isFirstWhere) {
-        isFirstWhere = false;
-        query = query.where(queryString, queryObj);
-      } else {
-        query = query.andWhere(queryString, queryObj);
-      }
-    }
+    filterOptions[key] = { $eq: value };
   });
 
-  return query;
+  return filterOptions;
 }
 
 @Resolver(() => Wallet)
@@ -50,15 +39,25 @@ export class WalletResolver {
   }
 
   @Query(() => [Wallet])
-  async walletsFilter(
-    @Args("wallet") walletFilterArgs: WalletFilterDto,
+  async walletFilter(
+    @Args("wallet", {
+      type: () => WalletFilterDto,
+      nullable: true,
+      defaultValue: null,
+    })
+    walletFilterArgs?: WalletFilterDto,
   ): Promise<Wallet[]> {
-    const entries = Object.entries(walletFilterArgs);
+    const entries = Object.entries(walletFilterArgs || {});
 
-    let query = await getMongoRepository(Wallet).createQueryBuilder("wallet");
-    query = buildFilterQuery<Wallet>(query, "wallet", entries);
+    const walletRepo = getMongoRepository(Wallet);
 
-    return query.getRawMany();
+    const filterOptions = buildFilterOptions(entries);
+
+    if (Object.keys(filterOptions)) {
+      return walletRepo.find({ where: filterOptions });
+    }
+
+    return walletRepo.find();
   }
 
   @ResolveField(() => User)
@@ -71,8 +70,8 @@ export class WalletResolver {
     return user;
   }
 
-  @ResolveField(() => Campaign)
-  async campaign(@Parent() wallet: Wallet): Promise<Campaign> {
+  @ResolveField(() => Campaign, { nullable: true })
+  async campaign(@Parent() wallet: Wallet): Promise<Campaign | null> {
     if (!wallet.campaignId) {
       return null;
     }

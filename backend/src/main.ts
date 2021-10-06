@@ -19,8 +19,8 @@ async function bootstrap() {
     new FastifyAdapter(),
   );
   app.useGlobalPipes(new ValidationPipe());
-  app.use(baseRouteRest, urlencoded({ extended: true }));
-  app.use(baseRouteRest, json());
+  app.use(/^\/rest\/(.*)\/?$/i, urlencoded({ extended: true }));
+  app.use(/^\/rest\/(.*)\/?$/i, json());
 
   await app.init();
 

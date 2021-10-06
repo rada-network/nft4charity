@@ -15,9 +15,9 @@ export class Wallet {
   @Field()
   address: string;
 
-  @Column()
+  @Column({ nullable: true })
   @Expose()
-  @Field()
+  @Field({ nullable: true })
   currency?: string;
 
   @Column()
