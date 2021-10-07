@@ -44,3 +44,5 @@ out/
 **/swagger.yml
 
 *.tmp.yml
+
+dist

@@ -1,10 +1,12 @@
 {
-  "name": "nft4charity",
+  "name": "nft4charity-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "NFT for charity is an open source project from RADA members who want to create a charity crypto donation platform",
   "author": "dev@rada.io",
   "private": true,
   "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "install:all": "yarn install && concurrently \"yarn --cwd backend install\"",
     "format:all": "concurrently \"yarn --cwd backend format\"",
