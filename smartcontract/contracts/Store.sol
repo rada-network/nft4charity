@@ -44,21 +44,33 @@ contract Store is Ownable, ReentrancyGuard {
 
 
     modifier isOwnerOfCampaign(address _add, uint _campaign_id) {
-        require(_add == campaigns[_campaign_id].owner);
+        require(
+            _add == campaigns[_campaign_id].owner,
+            "Only owner of campaign can use"
+            );
         _;
     }
 
     modifier isWorkingCampaign(uint _campaign_id){
-        require(campaigns[_campaign_id].slot > 0);
+        require(
+            campaigns[_campaign_id].ended ==false,
+            "Campaign is ended"
+        );
         _;
     
     }
     modifier isEndedCampaign(uint _campaign_id){
-        require(campaigns[_campaign_id].ended);
+        require(
+            campaigns[_campaign_id].ended,
+            "Campaign is not ended"
+        );
         _;
     }
     modifier isAcceptedCampaign(uint _campaign_id) {
-        require(campaigns[_campaign_id].vote > 0);
+        require(
+            campaigns[_campaign_id].vote > 0,
+            "Distributer list is not accepted yet"
+        );
         _;
     }
     modifier isDonorOfCampaign(address _add, uint _donor_id, uint _campaign_id){
@@ -145,7 +157,7 @@ contract Store is Ownable, ReentrancyGuard {
     }
     function distributing(uint _campaign_id, uint _distributer_id, uint _amount) public isOwnerOfCampaign(msg.sender, _campaign_id) isAcceptedCampaign(_campaign_id) isEndedCampaign(_campaign_id) {
         
-        require(campaigns[_campaign_id].current > _amount);
+        require(campaigns[_campaign_id].current >= _amount);
         
         Campaign storage c = campaigns[_campaign_id];
         

@@ -6,7 +6,4 @@ contract RadaToken is ERC20 {
     constructor(uint256 initialSupply) ERC20("RadaToken", "Rada") {
         _mint(msg.sender, initialSupply);
     }
-    // function transfer(address _sender, address _receiver,  uint amount){
-    //     _transfer()
-    // };
 }
