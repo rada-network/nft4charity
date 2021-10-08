@@ -23,6 +23,7 @@ module.exports = {
         '"Segoe UI Emoji"',
         '"Segoe UI Symbol"',
         '"Noto Color Emoji"',
+        'Open',
       ],
       serif: ['"Literata"', ...defaultTheme.fontFamily.serif],
     },
@@ -47,6 +48,10 @@ module.exports = {
         primary: colors.purple,
         secondary: colors.yellow,
         alternative: colors.green,
+        'purple-mixin-700': '#9C60FF',
+        'purple-mixin-400': '#5600E5',
+        'main-purple': '#8B5CF6',
+        'yellow-nft4': '#FBBF24',
 
         'bluegray-50': '#f8fafd',
         'bluegray-100': '#ebf1f9',
