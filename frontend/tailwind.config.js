@@ -25,6 +25,7 @@ module.exports = {
         '"Segoe UI Emoji"',
         '"Segoe UI Symbol"',
         '"Noto Color Emoji"',
+        'Open',
       ],
       serif: ['"Literata"', ...defaultTheme.fontFamily.serif],
     },
