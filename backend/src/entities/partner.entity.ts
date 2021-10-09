@@ -2,7 +2,7 @@ import { Field, ObjectType } from "@nestjs/graphql";
 import { Expose, plainToClass } from "class-transformer";
 import { Column, Entity, ObjectIdColumn } from "typeorm";
 
-@Entity({ name: "Partners" })
+@Entity({ name: "partners" })
 @ObjectType()
 export class Partner {
   @Expose()
