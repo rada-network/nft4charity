@@ -52,7 +52,7 @@ export const Header = () => {
             </svg>
             <p className="font-bold text-2xl text-yellow-nft4">nft4charity</p>
           </span>
-          <ul className="flex items-center text-center justify-center font-bold text-base text-black">
+          <ul className="flex items-center text-center justify-center cursor-pointer font-bold text-base text-black">
             <li className="mr-10">
               <img className="h-5 w-auto" src={homeSVG} alt="home icon" />
             </li>
@@ -68,7 +68,7 @@ export const Header = () => {
                 <span className="font-bold text-xl text-white ml-1">Connect</span>
               </button>
             </li>
-            <li className="flex ml-5">
+            <li className="flex ml-5 cursor-pointer">
               <img className="h-6 w-auto" src={languageSVG} alt="language icon" />
               <span className="pl-2">En</span>
             </li>

@@ -9,7 +9,7 @@ import youtubeSVG from '@/assets/icons/social/youtube.svg';
 
 export const Footer = () => {
   return (
-    <div className="max-width h-auto px-20 py-10 bg-black-nft-200 mt-10">
+    <div className="h-auto px-28 pt-10 pb-20 bg-black-nft-200 mt-10">
       <svg
         width="40"
         height="40"
@@ -50,8 +50,8 @@ export const Footer = () => {
           fill="#FBBF24"
         />
       </svg>
-      <div className="flex justify-center">
-        <div className="w-1/4 mr-40">
+      <div className="grid grid-cols-4 gap-4">
+        <div className="">
           <p className="font-bold text-2xl text-white">nft4charity</p>
           <p className="text-white text-sm">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vulputate a, ultricies sit nunc
@@ -76,7 +76,7 @@ export const Footer = () => {
           </ul>
         </div>
 
-        <div className="mr-20 text-white font-bold text-sm leading-6 cursor-pointer">
+        <div className="ml-auto mr-auto text-white font-bold text-sm leading-6 cursor-pointer">
           <p>Home</p>
           <p>About</p>
           <p>NFT Market</p>
@@ -86,12 +86,12 @@ export const Footer = () => {
           <p>Our support</p>
         </div>
 
-        <div className="mr-20 text-white font-bold text-sm leading-6 cursor-pointer">
+        <div className="text-white font-bold text-sm leading-6 cursor-pointer">
           <p>News on Rada</p>
           <p>Media for project</p>
         </div>
 
-        <div className="text-white w-1/4">
+        <div className="text-white ">
           <p className="font-bold text-2xl">Contact</p>
           <div className="flex pt-2">
             <img className="h-5 w-auto mt-1" src={locationSVG} alt="home icon" />
