@@ -1,7 +1,8 @@
+import * as React from 'react';
+
 import homeSVG from '@/assets/icons/home.svg';
 import languageSVG from '@/assets/icons/language.svg';
 import walletSVG from '@/assets/icons/wallet.svg';
-import * as React from 'react';
 
 export const Header = () => {
   return (
