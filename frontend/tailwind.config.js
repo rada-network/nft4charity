@@ -11,6 +11,8 @@ module.exports = {
   theme: {
     // Add Font to Sans Font Array
     fontFamily: {
+      Open: ['Open Sans'],
+      Merriweather: ['Merriweather'],
       sans: [
         '-apple-system',
         'BlinkMacSystemFont',
@@ -47,9 +49,24 @@ module.exports = {
         primary: colors.purple,
         secondary: colors.yellow,
         alternative: colors.green,
+        'purple-mixin-700': '#9C60FF',
+        'purple-mixin-400': '#5600E5',
+        'purple-mixin-200': '#F1D2EC',
+        'purple-linear-mixin': 'linear-gradient(to bottom, #9C60FF 0%, #5600E5 100%)',
+
+        'violet-mixin-100': '#E7EDFD',
+
+        'main-purple': '#8B5CF6',
+
+        'yellow-nft4': '#FBBF24',
+        'yellow-nft-100': '#fef2d3',
 
         'bluegray-50': '#f8fafd',
         'bluegray-100': '#ebf1f9',
+
+        'gray-100': '#F5F5F5',
+
+        'black-nft-200': '#2F4057',
 
         'shadepurple-50': '#fafaff',
         'shadepurple-100': '#eff0fe',
@@ -72,6 +89,12 @@ module.exports = {
         'deepgray-50': '#0c121d',
         'deepgray-100': '#0a0e17',
         'deepgray-200': '#080b12',
+      },
+
+      // Background Image
+      backgroundImage: {
+        'main-pattern': 'linear-gradient(to right top, #F1D2EC 21.32%, #E7EDFD 65.29%)',
+        'button-purple': 'linear-gradient(to bottom, #9C60FF 0%, #5600E5 100%)',
       },
 
       // Extra Font Sizes
