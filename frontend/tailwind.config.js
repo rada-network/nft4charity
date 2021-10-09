@@ -56,6 +56,8 @@ module.exports = {
         'bluegray-50': '#f8fafd',
         'bluegray-100': '#ebf1f9',
 
+        'black-nft-200': '#2F4057',
+
         'shadepurple-50': '#fafaff',
         'shadepurple-100': '#eff0fe',
 
