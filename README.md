@@ -6,6 +6,9 @@ Our immediate goal is the raise $1M for Covid campaigns in Vietnam. Our long ter
 
 Recently, we have seen inexperienced fundraisers who, despite their good intent, lose their reputation and in some case, being sued for fraud. With Blockchain & NFT, we can track all transactions and also make charitable campaigns more community-driven. We want to create an open source project that any one can run to raise money for their community in a Transparent way.
 
+# Join us by filling out this form
+https://bit.ly/rada-charity-team 
+
 
 # Installation
 
