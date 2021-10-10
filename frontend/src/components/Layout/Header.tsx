@@ -63,7 +63,7 @@ export const Header = () => {
           </ul>
           <ul className="flex items-center">
             <li className="flex">
-              <button className="btn flex bg-gradient-to-t from-purple-mixin-400 to-purple-mixin-700 p-2 rounded-3xl">
+              <button className="btn flex bg-button-purple p-2 rounded-3xl">
                 <img className="h-7 w-auto" src={walletSVG} alt="wallet icon" />
                 <span className="font-bold text-xl text-white ml-1">Connect</span>
               </button>
