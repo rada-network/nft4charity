@@ -66,8 +66,10 @@ module.exports = {
         'bluegray-100': '#ebf1f9',
 
         'gray-100': '#F5F5F5',
+        'gray-200': '#C4C4C4',
 
         'black-nft-200': '#2F4057',
+        'black-555': '#555555',
 
         'shadepurple-50': '#fafaff',
         'shadepurple-100': '#eff0fe',

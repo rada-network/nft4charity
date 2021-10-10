@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 
 import { Spinner } from '@/components/Elements';
 import { MainLayout } from '@/components/Layout';
+import { Donate } from '@/features/donate';
 import { Landing } from '@/features/misc';
 
 const App = () => {
@@ -25,6 +26,9 @@ export const publicRoutes = [
   {
     path: '/',
     element: <App />,
-    children: [{ path: '/', element: <Landing /> }],
+    children: [
+      { path: '/', element: <Landing /> },
+      { path: '/donate', element: <Donate /> },
+    ],
   },
 ];
