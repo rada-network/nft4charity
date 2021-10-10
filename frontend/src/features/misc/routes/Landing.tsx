@@ -5,8 +5,8 @@ import donatePNG from '@/assets/images/donate.png';
 import nftItemPNG from '@/assets/images/nftItem.png';
 import transparentPNG from '@/assets/images/transparent.png';
 import { AuctionItem } from '@/components/AuctionItem';
+import { LatestContributor } from '@/components/LatestContributor';
 import { Testimonial } from '@/components/Layout/Testimonial';
-import { ListContributor } from '@/components/ListContributor';
 import { ListPartner } from '@/components/ListPartner';
 
 export const Landing = () => {
@@ -110,7 +110,7 @@ export const Landing = () => {
             </p>
           </div>
 
-          <ListContributor />
+          <LatestContributor />
 
           <div className="flex justify-between grid-cols-2">
             <div className="flex mt-10">

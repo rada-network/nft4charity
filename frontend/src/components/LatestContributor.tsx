@@ -1,6 +1,6 @@
 import ctyptoPurpleSVG from '@/assets/icons/cryptoPurple.svg';
 
-export const ListContributor = () => {
+export const LatestContributor = () => {
   return (
     <div className="shadow-xl px-10 py-5 m-auto rounded-full bg-yellow-nft-100 w-max">
       <ul className="flex items-center text-center justify-center cursor-pointer text-black">
