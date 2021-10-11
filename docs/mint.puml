@@ -1,22 +1,27 @@
 @startuml
 
 actor "Web App" as fe
-
-participant "SmartContract" as sc
-participant "Amazon S3" as s3
-participant "IPFS" as ipfs
 participant "Wallet" as wallet
+participant "BackEnd" as be
+participant "S3" as s3
+participant "SmartContract" as sc
+participant "Pintana" as ipfs
+
 
 group User mint images
 fe -> fe: check if user already connect to wallet 
 fe -> fe: show wallets from web3 modal
 fe -> wallet: connect user's wallet
 wallet --> fe: return connected wallet w/ balance
-fe -> sc: [POST]  /mint (numberOfImages)
-sc -> s3: [GET] /file/generateGetPresignedUrl(imageNames)
-s3 --> sc: return s3 image urls
-sc -> ipfs: [POST] upload images to ipfs with metadata
-sc -> sc: processing (check buyer's wallet balance, \n market collects coins from buyer, \nmarket transfers from owner to buyer, \nmarket marks item sold)
+fe -> be: [POST]  /mint (numberOfImages)
+be -> be: randomly select image names from number of images
+be -> s3: getImageUrls by imageName 
+s3 --> be: return s3 image urls
+be -> sc: mint images from s3 image urls
+sc -> ipfs: [POST] upload images to ipfs
+sc -> sc: create metadata json with image ipfs url
+sc -> ipfs: [POST] upload json metadata to ipfs
+sc -> sc: processing (\ncheck buyer's wallet balance, \nmarket collects coins from buyer, \nmarket transfers NFTs from owner to buyer \nmarket marks NFT items sold)
 sc --> fe: return the transaction's result
 end
 
