@@ -4,8 +4,6 @@ actor "Web App" as fe
 participant "Wallet" as wallet
 participant "BackEnd" as be
 participant "SmartContract" as sc
-participant "DB" as mdb
-
 
 group User mint NFT items
 fe -> fe: check if user already connect to wallet 
@@ -16,16 +14,11 @@ fe -> be: [POST]  /mint (noOfNFTs)
 be -> be: randomly select imageId (nftId) from number of images
 be -> be: getImageUrls by nftId (return ipfs structure for images)
 be -> be: create metadata json with image ipfs url
+be -->fe: return ipfs metadata
 fe -> sc: mint nfts from ipfs metadata urls
 sc -> sc: processing (\ncheck buyer's wallet balance, \nmarket collects coins from buyer, \nmarket mints NFTs & assigns NFT owners \nmarket marks NFT items sold)
 sc --> fe: return the transaction's result
 end
 
-group User view Campaign's transactions
-fe -> be: view transactions of a campaign
-be -> mdb: get transactions by campaignId
-mdb --> be: return data
-be --> fe: return json data 
-end
 
 @enduml
