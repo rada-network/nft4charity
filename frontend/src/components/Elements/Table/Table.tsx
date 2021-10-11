@@ -2,6 +2,8 @@ import { ArchiveIcon } from '@heroicons/react/outline';
 import clsx from 'clsx';
 import * as React from 'react';
 
+import { TablePagination } from './Pagination';
+
 type TableColumn<Entry> = {
   title: string;
   field: keyof Entry;
@@ -19,6 +21,8 @@ export const Table = <Entry extends { id: string }>({
   columns,
   isShowHeader = true,
 }: TableProps<Entry>) => {
+  // const [rowsPerPage, setRowsPerPage] = React.useState(ROWS_PER_PAGE);
+
   if (!data?.length) {
     return (
       <div className="bg-white text-gray-500 h-80 flex justify-center items-center flex-col">
@@ -29,9 +33,9 @@ export const Table = <Entry extends { id: string }>({
   }
   return (
     <div className="flex flex-col">
-      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 mb-10">
         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-          <div className="overflow-hidden">
+          <div className="overflow-hidden h-px-530">
             <table className="min-w-full divide-y divide-gray-200">
               {isShowHeader && (
                 <thead className="bg-gray-50">
@@ -48,7 +52,7 @@ export const Table = <Entry extends { id: string }>({
                   </tr>
                 </thead>
               )}
-              <tbody className="font-Open text-sm divide-y divide-gray-200">
+              <tbody className="font-Open text-sm divide-y divide-gray-200 ">
                 {data.map((entry, entryIndex) => (
                   <tr
                     key={entry?.id || entryIndex}
@@ -70,6 +74,8 @@ export const Table = <Entry extends { id: string }>({
           </div>
         </div>
       </div>
+
+      <TablePagination total={13} onChange={() => {}} />
     </div>
   );
 };

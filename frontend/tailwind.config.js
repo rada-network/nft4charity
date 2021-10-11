@@ -156,6 +156,7 @@ module.exports = {
         'px-104': '104px',
         'px-112': '112px',
         'px-128': '128px',
+        'px-530': '530px',
       },
 
       // Added zIndex
