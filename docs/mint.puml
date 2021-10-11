@@ -8,7 +8,7 @@ participant "SmartContract" as sc
 participant "Pintana" as ipfs
 
 
-group User mint images
+group User mint NFT items
 fe -> fe: check if user already connect to wallet 
 fe -> fe: show wallets from web3 modal
 fe -> wallet: connect user's wallet
