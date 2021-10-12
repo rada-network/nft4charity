@@ -49,7 +49,7 @@ Create .env file in `backend` folder
 
 ```sh
 # From root folder run
-$ run_tes.sh
+$ run_test.sh
 ```
 
 # Others
