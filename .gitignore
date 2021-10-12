@@ -43,4 +43,8 @@ out/
 **/schema.gql
 **/swagger.yml
 
+# SmartContracts
+artifacts/
+cache/
+
 *.tmp.yml
