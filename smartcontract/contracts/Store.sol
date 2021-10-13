@@ -6,91 +6,78 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 import "./RadaNFTToken.sol";
+import "./RadaToken.sol";
 
-contract Store is Ownable, ReentrancyGuard {
-    RadaNFTToken public radaNFTToken;
-    address public marketplaceToken;
+
+contract Store is Ownable, ReentrancyGuard{
+    
 
     mapping(uint256 => uint256) public itemPrices;
+    
+    RadaNFTToken public nftToken;
+    RadaToken public radaToken;
 
-    event Listing(address indexed owner, uint256 indexed nftId, uint256 price);
+    struct Campaign {
+        address owner;
+        string name;
+        uint current;
+        uint price;
+        uint slot;
+        
+    }
+    struct Donor {
+        address add;
+        uint amount;
+        bool voted;
+    }
+    struct Distributer {
+        address add;
+        uint amount;
+    }
+    
+    uint private _campaign_count;
+    uint private _nft_count;
 
-    event Unlisting(address indexed owner, uint256 indexed nftId);
-
-    event Purchase(
-        address indexed previousOwner,
-        address indexed newOwner,
-        uint256 indexed nftId,
-        uint256 listingPrice
-    );
-
-    event PriceUpdated(
-        address indexed owner,
-        uint256 indexed nftId,
-        uint256 oldPrice,
-        uint256 newPrice
-    );
-
-    constructor(RadaNFTToken _radaNFTToken, address _marketplaceToken) {
-        radaNFTToken = _radaNFTToken;
-        marketplaceToken = _marketplaceToken;
+    mapping(address => bool) public ableToCreateCampaign;
+    mapping(uint => Donor[]) public donorsOfCampaign;
+    mapping(uint => Distributer[]) public distributersOfCampaign;
+    mapping(uint => Campaign) public campaigns;
+    mapping(uint => uint) public nftToCampaign;
+    
+    function setNFTContractAddress(address _rada_nft_address, address _rada_token_address) public onlyOwner {
+        nftToken = RadaNFTToken(_rada_nft_address);
+        radaToken = RadaToken(_rada_token_address);
     }
 
-    function listing(uint256 _nftId, uint256 _price) public onlyOwner {
-        require(
-            radaNFTToken.ownerOf(_nftId) == _msgSender(),
-            "You are not the owner"
-        );
-        radaNFTToken.transferFrom(owner(), address(this), _nftId);
+    function createCampaign(string memory _name, uint _slot, uint _price) public {
+        require(nftToken.isWhitelister(msg.sender) == true);
 
-        itemPrices[_nftId] = _price;
+        campaigns[_campaign_count] = Campaign(msg.sender, _name, 0, _slot, _price);
 
-        emit Listing(owner(), _nftId, _price);
-    }
-
-    function unlisting(uint256 _nftId) public onlyOwner {
-        require(_msgSender() == owner(), "You are not the owner");
-
-        delete itemPrices[_nftId];
-
-        radaNFTToken.transferFrom(address(this), owner(), _nftId);
-
-        emit Unlisting(owner(), _nftId);
-    }
-
-    function buy(uint256 _nftId) external {
-        address previousOwner = owner();
-        address newOwner = _msgSender();
-
-        _trade(_nftId);
-
-        emit Purchase(previousOwner, newOwner, _nftId, itemPrices[_nftId]);
-    }
-
-    function _trade(uint256 _nftId) private {
-        IERC20(marketplaceToken).transferFrom(
-            _msgSender(),
-            owner(),
-            itemPrices[_nftId]
-        );
-
-        if (msg.value != 0) {
-            payable(_msgSender()).transfer(msg.value);
+        for(uint i=0; i<_slot; i++){
+            nftToCampaign[_nft_count] = _campaign_count;
         }
+        _nft_count += _slot;
+        _campaign_count += 1;
 
-        radaNFTToken.transferFrom(address(this), _msgSender(), _nftId);
-
-        delete itemPrices[_nftId];
+        nftToken.batchMint(_slot);
     }
 
-    function updatePrice(uint256 _nftId, uint256 _price) public onlyOwner {
-        require(_msgSender() == owner(), "You are not the owner");
+    function donating(uint _campaign_id, uint _amount, uint _nft_id) public {
+        require(campaigns[_campaign_id].slot > 0, "Campaign still has slot");
+        require(_amount > campaigns[_campaign_id].price, "Donate amount must greater or equal than price");
+        require(nftToCampaign[_nft_id] == _campaign_id, "NFT token must of true campaign");
 
-        uint256 oldPrice = itemPrices[_nftId];
-        itemPrices[_nftId] = _price;
+        
+        radaToken.transferFrom(msg.sender, campaigns[_campaign_id].owner, _amount);
 
-        emit PriceUpdated(_msgSender(), _nftId, oldPrice, _price);
+        nftToken.transfer(campaigns[_campaign_id].owner, msg.sender, _nft_id);
+
+        donorsOfCampaign[_campaign_id].push(Donor(msg.sender, _amount, false));
+        
     }
+    
 }
