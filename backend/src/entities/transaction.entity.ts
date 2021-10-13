@@ -10,10 +10,10 @@ export class Transaction {
   @ObjectIdColumn()
   _id: string;
 
-  @Column({ nullable: true })
+  @Column()
   @Expose()
-  @Field({ nullable: true })
-  sourceAddress?: string;
+  @Field()
+  sourceAddress: string;
 
   @Column()
   @Expose()
@@ -25,25 +25,25 @@ export class Transaction {
   @Field({ nullable: true })
   description?: string;
 
-  @Column({ nullable: true })
+  @Column()
   @Expose()
-  @Field({ nullable: true })
-  currency?: string;
+  @Field()
+  currency: string;
 
   @Column()
   @Expose()
   @Field()
   amount: number;
 
-  @Column({ nullable: true })
+  @Column()
   @Expose()
-  @Field({ nullable: true })
-  status?: string;
+  @Field()
+  status: string;
 
-  @Column({ nullable: true })
+  @Column()
   @Expose()
-  @Field({ nullable: true })
-  networkFee?: number;
+  @Field()
+  networkFee: number;
 
   @Column()
   @Expose()

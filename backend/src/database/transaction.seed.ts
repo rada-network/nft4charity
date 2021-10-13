@@ -38,12 +38,12 @@ async function seed() {
 
   for (let i = 0; i < numberOfTransactions; i++) {
     const transaction = transactionRepo.create({
-      sourceAddress: boolean() ? finance.ethereumAddress() : null,
+      sourceAddress: finance.ethereumAddress(),
       description: boolean() ? lorem.sentence() : null,
       currency: "ETH",
       amount: number({ min: 100, max: 1500 }) / 10000000,
-      status: boolean() ? `${number() % 2}` : null,
-      networkFee: boolean() ? number({ min: 100, max: 1500 }) / 10000000 : null,
+      status: "1",
+      networkFee: number({ min: 100, max: 1500 }) / 10000000,
       transactionId: hexaDecimal(64),
       createdAt: date.between("2021-10-01", "2021-10-14"),
     });
