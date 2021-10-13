@@ -50,22 +50,24 @@ export const Header = () => {
                 fill="#FBBF24"
               />
             </svg>
-            <p className="font-bold text-2xl text-yellow-nft4">nft4charity</p>
+            <p className="font-bold text-sm lg:text-2xl md:flex md:items-center text-yellow-nft4">
+              nft4charity
+            </p>
           </span>
           <ul className="flex items-center text-center justify-center cursor-pointer font-bold text-base text-black">
             <li className="mr-10">
               <img className="h-5 w-auto" src={homeSVG} alt="home icon" />
             </li>
-            <li className="mr-10">About</li>
-            <li className="mr-10">NFTs Market</li>
-            <li className="mr-10">Donate</li>
-            <li className="mr-10">Certificate</li>
+            <li className="mr-10 text-sm lg:text-xl">About</li>
+            <li className="mr-10 text-sm lg:text-xl">NFTs Market</li>
+            <li className="mr-10 text-sm lg:text-xl">Donate</li>
+            <li className="mr-10 text-sm lg:text-xl">Certificate</li>
           </ul>
           <ul className="flex items-center">
             <li className="flex">
               <button className="btn flex bg-button-purple p-2 rounded-3xl">
                 <img className="h-7 w-auto" src={walletSVG} alt="wallet icon" />
-                <span className="font-bold text-xl text-white ml-1">Connect</span>
+                <p className="font-bold text-sm lg:text-xl md:m-auto text-white ml-1">Connect</p>
               </button>
             </li>
             <li className="flex ml-5 cursor-pointer">

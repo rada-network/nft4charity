@@ -26,12 +26,12 @@ export const Landing = () => {
                 </p>
                 <div className="flex pt-5">
                   <button className="bg-button-purple px-3 py-2 mr-8 rounded-3xl hover:text-red hover:bg-purple">
-                    <span className="font-bold text-xl text-white ml-1 hover:text-red">
+                    <span className="font-bold text-sm lg:text-xl text-white ml-1 hover:text-red ">
                       READ MORE
                     </span>
                   </button>
                   <button className="bg-white px-3 py-2 rounded-3xl border-3 border-solid border-purple-mixin-700">
-                    <span className="font-bold text-xl text-transparent bg-clip-text bg-gradient-to-t from-purple-mixin-400 to-purple-mixin-700">
+                    <span className="font-bold text-sm lg:text-xl text-transparent bg-clip-text bg-gradient-to-t from-purple-mixin-400 to-purple-mixin-700 ">
                       CREATE CAMPAIGN
                     </span>
                   </button>
@@ -46,10 +46,10 @@ export const Landing = () => {
         </div>
 
         <div className="mt-28 mb-10">
-          <p className="m-auto w-full flex justify-center flex-none font-Merriweather font-bold text-4xl">
+          <p className="m-auto w-full flex justify-center flex-none font-Merriweather font-bold text-4xl md:text-xl">
             Why should you donate with cryptocurrency?
           </p>
-          <p className="text-sm w-2/3 m-auto font-Open mt-10 text-center">
+          <p className="text-sm w-1/3 m-auto font-Open mt-10 text-center ">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
             incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,...
           </p>
@@ -60,39 +60,39 @@ export const Landing = () => {
             <div className="grid grid-cols-3">
               <div className="mx-10">
                 <img src={transparentPNG} alt="" className="m-auto" />
-                <p className="my-5 w-full flex justify-center flex-none mx-auto font-bold font-Merriweather text-3xl">
+                <p className="my-5 w-full flex justify-center flex-none mx-auto font-bold font-Merriweather text-sm lg:text-3xl text-center">
                   Transparent
                 </p>
-                <p className="font-Open text-sm italic w-full flex justify-center flex-none">
+                <p className="font-Open text-sm italic w-full flex justify-center flex-none text-center ">
                   Maximum privacy protect for donors
                 </p>
-                <p className="font-Open text-sm w-full flex justify my-5 text-center">
+                <p className="font-Open text-sm w-full flex justify my-5 text-center ">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
                   incididunt ut labore et dolore magna aliqua....
                 </p>
               </div>
               <div className="mx-10">
                 <img src={donatePNG} alt="" className="m-auto" />
-                <p className="my-5 w-full flex justify-center flex-none font-bold font-Merriweather text-3xl">
+                <p className="my-5 w-full flex justify-center flex-none font-bold font-Merriweather text-sm lg:text-3xl text-center ">
                   Easy to donate
                 </p>
-                <p className="font-Open text-sm italic w-full flex justify-center flex-none">
+                <p className="font-Open text-sm italic w-full flex justify-center flex-none text-center ">
                   Via to Metamask or Binance Wallet
                 </p>
-                <p className="font-Open text-sm w-full flex justify my-5 text-center">
+                <p className="font-Open text-sm w-full flex justify my-5 text-center ">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
                   incididunt ut labore et dolore magna aliqua....
                 </p>
               </div>
               <div className="mx-10">
                 <img src={nftItemPNG} alt="" className="m-auto" />
-                <p className="my-5 w-full flex justify-center flex-none font-bold font-Merriweather text-3xl">
+                <p className="my-5 w-full flex justify-center flex-none font-bold font-Merriweather text-sm lg:text-3xl text-center ">
                   Funny & Value
                 </p>
-                <p className="font-Open text-sm italic w-full flex justify-center flex-none">
+                <p className="font-Open text-sm italic w-full flex justify-center flex-none text-center ">
                   Own an NFT, forever on the blockchains
                 </p>
-                <p className="font-Open text-sm w-full flex justify my-5 text-center">
+                <p className="font-Open text-sm w-full flex justify my-5 text-center ">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
                   incididunt ut labore et dolore magna aliqua...
                 </p>

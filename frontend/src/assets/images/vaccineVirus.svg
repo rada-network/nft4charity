@@ -1,6 +1,11 @@
 <svg width="888" height="535" viewBox="0 0 888 535" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<mask id="mask0" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="888" height="536">
+<path d="M42 430C14.8 458 2.66667 511.667 0 535H888C888 448.567 835 412.333 807 405C777.4 391.4 608.667 393.333 528 396V115C528 97.4002 522 88.3335 519 86.0001C515 88.6667 506.8 91.2 506 80C505.2 68.8 514.333 68.6667 519 70.0001V22.0001C515.333 15.3335 494.4 1.80012 440 1.00012C385.6 0.200118 370.667 14.6668 370 22.0001V70.0001H380C384.667 74.6668 391.2 84.4001 380 86.0001C368.8 87.6001 363.333 106 362 115V396C266.667 395.667 69.2 402 42 430Z" fill="#C4C4C4"/>
+</mask>
+<g mask="url(#mask0)">
 <g style="mix-blend-mode:multiply">
 <rect x="-207" y="-159" width="1280" height="720" fill="url(#pattern0)"/>
+</g>
 </g>
 <defs>
 <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">

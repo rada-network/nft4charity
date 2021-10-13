@@ -185,7 +185,7 @@ export const Donate = () => {
             </div>
           </div>
 
-          <div className="absolute -bottom-16 transform right-2/4 w-2/3 translate-x-2/4 bg-white shadow-xl p-5 m-auto rounded-full">
+          <div className="absolute -bottom-16 transform right-2/4 w-full lg:w-2/3 translate-x-2/4 bg-white shadow-xl p-5 m-auto rounded-full">
             <ul className="flex items-center text-center justify-center cursor-pointer font-bold text-base text-black">
               <li className="mr-10 flex">
                 <img src={cryptoYellow} alt="" />
