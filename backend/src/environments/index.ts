@@ -8,4 +8,6 @@ const PORT: number = +process.env.PORT || 8080;
 
 const REST_BASE_ROUTE = "/rest";
 
-export { BASE_URL, MONGODB_URL, PORT, REST_BASE_ROUTE };
+const SENTRY_DSN = process.env.SENTRY_DSN || "";
+
+export { BASE_URL, MONGODB_URL, PORT, REST_BASE_ROUTE, SENTRY_DSN };

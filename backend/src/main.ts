@@ -6,10 +6,12 @@ import {
   NestFastifyApplication,
 } from "@nestjs/platform-fastify";
 import { SwaggerModule } from "@nestjs/swagger";
+import * as Sentry from "@sentry/node";
 import { json, urlencoded } from "body-parser";
 import { OpenAPI, useSofa } from "sofa-api";
 import { AppModule } from "./app.module";
-import { BASE_URL, PORT, REST_BASE_ROUTE } from "./environments";
+import { SentryInterceptor } from "./common";
+import { BASE_URL, PORT, REST_BASE_ROUTE, SENTRY_DSN } from "./environments";
 
 const baseRouteRest = REST_BASE_ROUTE;
 
@@ -23,6 +25,10 @@ async function bootstrap() {
 
   app.use(/^\/rest\/(.*)\/?$/i, urlencoded({ extended: true }));
   app.use(/^\/rest\/(.*)\/?$/i, json());
+
+  Sentry.init({ dsn: SENTRY_DSN });
+
+  app.useGlobalInterceptors(new SentryInterceptor());
 
   await app.init();
 
