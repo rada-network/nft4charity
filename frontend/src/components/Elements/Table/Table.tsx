@@ -1,5 +1,8 @@
 import { ArchiveIcon } from '@heroicons/react/outline';
+import clsx from 'clsx';
 import * as React from 'react';
+
+import { TablePagination } from './Pagination';
 
 type TableColumn<Entry> = {
   title: string;
@@ -10,9 +13,16 @@ type TableColumn<Entry> = {
 export type TableProps<Entry> = {
   data: Entry[];
   columns: TableColumn<Entry>[];
+  isShowHeader?: boolean;
 };
 
-export const Table = <Entry extends { id: string }>({ data, columns }: TableProps<Entry>) => {
+export const Table = <Entry extends { id: string }>({
+  data,
+  columns,
+  isShowHeader = true,
+}: TableProps<Entry>) => {
+  // const [rowsPerPage, setRowsPerPage] = React.useState(ROWS_PER_PAGE);
+
   if (!data?.length) {
     return (
       <div className="bg-white text-gray-500 h-80 flex justify-center items-center flex-col">
@@ -23,29 +33,32 @@ export const Table = <Entry extends { id: string }>({ data, columns }: TableProp
   }
   return (
     <div className="flex flex-col">
-      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 mb-10">
         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-          <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+          <div className="overflow-hidden h-px-530">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  {columns.map((column, index) => (
-                    <th
-                      key={column.title + index}
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >
-                      {column.title}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
+              {isShowHeader && (
+                <thead className="bg-gray-50">
+                  <tr>
+                    {columns.map((column, index) => (
+                      <th
+                        key={column.title + index}
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        {column.title}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+              )}
+              <tbody className="font-Open text-sm divide-y divide-gray-200 ">
                 {data.map((entry, entryIndex) => (
                   <tr
                     key={entry?.id || entryIndex}
-                    className={entryIndex % 2 === 0 ? 'bg-white' : 'bg-gray-100'}
+                    className={clsx(entryIndex % 2 === 0 ? 'bg-white' : 'bg-gray-100', '')}
                   >
+                    <td className="text-sm font-bold w-14 text-center"> {entryIndex}. </td>
                     {columns.map(({ Cell, field, title }, columnIndex) => (
                       <td
                         key={title + columnIndex}
@@ -61,6 +74,8 @@ export const Table = <Entry extends { id: string }>({ data, columns }: TableProp
           </div>
         </div>
       </div>
+
+      <TablePagination total={13} onChange={() => {}} />
     </div>
   );
 };
