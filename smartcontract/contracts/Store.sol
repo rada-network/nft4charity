@@ -45,6 +45,7 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
     mapping(uint => Distributer[]) public distributersOfCampaign;
     mapping(uint => Campaign) public campaigns;
     mapping(uint => uint) public nftToCampaign;
+    mapping(uint => bool) public isListedNFT;
 
 
     constructor () ERC721("Gift Rada", "RadaNFT") Ownable() {
@@ -105,11 +106,12 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
         _campaign_count += 1;
         
     }
-
+    
     function donatingNFT(uint _campaign_id, uint _amount, uint _tokenId) public {
         require(campaigns[_campaign_id].slot > 0, "Campaign has no nft slot");
         require(_amount > campaigns[_campaign_id].price, "Donate amount must greater or equal than price");
         require(nftToCampaign[_tokenId] == _campaign_id, "NFT token must of true campaign");
+        require(isListedNFT[_tokenId], "This token hasn't set URI yet ");
 
         // Need to explain this point, transfer erc20 from "from" -> "to" by thirdparty?
 
@@ -163,6 +165,7 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
     }
     function setTokenURI(uint _tokenId, string memory _tokenURI) external onlyOwnerOfToken(_tokenId) {
         _setTokenURI(_tokenId, _tokenURI);
+        isListedNFT[_tokenId] = true;
     }
 
 }
