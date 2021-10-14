@@ -4,6 +4,8 @@ import homeSVG from '@/assets/icons/home.svg';
 import languageSVG from '@/assets/icons/language.svg';
 import walletSVG from '@/assets/icons/wallet.svg';
 
+import { Link } from '../Elements/Link/Link';
+
 export const Header = () => {
   return (
     <>
@@ -59,6 +61,9 @@ export const Header = () => {
               <img className="h-5 w-auto" src={homeSVG} alt="home icon" />
             </li>
             <li className="mr-10 text-sm lg:text-xl">About</li>
+            <li className="mr-10 text-sm lg:text-xl">
+              <Link to={`/campaigns`}>Campaigns</Link>
+            </li>
             <li className="mr-10 text-sm lg:text-xl">NFTs Market</li>
             <li className="mr-10 text-sm lg:text-xl">Donate</li>
             <li className="mr-10 text-sm lg:text-xl">Certificate</li>

@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 
 import { Spinner } from '@/components/Elements';
 import { MainLayout } from '@/components/Layout';
+import { Campaigns } from '@/features/campaigns';
 import { Donate } from '@/features/donate';
 import { Landing } from '@/features/misc';
 
@@ -29,6 +30,7 @@ export const publicRoutes = [
     children: [
       { path: '/', element: <Landing /> },
       { path: '/donate', element: <Donate /> },
+      { path: '/campaigns', element: <Campaigns /> },
     ],
   },
 ];
