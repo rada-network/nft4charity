@@ -18,23 +18,26 @@ async function main() {
     const nftContract = new ethers.Contract(nftAddress, nft.abi, deployer);
     const storeFrontContract = new ethers.Contract(storeFrontAddress, storeFront.abi, deployer);
     const price = ethers.utils.parseUnits(DEFAULT_PRICE, 'ether');
-    
-    ipfs.forEach(async(d, idx) => {
-      tokenId = idx + 1;
-      const tmp = await nftContract.createToken(`${d.url}`);
-      console.log(tmp);
-      let tx = await transaction.wait();
-      console.log(`tx is ${tx}`);
+    let listingPrice = await storeFrontContract.getListingPrice();
+    listingPrice = listingPrice.toString();
 
-      let event = tx.events[0];
-      let value = event.args[2];
-      let createdTokenId = value.toNumber();
-      let listingPrice = await storeFrontContract.getListingPrice();
-      listingPrice = listingPrice.toString();
-      console.log(`listing price is ${listingPrice}`);
-      let transaction = await storeFrontContract.listItemForSale(contractAddress, createdTokenId, price, { value: listingPrice })
+    // create tokens
+    // let tokenIds = await Promise.all(ipfs.map(async (d) => {
+    //   let transaction = await nftContract.createToken(`${d.url}`);
+    //   let tx1 = await transaction.wait();
+    //   let event = tx1.events[0];
+    //   let value = event.args[2];
+    //   return value;
+    // }));
+    tokenIds = [5];
+    // listing token for sale
+    let transactions = await Promise.all(tokenIds.map(async(tokenId) => {
+      let transaction = await storeFrontContract.listItemForSale(nftAddress, tokenId, price, { value: listingPrice });
       await transaction.wait();
-    })
+      return transaction;
+    }));
+   
+    console.log(transactions);
   }
   catch(ex) {
     throw ex;
