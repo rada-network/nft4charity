@@ -7,19 +7,20 @@ async function main() {
   await storeFront.deployed();
   console.log("storeFront deployed to:", storeFront.address);
 
-  const Item = await hre.ethers.getContractFactory("Item");
-  const item = await Item.deploy(storeFront.address);
-  await item.deployed();
-  console.log("item deployed to:", item.address);
+  const NFT = await hre.ethers.getContractFactory("NFT");
+  const nft = await NFT.deploy(storeFront.address);
+  await nft.deployed();
+  console.log("nft deployed to:", nft.address);
 
   let config = `
-  export const storefrontAddress = "${storeFront.address}"
-  export const itemAddress = "${item.address}"
+    const config = {
+      storeFrontAddress: "${storeFront.address}",
+      nftAddress: "${nft.address}"
+    };
+    module.exports = config;
   `
-
   let data = JSON.stringify(config)
   fs.writeFileSync('config.js', JSON.parse(data))
-
 }
 
 main()

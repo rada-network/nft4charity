@@ -48,3 +48,4 @@ artifacts/
 cache/
 
 *.tmp.yml
+*.env

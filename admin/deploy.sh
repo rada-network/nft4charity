@@ -1,0 +1,1 @@
+npx hardhat run src/deploy.js --network goerli
