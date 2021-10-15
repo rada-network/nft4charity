@@ -7,7 +7,7 @@ const config = require('../config.js');
 const DEFAULT_PRICE = '0.001';
 
 async function main() {
-  console.info('start deploying....');
+  console.info('start creating sale....');
   const nftAddress = config.nftAddress;
   const storeFrontAddress = config.storeFrontAddress;
 
@@ -21,21 +21,21 @@ async function main() {
     let listingPrice = await storeFrontContract.getListingPrice();
     listingPrice = listingPrice.toString();
 
-    // create tokens
-    // let tokenIds = await Promise.all(ipfs.map(async (d) => {
-    //   let transaction = await nftContract.createToken(`${d.url}`);
-    //   let tx1 = await transaction.wait();
-    //   let event = tx1.events[0];
-    //   let value = event.args[2];
-    //   return value;
-    // }));
-    tokenIds = [5];
-    // listing token for sale
-    let transactions = await Promise.all(tokenIds.map(async(tokenId) => {
-      let transaction = await storeFrontContract.listItemForSale(nftAddress, tokenId, price, { value: listingPrice });
-      await transaction.wait();
-      return transaction;
+    // create tokens (mint tokens)
+    let tokenIds = await Promise.all(ipfs.map(async (d) => {
+      let transaction = await nftContract.createToken(`${d.url}`);
+      let tx1 = await transaction.wait();
+      let event = tx1.events[0];
+      let value = event.args[2];
+      return value;
     }));
+    //tokenIds = [5];
+    // // listing token for sale
+    // let transactions = await Promise.all(tokenIds.map(async(tokenId) => {
+    //   let transaction = await storeFrontContract.listItemForSale(nftAddress, tokenId, price, { value: listingPrice });
+    //   await transaction.wait();
+    //   return transaction;
+    // }));
    
     console.log(transactions);
   }

@@ -1,0 +1,20 @@
+@startuml
+
+actor "Admin" as admin
+participant "IPFS" as storage
+participant "SmartContract" as sc
+
+group Admin upload images to storage
+admin -> admin: Load all needed images into asset folder
+admin -> storage: Run upload.js to upload all images to nft storage
+storage --> admin: Return metadata of successfully upload files
+admin -> admin: Construct data.json file 
+end
+
+group Admin mint ipfs to NFT contracts and send those to StoreFront
+admin -> admin: Copy data.json file from admin folder to smartcontracts folder
+admin -> sc: Run run_deploy.sh to: \n 1. Create NFT tokens from ipfs files (minting) (using NFT.sol) \n 2. List those tokens on StoreFront address (using StoreFront.sol)
+end
+
+
+@enduml
