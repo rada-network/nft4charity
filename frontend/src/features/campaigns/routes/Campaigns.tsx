@@ -1,5 +1,7 @@
 import { gql, useQuery } from '@apollo/client';
 
+import { Link } from '@/components/Elements/Link/Link';
+
 const AllCampaignsQuery = gql`
   query {
     campaigns {
@@ -36,8 +38,8 @@ export const Campaigns = () => {
           <div>
             <ul>
               {data.campaigns.map((link: any) => (
-                <li key={link.name} className="shadow  max-w-md  rounded">
-                  {link.name}
+                <li key={link.name} className="shadow max-w-md rounded cursor-pointer">
+                  <Link to={`/donate/${link._id}`}>{link.name}</Link>
                 </li>
               ))}
             </ul>
