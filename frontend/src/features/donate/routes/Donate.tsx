@@ -1,3 +1,5 @@
+import { useForm } from 'react-hook-form';
+
 import contentCopySVG from '@/assets/icons/content_copy.svg';
 import cryptoYellow from '@/assets/icons/cryptoYellow.svg';
 import qrCodeSVG from '@/assets/icons/qrCode.svg';
@@ -162,6 +164,9 @@ const renderTable = () => {
 };
 
 export const Donate = () => {
+  const { register, handleSubmit } = useForm();
+  const onSubmit = (data: any) => alert(JSON.stringify(data));
+
   return (
     <>
       <div className="">
@@ -186,44 +191,46 @@ export const Donate = () => {
           </div>
 
           <div className="absolute -bottom-16 transform right-2/4 w-full lg:w-2/3 translate-x-2/4 bg-white shadow-xl p-5 m-auto rounded-full">
-            <ul className="flex items-center text-center justify-center cursor-pointer font-bold text-base text-black">
-              <li className="mr-10 flex">
-                <img src={cryptoYellow} alt="" />
-              </li>
-              <li className="mr-10">
-                <img src={qrCodeSVG} alt="" />
-              </li>
-              <li className="mr-10">
-                <div className="flex">
-                  <SelectField
-                    label="Network"
-                    className="w-52 mr-10"
-                    options={[
-                      { label: 'Ethereum', value: 'ethereum' },
-                      { label: 'BNB', value: 'bnb' },
-                    ]}
-                    registration={{ name: 'network' }}
-                  />
-                  <InputField
-                    className="w-52"
-                    label="Amount"
-                    registration={{ name: 'amountValueDonate' }}
-                    type="number"
-                  />
-                </div>
-                <div className="flex mt-2">
-                  <span className="font-Open text-sm text-black-555 mr-5 items-center flex">
-                    0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee
-                  </span>
-                  <img src={contentCopySVG} alt="" />
-                </div>
-              </li>
-              <li className="mr-10">
-                <button className="btn flex bg-button-purple p-2 rounded-3xl">
-                  <span className="font-bold text-xl text-white ml-1">Donate</span>
-                </button>
-              </li>
-            </ul>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <ul className="flex items-center text-center justify-center cursor-pointer font-bold text-base text-black">
+                <li className="mr-10 flex">
+                  <img src={cryptoYellow} alt="" />
+                </li>
+                <li className="mr-10">
+                  <img src={qrCodeSVG} alt="" />
+                </li>
+                <li className="mr-10">
+                  <div className="flex">
+                    <SelectField
+                      label="Network"
+                      className="w-52 mr-10"
+                      options={[
+                        { label: 'Ethereum', value: 'ethereum' },
+                        { label: 'BNB', value: 'bnb' },
+                      ]}
+                      registration={{ ...register('firstName', { required: true }) }}
+                    />
+                    <InputField
+                      className="w-52"
+                      label="Amount"
+                      registration={{ name: 'amountValueDonate' }}
+                      type="number"
+                    />
+                  </div>
+                  <div className="flex mt-2">
+                    <span className="font-Open text-sm text-black-555 mr-5 items-center flex">
+                      0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee
+                    </span>
+                    <img src={contentCopySVG} alt="" />
+                  </div>
+                </li>
+                <li className="mr-10">
+                  <button className="btn flex bg-button-purple p-2 rounded-3xl" type="submit">
+                    <span className="font-bold text-xl text-white ml-1">Donate</span>
+                  </button>
+                </li>
+              </ul>
+            </form>
           </div>
         </div>
 
