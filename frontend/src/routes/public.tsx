@@ -5,6 +5,7 @@ import { Spinner } from '@/components/Elements';
 import { MainLayout } from '@/components/Layout';
 import { Campaigns } from '@/features/campaigns';
 import { Donate } from '@/features/donate';
+import { Mint } from '@/features/mint';
 import { Landing } from '@/features/misc';
 
 const App = () => {
@@ -29,8 +30,9 @@ export const publicRoutes = [
     element: <App />,
     children: [
       { path: '/', element: <Landing /> },
-      { path: '/donate', element: <Donate /> },
+      { path: '/donate/:id', element: <Donate /> },
       { path: '/campaigns', element: <Campaigns /> },
+      { path: '/mint', element: <Mint /> },
     ],
   },
 ];

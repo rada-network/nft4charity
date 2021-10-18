@@ -1,17 +1,26 @@
-import { gql, useQuery } from '@apollo/client';
-// import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import Coverflow from 'react-coverflow';
 
 import contentCopySVG from '@/assets/icons/content_copy.svg';
-import cryptoYellow from '@/assets/icons/cryptoYellow.svg';
-import qrCodeSVG from '@/assets/icons/qrCode.svg';
-import vaccineVirus from '@/assets/images/vaccineVirus.svg';
+import designerAvatar from '@/assets/images/designerAvatar.png';
+import donatePNG from '@/assets/images/donate.png';
+import nftItemPNG from '@/assets/images/nftItem.png';
+import nftItemBuffaloPNG from '@/assets/images/nftItemBuffalo.png';
+import { BlockLists } from '@/components/BlockLists';
 import { Table } from '@/components/Elements';
 import { SelectField } from '@/components/Form';
 import { InputField } from '@/components/Form/InputField';
 import { LatestContributor } from '@/components/LatestContributor';
-import { formatDate, formatDateTypeNumber } from '@/utils/format';
+import { formatDateTypeNumber } from '@/utils/format';
+
+const dataListBlock = [
+  { title: 'Clothes', content: 'Hologram jacket', rate: '6% have this collectibles' },
+  { title: 'Mounth', content: 'Large smile', rate: '10% have this collectibles' },
+  { title: 'Eyes', content: 'Angry Eyes', rate: '10% have this collectibles' },
+  { title: 'Glasses', content: 'Pixel glasses', rate: '10% have this collectibles' },
+  { title: 'Head', content: 'Undercut', rate: '10% have this collectibles' },
+  { title: 'Hat', content: 'Fez hat', rate: '10% have this collectibles' },
+  { title: 'Jewelry', content: 'Silver stud', rate: '10% have this collectibles' },
+];
 
 const renderTable = () => {
   return (
@@ -166,123 +175,93 @@ const renderTable = () => {
   );
 };
 
-const CampaignByQuery = gql`
-  query Campaign($id: String!) {
-    campaign(id: $id) {
-      _id
-      name
-      description
-      goal
-      startedAt
-      endedAt
-      coverImgUrl
-    }
-  }
-`;
-
-const GetListWalletByCampaignId = gql`
-  query {
-    walletFilter(wallet: { campaignId: "615db44161c08b12f6b79cc8" }) {
-      address
-      platform
-      balance
-      _id
-      currency
-    }
-  }
-`;
-
-export const Donate = () => {
-  // const [addressWallet] = useState('');
-
-  const { register, handleSubmit } = useForm();
-  const onSubmit = (data: any) => alert(JSON.stringify(data));
-  const { id } = useParams();
-  const { data: listWallet } = useQuery(GetListWalletByCampaignId);
-  console.log('listWallet', listWallet);
-
-  const { data, loading, error } = useQuery(CampaignByQuery, {
-    variables: { id },
-  });
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Oh no... {error.message}</p>;
-
+export const Mint = () => {
   return (
     <>
-      <div className="bg-main-pattern p-20 relative">
-        <div className="w-4/5 m-auto">
-          <div className="grid-cols-2 flex justify-center ">
-            <div className="mt-16">
-              <p className="font-black text-5xl font-Merriweather leading-tight">
-                {data?.campaign?.name}
-              </p>
-              <p className="pt-5 text-sm">{data?.campaign?.description}</p>
-              <p className="font-Merriweather font-bold text-lg mt-5">Campaign Start</p>
-              <p className="font-Open text-lg">{formatDate(data?.campaign?.startedAt)}</p>
-            </div>
-            <div className="">
-              <img className="" alt="" src={vaccineVirus} />
-            </div>
-          </div>
-        </div>
+      <div className="relative bg-main-pattern">
+        <Coverflow
+          width="100%"
+          height="500"
+          displayQuantityOfSide={2}
+          navigation={false}
+          enableScroll={false}
+          clickable={true}
+          active={0}
+        >
+          <img src={nftItemPNG} alt="" className="m-auto height-full" />
+          <img src={nftItemBuffaloPNG} alt="" className="m-auto height-full" />
+          <img src={donatePNG} alt="" className="m-auto height-full" />
+        </Coverflow>
+      </div>
 
-        <div className="absolute -bottom-16 transform right-2/4 w-full lg:w-2/3 translate-x-2/4 bg-white shadow-xl p-5 m-auto rounded-full">
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <ul className="flex items-center text-center justify-center cursor-pointer font-bold text-base text-black">
-              <li className="mr-10 flex">
-                <img src={cryptoYellow} alt="" />
-              </li>
-              <li className="mr-10">
-                <img src={qrCodeSVG} alt="" />
-              </li>
-              <li className="mr-10">
-                <div className="flex">
-                  <SelectField
-                    label="Network"
-                    className="w-52 mr-10"
-                    options={
-                      listWallet
-                        ? listWallet?.walletFilter.map((item: any) => {
-                            return { label: item?.currency, value: item?.currency };
-                          })
-                        : []
-                    }
-                    registration={{ ...register('network', { required: true }) }}
-                  />
-                  <InputField
-                    className="w-52"
-                    label="Amount"
-                    registration={{ name: 'amountValueDonate' }}
-                    type="number"
-                  />
-                </div>
-                <div className="flex mt-2">
-                  <span className="font-Open text-sm text-black-555 mr-5 items-center flex">
-                    0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee
-                  </span>
-                  <img src={contentCopySVG} alt="" />
-                </div>
-              </li>
-              <li className="mr-10">
-                <button className="btn flex bg-button-purple p-2 rounded-3xl" type="submit">
-                  <span className="font-bold text-xl text-white ml-1">Donate</span>
-                </button>
-              </li>
-            </ul>
-          </form>
-        </div>
+      <div className="transform w-full bg-white shadow-xl p-5 m-auto">
+        <ul className="flex items-start text-center justify-center cursor-pointer font-bold text-base text-black">
+          <li>
+            <InputField
+              className="w-52 mr-10"
+              label="Amount sold"
+              registration={{ name: 'amountSolds' }}
+              type="number"
+            />
+          </li>
+          <li className="mr-10">
+            <div className="flex">
+              <SelectField
+                label="Network"
+                className="w-52 mr-10"
+                options={[
+                  { label: 'Ethereum', value: 'ethereum' },
+                  { label: 'BNB', value: 'bnb' },
+                ]}
+                registration={{
+                  name: 'network',
+                }}
+              />
+              <InputField
+                className="w-52"
+                label="Units"
+                registration={{ name: 'units' }}
+                type="number"
+              />
+            </div>
+            <div className="flex mt-2">
+              <span className="font-Open text-sm text-black-555 mr-5 items-center flex">
+                0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee
+              </span>
+              <img src={contentCopySVG} alt="" />
+            </div>
+          </li>
+          <li className="mx-0 my-auto">
+            <button className="btn flex bg-button-purple p-2 rounded-3xl">
+              <span className="font-bold text-xl text-white ml-1">Random Mint</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div className="container my-10 w-4/5 m-auto">
+        <BlockLists listBlock={dataListBlock} />
       </div>
 
       <div className="mt-28 mb-10">
+        <img src={designerAvatar} alt="" className="m-auto w-px-112" />
         <p className="m-auto w-full flex justify-center flex-none font-Merriweather font-bold text-4xl">
-          Recent donate
+          Creator - Alex Ace
         </p>
         <p className="text-sm w-1/3 m-auto font-Open mt-10 text-center">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
           ut labore et dolore magna aliqua. Ut enim ad minim veniam,...
         </p>
       </div>
-
+      <div className="mt-28 mb-10">
+        <p className="m-auto w-full flex justify-center flex-none font-Merriweather font-bold text-4xl">
+          Recent NFT minting
+        </p>
+        <p className="text-sm w-1/3 m-auto font-Open mt-10 text-center">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+          ut labore et dolore magna aliqua. Ut enim ad minim veniam,...
+        </p>
+      </div>
       <div className="w-4/5 m-auto">
         <LatestContributor />
         <div className="mt-10">{renderTable()}</div>

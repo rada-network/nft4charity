@@ -112,7 +112,7 @@ export const Landing = () => {
 
           <LatestContributor />
 
-          <div className="flex justify-between grid-cols-2">
+          <div className="flex justify-around grid-cols-2">
             <div className="flex mt-10">
               <img src={cryptoBlackSVG} alt="" />
               <div className="ml-10">

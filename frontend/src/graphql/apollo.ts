@@ -2,7 +2,7 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 
 const apolloClient = new ApolloClient({
-  uri: 'http://localhost:8080/graphql',
+  uri: 'https://api.rada.charity/graphql',
   cache: new InMemoryCache(),
 });
 
