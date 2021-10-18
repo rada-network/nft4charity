@@ -1,4 +1,4 @@
-import { Field, InputType } from "@nestjs/graphql";
+import { ArgsType, Field, InputType } from "@nestjs/graphql";
 import { Expose } from "class-transformer";
 import {
   IsBoolean,
@@ -7,7 +7,7 @@ import {
   IsString,
 } from "class-validator";
 
-@InputType()
+@ArgsType()
 export class WalletFilterDto {
   @Expose()
   @Field({ nullable: true })

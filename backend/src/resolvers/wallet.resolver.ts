@@ -1,4 +1,4 @@
-import { Logger, NotFoundException } from "@nestjs/common";
+import { NotFoundException } from "@nestjs/common";
 import {
   Args,
   Float,
@@ -41,12 +41,7 @@ export class WalletResolver {
 
   @Query(() => [Wallet])
   async walletFilter(
-    @Args("wallet", {
-      type: () => WalletFilterDto,
-      nullable: true,
-      defaultValue: null,
-    })
-    walletFilterArgs?: WalletFilterDto,
+    @Args() walletFilterArgs?: WalletFilterDto,
   ): Promise<Wallet[]> {
     const entries = Object.entries(walletFilterArgs || {});
 
