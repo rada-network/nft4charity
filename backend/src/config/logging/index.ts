@@ -1,8 +1,11 @@
 import * as morgan from "morgan";
+import { SENTRY_DSN } from "src/environments";
 import { config, createLogger, transports, format } from "winston";
 
 // eslint-disable-next-line
 const json = require("morgan-json");
+// eslint-disable-next-line
+const Sentry = require("winston-sentry-log");
 
 const { combine, timestamp, printf, errors, colorize } = format;
 
@@ -33,6 +36,16 @@ const options = {
       consoleFormat,
     ),
   },
+  sentry: {
+    level: "info",
+    config: {
+      dsn: SENTRY_DSN,
+    },
+    handleExceptions: true,
+    json: true,
+    maxsize: 5242880,
+    colorize: false,
+  },
 };
 
 const morganFormatStr =
@@ -52,7 +65,8 @@ export const httpConsoleLogger = morgan(morganFormatStr, {
 
 export const fileLogger = createLogger({
   levels: config.npm.levels,
-  transports: [new transports.File(options.file)],
+  // transports: [new transports.File(options.file)],
+  transports: [new Sentry(options.sentry)],
   exitOnError: false,
 });
 
