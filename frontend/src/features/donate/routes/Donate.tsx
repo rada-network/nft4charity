@@ -195,10 +195,11 @@ const GetListWalletByCampaignId = gql`
 export const Donate = () => {
   // const [addressWallet] = useState('');
 
-  const { register, handleSubmit, getValues } = useForm();
+  const { register, handleSubmit } = useForm();
   const onSubmit = (data: any) => alert(JSON.stringify(data));
   const { id } = useParams();
   const { data: listWallet } = useQuery(GetListWalletByCampaignId);
+  console.log('listWallet', listWallet);
 
   const { data, loading, error } = useQuery(CampaignByQuery, {
     variables: { id },
@@ -257,8 +258,7 @@ export const Donate = () => {
                 </div>
                 <div className="flex mt-2">
                   <span className="font-Open text-sm text-black-555 mr-5 items-center flex">
-                    {/* 0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee */}
-                    {getValues('network')}
+                    0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee
                   </span>
                   <img src={contentCopySVG} alt="" />
                 </div>

@@ -1,10 +1,26 @@
+import Coverflow from 'react-coverflow';
+
 import contentCopySVG from '@/assets/icons/content_copy.svg';
 import designerAvatar from '@/assets/images/designerAvatar.png';
+import donatePNG from '@/assets/images/donate.png';
+import nftItemPNG from '@/assets/images/nftItem.png';
+import nftItemBuffaloPNG from '@/assets/images/nftItemBuffalo.png';
+import { BlockLists } from '@/components/BlockLists';
 import { Table } from '@/components/Elements';
 import { SelectField } from '@/components/Form';
 import { InputField } from '@/components/Form/InputField';
 import { LatestContributor } from '@/components/LatestContributor';
 import { formatDateTypeNumber } from '@/utils/format';
+
+const dataListBlock = [
+  { title: 'Clothes', content: 'Hologram jacket', rate: '6% have this collectibles' },
+  { title: 'Mounth', content: 'Large smile', rate: '10% have this collectibles' },
+  { title: 'Eyes', content: 'Angry Eyes', rate: '10% have this collectibles' },
+  { title: 'Glasses', content: 'Pixel glasses', rate: '10% have this collectibles' },
+  { title: 'Head', content: 'Undercut', rate: '10% have this collectibles' },
+  { title: 'Hat', content: 'Fez hat', rate: '10% have this collectibles' },
+  { title: 'Jewelry', content: 'Silver stud', rate: '10% have this collectibles' },
+];
 
 const renderTable = () => {
   return (
@@ -162,13 +178,27 @@ const renderTable = () => {
 export const Campaign = () => {
   return (
     <>
-      <div className="p-20 relative bg-main-pattern"></div>
+      <div className="relative bg-main-pattern">
+        <Coverflow
+          width="100%"
+          height="500"
+          displayQuantityOfSide={2}
+          navigation={false}
+          enableScroll={false}
+          clickable={true}
+          active={0}
+        >
+          <img src={nftItemPNG} alt="" className="m-auto height-full" />
+          <img src={nftItemBuffaloPNG} alt="" className="m-auto height-full" />
+          <img src={donatePNG} alt="" className="m-auto height-full" />
+        </Coverflow>
+      </div>
 
-      <div className="transform w-full lg:w-2/3 bg-white shadow-xl p-5 m-auto">
-        <ul className="flex items-center text-center justify-center cursor-pointer font-bold text-base text-black">
+      <div className="transform w-full bg-white shadow-xl p-5 m-auto">
+        <ul className="flex items-start text-center justify-center cursor-pointer font-bold text-base text-black">
           <li>
             <InputField
-              className="w-52"
+              className="w-52 mr-10"
               label="Amount sold"
               registration={{ name: 'amountSolds' }}
               type="number"
@@ -201,12 +231,16 @@ export const Campaign = () => {
               <img src={contentCopySVG} alt="" />
             </div>
           </li>
-          <li className="">
+          <li className="mx-0 my-auto">
             <button className="btn flex bg-button-purple p-2 rounded-3xl">
               <span className="font-bold text-xl text-white ml-1">Random Mint</span>
             </button>
           </li>
         </ul>
+      </div>
+
+      <div className="container my-10 w-4/5 m-auto">
+        <BlockLists listBlock={dataListBlock} />
       </div>
 
       <div className="mt-28 mb-10">
@@ -219,7 +253,6 @@ export const Campaign = () => {
           ut labore et dolore magna aliqua. Ut enim ad minim veniam,...
         </p>
       </div>
-
       <div className="mt-28 mb-10">
         <p className="m-auto w-full flex justify-center flex-none font-Merriweather font-bold text-4xl">
           Recent NFT minting
@@ -229,7 +262,6 @@ export const Campaign = () => {
           ut labore et dolore magna aliqua. Ut enim ad minim veniam,...
         </p>
       </div>
-
       <div className="w-4/5 m-auto">
         <LatestContributor />
         <div className="mt-10">{renderTable()}</div>
