@@ -1,23 +1,26 @@
+import { fileLogger } from "./../../config/logging/index";
 import {
   CallHandler,
   ExecutionContext,
   Injectable,
   NestInterceptor,
 } from "@nestjs/common";
-import * as Sentry from "@sentry/minimal";
 import { catchError, map, Observable, throwError } from "rxjs";
 
 @Injectable()
-export class SentryInterceptor implements NestInterceptor {
+export class ErrorInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       map((value) => {
-        console.log(JSON.stringify(value));
-        Sentry.captureMessage(JSON.stringify(value));
+        fileLogger.info(
+          JSON.stringify({
+            data: value,
+          }),
+        );
         return value === null ? "" : value;
       }),
       catchError((exception) => {
-        Sentry.captureException(exception);
+        fileLogger.error(exception.stack || exception.message);
         return throwError(() => exception);
       }),
     );

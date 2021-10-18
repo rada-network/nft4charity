@@ -1,3 +1,4 @@
+import { ErrorInterceptor } from "./common/interceptors/error.interceptor";
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { GraphQLSchemaHost } from "@nestjs/graphql";
@@ -6,12 +7,11 @@ import {
   NestFastifyApplication,
 } from "@nestjs/platform-fastify";
 import { SwaggerModule } from "@nestjs/swagger";
-import * as Sentry from "@sentry/node";
 import { json, urlencoded } from "body-parser";
 import { OpenAPI, useSofa } from "sofa-api";
 import { AppModule } from "./app.module";
-import { SentryInterceptor } from "./common";
-import { BASE_URL, PORT, REST_BASE_ROUTE, SENTRY_DSN } from "./environments";
+import { httpFileLogger, consoleLogger, httpConsoleLogger } from "./config";
+import { BASE_URL, PORT, REST_BASE_ROUTE } from "./environments";
 
 const baseRouteRest = REST_BASE_ROUTE;
 
@@ -21,14 +21,14 @@ async function bootstrap() {
     new FastifyAdapter(),
   );
 
+  app.use(httpFileLogger);
+  app.use(httpConsoleLogger);
+
+  app.useGlobalInterceptors(new ErrorInterceptor());
   app.useGlobalPipes(new ValidationPipe());
 
   app.use(/^\/rest\/(.*)\/?$/i, urlencoded({ extended: true }));
   app.use(/^\/rest\/(.*)\/?$/i, json());
-
-  Sentry.init({ dsn: SENTRY_DSN });
-
-  app.useGlobalInterceptors(new SentryInterceptor());
 
   await app.init();
 
@@ -66,5 +66,7 @@ async function bootstrap() {
   SwaggerModule.setup("apidocs", app, openApiDoc);
 
   await app.listen(PORT, "0.0.0.0");
+
+  consoleLogger.info(`Application listening on port ${PORT}`);
 }
 bootstrap();
