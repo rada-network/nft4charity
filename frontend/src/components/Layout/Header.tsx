@@ -65,9 +65,6 @@ export const Header = () => {
               <Link to={`/campaigns`}>Campaigns</Link>
             </li>
             <li className="mr-10 text-sm lg:text-xl">NFTs Market</li>
-            <li className="mr-10 text-sm lg:text-xl">
-              <Link to={`/donate`}>Donate</Link>
-            </li>
             <li className="mr-10 text-sm lg:text-xl">Certificate</li>
           </ul>
           <ul className="flex items-center">

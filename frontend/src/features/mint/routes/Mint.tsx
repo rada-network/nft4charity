@@ -175,7 +175,7 @@ const renderTable = () => {
   );
 };
 
-export const Campaign = () => {
+export const Mint = () => {
   return (
     <>
       <div className="relative bg-main-pattern">
