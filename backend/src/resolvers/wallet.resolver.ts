@@ -1,4 +1,4 @@
-import { Logger, NotFoundException } from "@nestjs/common";
+import { NotFoundException } from "@nestjs/common";
 import {
   Args,
   Float,

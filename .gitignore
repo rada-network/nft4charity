@@ -34,7 +34,7 @@ lerna-debug.log*
 
 mongo-data/
 
-.env
+/**/.env
 
 # PlantUML Docs
 out/
