@@ -75,9 +75,17 @@ export const Donate = () => {
   const { data: transactions } = useQuery(GetTransactions, {
     variables: { id: walletAddress },
   });
-  console.log('transactions', transactions);
 
   const onSubmit = (data: any) => alert(JSON.stringify(data));
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(walletAddress);
+
+    (document as any).querySelector('.editor').innerText = 'Copied';
+    setTimeout(function () {
+      (document as any).querySelector('.editor').innerText = '';
+    }, 3000);
+  };
 
   const { data, loading, error } = useQuery(CampaignByQuery, {
     variables: { id },
@@ -182,7 +190,8 @@ export const Donate = () => {
                   <span className="font-Open text-sm text-black-555 mr-5 items-center flex">
                     {walletAddress}
                   </span>
-                  <img src={contentCopySVG} alt="" />
+                  <img src={contentCopySVG} alt="" onClick={copyToClipboard} />
+                  <span className="editor ml-5 text-sm italic"></span>
                 </div>
               </li>
               <li className="mr-10">
