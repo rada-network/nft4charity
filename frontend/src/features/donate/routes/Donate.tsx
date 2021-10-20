@@ -1,4 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
+import { useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 
@@ -39,10 +40,10 @@ const GetListWalletByCampaignId = gql`
     }
   }
 `;
-// Wallet($id: String!)
+
 const GetTransactions = gql`
-  query {
-    wallet(id: "615db44161c08b12f6b79ccd") {
+  query Wallet($id: String!) {
+    wallet(id: $id) {
       _id
       currency
       transaction: transaction {
@@ -59,7 +60,7 @@ const GetTransactions = gql`
 `;
 
 export const Donate = () => {
-  const { register, handleSubmit, control } = useForm();
+  const { register, handleSubmit, control, reset } = useForm();
   const { id } = useParams();
 
   const { data: listWallet } = useQuery(GetListWalletByCampaignId, {
@@ -69,11 +70,21 @@ export const Donate = () => {
   const walletAddress = useWatch({
     name: 'network',
     control,
-    defaultValue: listWallet?.walletFilter[0].address,
   });
 
+  useEffect(() => {
+    setTimeout(() => {
+      reset({
+        network: listWallet?.walletFilter[0].address,
+      });
+    }, 1000);
+  }, [reset, listWallet]);
+
   const { data: transactions } = useQuery(GetTransactions, {
-    variables: { id: walletAddress },
+    variables: {
+      id: listWallet?.walletFilter.find((item: WalletFilter) => item.address === walletAddress)
+        ?._id,
+    },
   });
 
   const onSubmit = (data: any) => alert(JSON.stringify(data));
@@ -82,7 +93,7 @@ export const Donate = () => {
     navigator.clipboard.writeText(walletAddress);
 
     (document as any).querySelector('.editor').innerText = 'Copied';
-    setTimeout(function () {
+    setTimeout(() => {
       (document as any).querySelector('.editor').innerText = '';
     }, 3000);
   };
