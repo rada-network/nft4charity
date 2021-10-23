@@ -45,15 +45,14 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
     mapping(uint => Donor[]) public donorsOfCampaign;
     mapping(uint => Distributer[]) public distributersOfCampaign;
     mapping(uint => Campaign) public campaigns;
+    
     mapping(uint => uint) public nftToCampaign;
-    mapping(uint => bool) public isListedNFT;
+    
 
     
     event campaignCreated(uint _campaignId, address _creator);
-    event nftCreated(uint _tokenID, address _creator);
-    event nftURISet(uint _tokenId);
+    event nftMined(uint _tokenID, address _creator);
     event donated(uint _campaignId, address _donor, uint _amount);
-    event nftTransfer(uint _campaignId, uint _tokenID, address _owner, address _receiver);
     event distributerAdded(uint _campaignId, address _distributer);
     event campaignEnded(uint _campaignId);
     event distributed(uint _campaignId, address _distributer, uint _amount); 
@@ -102,19 +101,10 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
         return whitelist[_user];
     }
 
-
     // campaign methods
     function createCampaign(string memory _name, uint _slot, uint _price) public onlyWhitelister {
-
-        campaigns[_campaign_count] = Campaign(msg.sender, _name, 0, _slot, _price, false);
         
-        if(_slot > 0){
-            for(uint i=0; i<_slot; i++){
-                nftToCampaign[_nft_count] = _campaign_count;
-            }
-            batchMint(_slot);
-        }
-
+        campaigns[_campaign_count] = Campaign(msg.sender, _name, 0, _slot, _price, false);
         emit campaignCreated(_campaign_count, msg.sender);
         
         _campaign_count += 1;
@@ -122,31 +112,38 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
         
     }
     
-    function donatingNFT(uint _campaignId, uint _amount, uint _tokenId) public {
+    function donatingNFT(uint _campaignId, uint _amount, string memory _tokenURI) public {
         require(campaigns[_campaignId].slot > 0, "Campaign has no nft slot");
         require(_amount > campaigns[_campaignId].price, "Donate amount must greater or equal than price");
-        require(nftToCampaign[_tokenId] == _campaignId, "NFT token must of true campaign");
-        require(isListedNFT[_tokenId], "This token hasn't set URI yet ");
 
-        // sender must approve allowance for CONTRACT 
-        radaToken.transferFrom(msg.sender, campaigns[_campaignId].creator, _amount); 
+        // Send it to contract, allow creator to withdraw
+        radaToken.transferFrom(msg.sender, address(this), _amount);
+        // radaToken.increaseAllowance(campaigns[_campaignId].creator, _amount); ??
+
         campaigns[_campaignId].current += _amount;
-
-        _transfer(campaigns[_campaignId].creator, msg.sender, _tokenId);
-
-
         donorsOfCampaign[_campaignId].push(Donor(msg.sender, _amount, false));
+
+
+        // Donor mint itself
+        _safeMint(msg.sender, _nft_count);
+        _setTokenURI(_nft_count, _tokenURI);
+        nftToCampaign[_nft_count] = _campaignId;
+        _nft_count += 1;
+        campaigns[_campaignId].slot -=  1;
 
         emit donated(_campaignId, msg.sender, _amount);
         
     }
     function donatingNormal(uint _campaignId, uint _amount) public {
         require(_amount > campaigns[_campaignId].price, "Donate amount must greater or equal than price");
-                
 
-        radaToken.transferFrom(msg.sender, campaigns[_campaignId].creator, _amount);
-        campaigns[_campaignId].current += _amount; 
+         // Send it to contract, allow creator to withdraw
+        radaToken.transferFrom(msg.sender, address(this), _amount);
+        // radaToken.increaseAllowance(campaigns[_campaignId].creator, _amount); ?
+
+        campaigns[_campaignId].current += _amount;
         donorsOfCampaign[_campaignId].push(Donor(msg.sender, _amount, false));
+
 
         emit donated(_campaignId, msg.sender, _amount);
     }
@@ -156,47 +153,27 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
         
         emit distributerAdded(_campaignId, _distributer);
     }
-    
-
 
     function endingCampaign(uint _campaignId) public onlyOwnerOfCampaign(_campaignId){
         campaigns[_campaignId].ended = true;
         emit campaignEnded(_campaignId);
     }
+
     function distributing(uint _campaignId, uint _distributerId, uint _amount) public onlyOwnerOfCampaign(_campaignId) {
-        
-        require(campaigns[_campaignId].current >= _amount, "Campaign out of amount money");
-
         require(campaigns[_campaignId].ended, "Campaign is not ended");
-
-
+        require(campaigns[_campaignId].current >= _amount, "Campaign out of amount money");
         
-        Campaign storage c = campaigns[_campaignId];
+        Campaign storage c = campaigns[_campaignId];        
         
         address _distributerAddress = distributersOfCampaign[_campaignId][_distributerId].add;
 
-        if(msg.sender != _distributerAddress){  // if creator is distributer: not transfer money but emit Event and descrease current
-            radaToken.transferFrom(msg.sender, _distributerAddress, _amount);
-        }
-
+        radaToken.transfer(_distributerAddress, _amount); // distributing from contract to distributer
+        
         c.current -= _amount;
-        emit distributed(_campaignId, _distributerAddress, _amount);
-    }
+        
+        distributersOfCampaign[_campaignId][_distributerId].amount += _amount;
 
-    // nft methods
-    function mint() internal onlyWhitelister {
-        _safeMint(msg.sender, _nft_count);
-        _nft_count += 1;
-    }
-    function batchMint(uint _slot) internal onlyWhitelister {
-        for (uint i = 0; i < _slot; i++) {
-            mint();
-        }
-    }
-    function setTokenURI(uint _tokenId, string memory _tokenURI) external onlyOwnerOfToken(_tokenId) {
-        _setTokenURI(_tokenId, _tokenURI);
-        isListedNFT[_tokenId] = true;
-        emit nftURISet(_tokenId);
+        emit distributed(_campaignId, _distributerAddress, _amount);
     }
 
 }
