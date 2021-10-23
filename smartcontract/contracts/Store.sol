@@ -16,7 +16,7 @@ import "./RadaToken.sol";
 contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
     
 
-    RadaToken radaToken;
+    RadaToken currencyToken;
 
     struct Campaign {
         address creator;
@@ -28,12 +28,12 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
         
     }
     struct Donor {
-        address add;
+        address wallet;
         uint amount;
         bool voted;
     }
-    struct Distributer {
-        address add;
+    struct Distributor {
+        address wallet;
         uint amount;
     }
     
@@ -41,9 +41,9 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
     uint private _campaign_count;
     uint private _nft_count;
 
-    mapping(address => bool) private whitelist;
+    mapping(address => bool) private whitelist; // user in whitelist can create campaign
     mapping(uint => Donor[]) public donorsOfCampaign;
-    mapping(uint => Distributer[]) public distributersOfCampaign;
+    mapping(uint => Distributor[]) public distributorsOfCampaign;
     mapping(uint => Campaign) public campaigns;
     
     mapping(uint => uint) public nftToCampaign;
@@ -53,9 +53,9 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
     event campaignCreated(uint _campaignId, address _creator);
     event nftMined(uint _tokenID, address _creator);
     event donated(uint _campaignId, address _donor, uint _amount);
-    event distributerAdded(uint _campaignId, address _distributer);
+    event distributorAdded(uint _campaignId, address _distributor);
     event campaignEnded(uint _campaignId);
-    event distributed(uint _campaignId, address _distributer, uint _amount); 
+    event distributed(uint _campaignId, address _distributor, uint _amount); 
 
 
 
@@ -85,8 +85,8 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
         _;
     }
     // set token interface 
-    function setRadaERC20Interface(address _radatoken) external onlyOwner {
-        radaToken = RadaToken(_radatoken);
+    function setRadaERC20Interface(address _currencytoken) external onlyOwner {
+        currencyToken = RadaToken(_currencytoken);
     }
     
     
@@ -117,8 +117,8 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
         require(_amount > campaigns[_campaignId].price, "Donate amount must greater or equal than price");
 
         // Send it to contract, allow creator to withdraw
-        radaToken.transferFrom(msg.sender, address(this), _amount);
-        // radaToken.increaseAllowance(campaigns[_campaignId].creator, _amount); ??
+        currencyToken.transferFrom(msg.sender, address(this), _amount);
+       
 
         campaigns[_campaignId].current += _amount;
         donorsOfCampaign[_campaignId].push(Donor(msg.sender, _amount, false));
@@ -138,8 +138,8 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
         require(_amount > campaigns[_campaignId].price, "Donate amount must greater or equal than price");
 
          // Send it to contract, allow creator to withdraw
-        radaToken.transferFrom(msg.sender, address(this), _amount);
-        // radaToken.increaseAllowance(campaigns[_campaignId].creator, _amount); ?
+        currencyToken.transferFrom(msg.sender, address(this), _amount);
+
 
         campaigns[_campaignId].current += _amount;
         donorsOfCampaign[_campaignId].push(Donor(msg.sender, _amount, false));
@@ -147,11 +147,11 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
 
         emit donated(_campaignId, msg.sender, _amount);
     }
-    function addDistributer(uint _campaignId, address _distributer) public onlyOwnerOfCampaign(_campaignId){
+    function addDistributor(uint _campaignId, address _distributor) public onlyOwnerOfCampaign(_campaignId){
         
-        distributersOfCampaign[_campaignId].push(Distributer(_distributer, 0));
+        distributorsOfCampaign[_campaignId].push(Distributor(_distributor, 0));
         
-        emit distributerAdded(_campaignId, _distributer);
+        emit distributorAdded(_campaignId, _distributor);
     }
 
     function endingCampaign(uint _campaignId) public onlyOwnerOfCampaign(_campaignId){
@@ -159,21 +159,21 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
         emit campaignEnded(_campaignId);
     }
 
-    function distributing(uint _campaignId, uint _distributerId, uint _amount) public onlyOwnerOfCampaign(_campaignId) {
-        require(campaigns[_campaignId].ended, "Campaign is not ended");
+    function distributing(uint _campaignId, uint _distributorId, uint _amount) public onlyOwnerOfCampaign(_campaignId) {
+        
         require(campaigns[_campaignId].current >= _amount, "Campaign out of amount money");
         
-        Campaign storage c = campaigns[_campaignId];        
+              
         
-        address _distributerAddress = distributersOfCampaign[_campaignId][_distributerId].add;
+        address _distributorWallet = distributorsOfCampaign[_campaignId][_distributorId].wallet;
 
-        radaToken.transfer(_distributerAddress, _amount); // distributing from contract to distributer
+        currencyToken.transfer(_distributorWallet, _amount); // distributing from contract to distributor
         
-        c.current -= _amount;
+        campaigns[_campaignId].current -= _amount;
         
-        distributersOfCampaign[_campaignId][_distributerId].amount += _amount;
+        distributorsOfCampaign[_campaignId][_distributorId].amount += _amount;
 
-        emit distributed(_campaignId, _distributerAddress, _amount);
+        emit distributed(_campaignId, _distributorWallet, _amount);
     }
 
 }

@@ -15,12 +15,14 @@ module.exports = {
       timeoutBlocks: 200,
       skipDryRun: true,
     },
-    rinkeby: {
+    rinkerby: {
       provider: () =>
-        new HDWalletProvider([""], `https://data-seed-prebsc-1-s1.binance.org:8545/`, 0, 1),
+        new HDWalletProvider([""], ``, 0, 1),
       port: 8545,
       network_id: "4", // Rinkeby ID 4
-      gas: 6712390
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: true,
      }
   },
 

@@ -44,3 +44,7 @@ out/
 **/swagger.yml
 
 *.tmp.yml
+
+
+# build json SC
+smartcontract/build/*
