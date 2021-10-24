@@ -6,6 +6,10 @@
       "dom.iterable",
       "esnext"
     ],
+    "typeRoots": [
+      "./types",
+      "./node_modules/@types"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -24,7 +28,8 @@
     "src"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "typings"
   ],
   "extends": "./tsconfig.paths.json"
 }

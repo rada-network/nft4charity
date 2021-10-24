@@ -1,4 +1,4 @@
-import { Logger, NotFoundException } from "@nestjs/common";
+import { NotFoundException } from "@nestjs/common";
 import {
   Args,
   Float,
@@ -8,7 +8,12 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
-import { CreateWalletDto, WalletFilterDto } from "src/dtos";
+import { PaginationParamsDto } from "src/common";
+import {
+  CreateWalletDto,
+  PaginatedTransaction,
+  WalletFilterDto,
+} from "src/dtos";
 import { Campaign, Transaction, User, Wallet } from "src/entities";
 import { FindManyOptions, getMongoRepository } from "typeorm";
 
@@ -41,12 +46,7 @@ export class WalletResolver {
 
   @Query(() => [Wallet])
   async walletFilter(
-    @Args("wallet", {
-      type: () => WalletFilterDto,
-      nullable: true,
-      defaultValue: null,
-    })
-    walletFilterArgs?: WalletFilterDto,
+    @Args() walletFilterArgs?: WalletFilterDto,
   ): Promise<Wallet[]> {
     const entries = Object.entries(walletFilterArgs || {});
 
@@ -98,17 +98,33 @@ export class WalletResolver {
     return campaign;
   }
 
-  @ResolveField(() => [Transaction])
-  async transaction(@Parent() wallet): Promise<Transaction[]> {
+  @ResolveField(() => PaginatedTransaction)
+  async transaction(
+    @Parent() wallet: Wallet,
+    @Args() paginationParams?: PaginationParamsDto,
+  ): Promise<PaginatedTransaction> {
     const walletId = wallet._id.toString();
-    const transactions = await getMongoRepository(Transaction).find({
-      walletId: walletId,
+    const { limit, offset } = paginationParams;
+
+    const [transactions, total] = await getMongoRepository(
+      Transaction,
+    ).findAndCount({
+      where: { walletId },
+      order: { createdAt: "DESC" },
+      take: limit,
+      skip: offset,
     });
+
     if (!transactions) {
       throw new NotFoundException("Transactions are not found.");
     }
 
-    return transactions;
+    const res: PaginatedTransaction = {
+      data: transactions,
+      meta: { limit, offset, total },
+    };
+
+    return res;
   }
 
   @Mutation(() => Wallet)

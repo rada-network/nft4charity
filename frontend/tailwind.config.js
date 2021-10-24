@@ -11,6 +11,8 @@ module.exports = {
   theme: {
     // Add Font to Sans Font Array
     fontFamily: {
+      Open: ['Open Sans'],
+      Merriweather: ['Merriweather'],
       sans: [
         '-apple-system',
         'BlinkMacSystemFont',
@@ -23,6 +25,7 @@ module.exports = {
         '"Segoe UI Emoji"',
         '"Segoe UI Symbol"',
         '"Noto Color Emoji"',
+        'Open',
       ],
       serif: ['"Literata"', ...defaultTheme.fontFamily.serif],
     },
@@ -47,9 +50,26 @@ module.exports = {
         primary: colors.purple,
         secondary: colors.yellow,
         alternative: colors.green,
+        'purple-mixin-700': '#9C60FF',
+        'purple-mixin-400': '#5600E5',
+        'purple-mixin-200': '#F1D2EC',
+        'purple-linear-mixin': 'linear-gradient(to bottom, #9C60FF 0%, #5600E5 100%)',
+
+        'violet-mixin-100': '#E7EDFD',
+
+        'main-purple': '#8B5CF6',
+
+        'yellow-nft4': '#FBBF24',
+        'yellow-nft-100': '#fef2d3',
 
         'bluegray-50': '#f8fafd',
         'bluegray-100': '#ebf1f9',
+
+        'gray-100': '#F5F5F5',
+        'gray-200': '#C4C4C4',
+
+        'black-nft-200': '#2F4057',
+        'black-555': '#555555',
 
         'shadepurple-50': '#fafaff',
         'shadepurple-100': '#eff0fe',
@@ -72,6 +92,12 @@ module.exports = {
         'deepgray-50': '#0c121d',
         'deepgray-100': '#0a0e17',
         'deepgray-200': '#080b12',
+      },
+
+      // Background Image
+      backgroundImage: {
+        'main-pattern': 'linear-gradient(to right top, #F1D2EC 21.32%, #E7EDFD 65.29%)',
+        'button-purple': 'linear-gradient(to bottom, #9C60FF 0%, #5600E5 100%)',
       },
 
       // Extra Font Sizes
@@ -130,12 +156,18 @@ module.exports = {
         'px-104': '104px',
         'px-112': '112px',
         'px-128': '128px',
+        'px-530': '530px',
       },
 
       // Added zIndex
       zIndex: {
         '-1': '-1',
         '-2': '-2',
+      },
+
+      // Box shadow
+      boxShadow: {
+        main: '0px 10px 35px -6px rgba(0, 0, 0, 0.1)',
       },
     },
   },

@@ -34,7 +34,7 @@ lerna-debug.log*
 
 mongo-data/
 
-.env
+/**/.env
 
 # PlantUML Docs
 out/
@@ -47,9 +47,14 @@ out/
 artifacts/
 cache/
 
-*.tmp.yml
-*.env
+# build json SC
+smartcontract/build/*
 
+# yarn.lock
 yarn.lock
 admin/yarn.lock
 thangle/yarn.lock
+
+*.tmp.yml
+
+*.env

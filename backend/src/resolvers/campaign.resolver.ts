@@ -8,7 +8,7 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import CreateCampaignDto from "src/dtos/campaigns/createCampaign.dto";
-import { Campaign, User } from "src/entities";
+import { Campaign, User, Wallet } from "src/entities";
 import { getMongoRepository } from "typeorm";
 
 @Resolver(() => Campaign)
@@ -38,6 +38,13 @@ export class CampaignResolver {
     }
 
     return user;
+  }
+
+  @ResolveField(() => [Wallet])
+  async wallet(@Parent() campaign: Campaign): Promise<Wallet[]> {
+    return await getMongoRepository(Wallet).find({
+      campaignId: campaign._id.toString(),
+    });
   }
 
   @Mutation(() => Campaign)

@@ -1,3 +1,4 @@
+import { ErrorInterceptor } from "./common/interceptors/error.interceptor";
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { GraphQLSchemaHost } from "@nestjs/graphql";
@@ -9,7 +10,8 @@ import { SwaggerModule } from "@nestjs/swagger";
 import { json, urlencoded } from "body-parser";
 import { OpenAPI, useSofa } from "sofa-api";
 import { AppModule } from "./app.module";
-import { REST_BASE_ROUTE } from "./environments";
+import { httpFileLogger, consoleLogger, httpConsoleLogger } from "./config";
+import { BASE_URL, PORT, REST_BASE_ROUTE } from "./environments";
 
 const baseRouteRest = REST_BASE_ROUTE;
 
@@ -18,7 +20,13 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
   );
+
+  app.use(httpFileLogger);
+  app.use(httpConsoleLogger);
+
+  app.useGlobalInterceptors(new ErrorInterceptor());
   app.useGlobalPipes(new ValidationPipe());
+
   app.use(/^\/rest\/(.*)\/?$/i, urlencoded({ extended: true }));
   app.use(/^\/rest\/(.*)\/?$/i, json());
 
@@ -33,7 +41,12 @@ async function bootstrap() {
     },
     servers: [
       {
-        url: `http://localhost:8080`,
+        url: `http://localhost:${PORT}${baseRouteRest}`,
+        description: "NFT4Charity API Development Server",
+      },
+      {
+        url: `https://${BASE_URL}${baseRouteRest}`,
+        description: "NFT4Charity API Production Server",
       },
     ],
   });
@@ -44,9 +57,7 @@ async function bootstrap() {
       basePath: baseRouteRest,
       schema,
       onRoute(info) {
-        openApi.addRoute(info, {
-          basePath: baseRouteRest,
-        });
+        openApi.addRoute(info);
       },
     }),
   );
@@ -54,6 +65,8 @@ async function bootstrap() {
   const openApiDoc = openApi.get();
   SwaggerModule.setup("apidocs", app, openApiDoc);
 
-  await app.listen(8080, "0.0.0.0");
+  await app.listen(PORT, "0.0.0.0");
+
+  consoleLogger.info(`Application listening on port ${PORT}`);
 }
 bootstrap();
