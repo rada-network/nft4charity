@@ -1,3 +1,3 @@
-cp admin/data.json smartcontracts/data.json
-cd smartcontracts
+cp admin/data.json thangle/data.json
+cd thangle
 npx hardhat run scripts/deploy.js
