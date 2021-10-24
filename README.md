@@ -63,3 +63,6 @@ $ run_test.sh
 
 - Method 1: https://goerli.net/
 - Method 2: https://faucet.goerli.mudit.blog/ Requires public post on twitter or facebook.
+
+<img width="639" alt="Screen Shot 2021-10-24 at 22 03 38" src="https://user-images.githubusercontent.com/156454/138600053-8d0826fd-4e45-42e0-b538-6c51c912005a.png">
+
