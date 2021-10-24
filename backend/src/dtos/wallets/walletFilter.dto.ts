@@ -1,4 +1,4 @@
-import { ArgsType, Field, InputType } from "@nestjs/graphql";
+import { ArgsType, Field } from "@nestjs/graphql";
 import { Expose } from "class-transformer";
 import {
   IsBoolean,

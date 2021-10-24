@@ -1,0 +1,38 @@
+{
+  "name": "nft4charity-admin",
+  "version": "1.0.0",
+  "description": "An admin tool to upload files to ipfs and create NFT token from those uploaded files",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "yarn pretty && yarn lint",
+    "format:check": "yarn pretty:check & yarn lint:check",
+    "lint": "eslint \"{src,test}/**/*.js\" --fix --max-warnings=0",
+    "lint:check": "eslint \"{src,test}/**/*.js\"",
+    "pretty": "prettier --write \"{src,test}/**/*.js\" --end-of-line lf",
+    "pretty:check": "prettier --check \"{src,test}/**/*.js\" --end-of-line lf",
+    "prettier": "prettier --write --end-of-line lf",
+    "eslint": "eslint --fix --max-warnings=0"
+  },
+  "keywords": [],
+  "author": "Rada NFT Dev Team",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.3.3",
+    "dotenv": "^10.0.0",
+    "eslint": "^7.30.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "nft.storage": "^3.3.0"
+  },
+  "dependencies": {
+    "cids": "^1.1.6",
+    "commander": "^7.1.0",
+    "concurrently": "^6.0.0",
+    "inquirer": "^8.0.0",
+    "ipfs-http-client": "^49.0.4",
+    "it-all": "^1.0.5",
+    "json-colorizer": "^2.2.2",
+    "multiaddr": "^8.1.2"
+  }
+}

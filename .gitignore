@@ -43,8 +43,18 @@ out/
 **/schema.gql
 **/swagger.yml
 
-*.tmp.yml
-
+# SmartContracts
+artifacts/
+cache/
 
 # build json SC
 smartcontract/build/*
+
+# yarn.lock
+yarn.lock
+admin/yarn.lock
+thangle/yarn.lock
+
+*.tmp.yml
+
+*.env

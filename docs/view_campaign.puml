@@ -1,0 +1,14 @@
+@startuml
+
+actor "Web App" as fe
+participant "BackEnd" as be
+participant "DB" as mdb
+
+group User view Campaign's transactions
+fe -> be: view transactions of a campaign
+be -> mdb: get transactions by campaignId
+mdb --> be: return data
+be --> fe: return json data 
+end
+
+@enduml

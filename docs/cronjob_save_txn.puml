@@ -1,0 +1,15 @@
+@startuml
+
+participant "CronJob" as cronjob
+participant "DB" as mdb
+participant "Network" as network
+
+group Cronjob to create transactions by walletIds
+cronjob -> mdb: get all active campaigns
+mdb --> cronjob: return all active campaigns w/ walletIds
+cronjob -> network: get all transactions by walletAddresses and network
+network --> cronjob: return transactions data
+cronjob -> mdb: save transactions data
+end
+
+@enduml

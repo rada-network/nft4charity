@@ -1,0 +1,24 @@
+@startuml
+
+actor "Web App" as fe
+participant "Wallet" as wallet
+participant "BackEnd" as be
+participant "SmartContract" as sc
+
+group User mint NFT items
+fe -> fe: check if user already connect to wallet 
+fe -> fe: show wallets from web3 modal
+fe -> wallet: connect user's wallet
+wallet --> fe: return connected wallet w/ balance
+fe -> be: [POST]  /mint (noOfNFTs)
+be -> be: randomly select imageId (nftId) from number of images
+be -> be: getImageUrls by nftId (return ipfs structure for images)
+be -> be: create metadata json with image ipfs url
+be -->fe: return ipfs metadata
+fe -> sc: mint nfts from ipfs metadata urls
+sc -> sc: processing (\ncheck buyer's wallet balance, \nmarket collects coins from buyer, \nmarket mints NFTs & assigns NFT owners \nmarket marks NFT items sold)
+sc --> fe: return the transaction's result
+end
+
+
+@enduml
