@@ -1,2 +1,0 @@
-export const nftAddress="0xb71026C1bc04ef5Ad607DaEe668117754b1b4B21"
-export const storefrontAddress="0xb71026C1bc04ef5Ad607DaEe668117754b1b4B21"
