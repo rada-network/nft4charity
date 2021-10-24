@@ -10,38 +10,37 @@ import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 
-import "./RadaToken.sol";
 
 
 contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
     
 
-    RadaToken currencyToken;
 
     struct Campaign {
-        address creator;
-        string name;
-        uint current;
-        uint price;
-        uint slot;
-        bool ended;
+        address creator;      //  creator of campaign
+        address tokenAddress; // specific which ERC20 token for this campaign
+        string name;          // name of campaign (MAYBE should stored in BE)
+        uint current;         // available balance of campaign
+        uint price;           // minimum price for a donation (lower value will be discard) 
+        uint slot;            // slot for NFT
+        bool ended;           // isended campaign
         
     }
     struct Donor {
-        address wallet;
-        uint amount;
-        bool voted;
+        address wallet;      // donor address
+        uint amount;         // amount donate
+        bool voted;          // not used yet
     }
     struct Distributor {
-        address wallet;
-        uint amount;
+        address wallet;      // distributer address
+        uint amount;         // amount withdraw from campaign
     }
     
 
     uint private _campaign_count;
     uint private _nft_count;
 
-    mapping(address => bool) private whitelist; // user in whitelist can create campaign
+    mapping(address => bool) private whitelist;  // user in whitelist can create campaign
     mapping(uint => Donor[]) public donorsOfCampaign;
     mapping(uint => Distributor[]) public distributorsOfCampaign;
     mapping(uint => Campaign) public campaigns;
@@ -50,7 +49,7 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
     
 
     
-    event campaignCreated(uint _campaignId, address _creator);
+    event campaignCreated(uint _campaignId, address _creator, address _tokenAddress);
     event nftMined(uint _tokenID, address _creator);
     event donated(uint _campaignId, address _donor, uint _amount);
     event distributorAdded(uint _campaignId, address _distributor);
@@ -84,10 +83,7 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
             );
         _;
     }
-    // set token interface 
-    function setRadaERC20Interface(address _currencytoken) external onlyOwner {
-        currencyToken = RadaToken(_currencytoken);
-    }
+
     
     
     // whitelist methods
@@ -102,10 +98,10 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
     }
 
     // campaign methods
-    function createCampaign(string memory _name, uint _slot, uint _price) public onlyWhitelister {
+    function createCampaign(string memory _name, address _tokenAddress, uint _slot, uint _price) public onlyWhitelister {
         
-        campaigns[_campaign_count] = Campaign(msg.sender, _name, 0, _slot, _price, false);
-        emit campaignCreated(_campaign_count, msg.sender);
+        campaigns[_campaign_count] = Campaign(msg.sender, _tokenAddress, _name, 0, _slot, _price, false);
+        emit campaignCreated(_campaign_count, msg.sender, _tokenAddress);
         
         _campaign_count += 1;
 
@@ -117,8 +113,8 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
         require(_amount > campaigns[_campaignId].price, "Donate amount must greater or equal than price");
 
         // Send it to contract, allow creator to withdraw
-        currencyToken.transferFrom(msg.sender, address(this), _amount);
-       
+        IERC20(campaigns[_campaignId].tokenAddress).transferFrom(msg.sender, address(this), _amount);
+
 
         campaigns[_campaignId].current += _amount;
         donorsOfCampaign[_campaignId].push(Donor(msg.sender, _amount, false));
@@ -138,7 +134,7 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
         require(_amount > campaigns[_campaignId].price, "Donate amount must greater or equal than price");
 
          // Send it to contract, allow creator to withdraw
-        currencyToken.transferFrom(msg.sender, address(this), _amount);
+        IERC20(campaigns[_campaignId].tokenAddress).transferFrom(msg.sender, address(this), _amount);
 
 
         campaigns[_campaignId].current += _amount;
@@ -163,11 +159,10 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
         
         require(campaigns[_campaignId].current >= _amount, "Campaign out of amount money");
         
-              
         
         address _distributorWallet = distributorsOfCampaign[_campaignId][_distributorId].wallet;
 
-        currencyToken.transfer(_distributorWallet, _amount); // distributing from contract to distributor
+        IERC20(campaigns[_campaignId].tokenAddress).transfer(_distributorWallet, _amount); // distributing from contract to distributor
         
         campaigns[_campaignId].current -= _amount;
         
