@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 import { Web3Provider } from '@ethersproject/providers';
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
+import Web3Token from 'web3-token';
 import Web3Modal from 'web3modal';
 
 // Enter a valid infura key here to avoid being rate limited
@@ -36,6 +38,12 @@ function useWeb3Modal(config: any = {}) {
   const loadWeb3Modal = useCallback(async () => {
     const newProvider = await web3Modal.connect();
     setProvider(new Web3Provider(newProvider));
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const token = await Web3Token.sign(async (msg: string) => await signer.signMessage(msg), '1d');
+    console.log(newProvider);
+    console.log(window.ethereum);
+    console.log(token);
     setSignedInAddress(newProvider.selectedAddress);
   }, [web3Modal]);
 
