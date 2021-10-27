@@ -1,6 +1,7 @@
+import designerAvatar from '@/assets/images/designerAvatar.png';
 import { ContentLayout } from '@/components/Layout';
-import { useAuth } from '@/lib/auth';
 
+// import { useAuth } from '@/lib/auth';
 import { UpdateProfile } from '../components/UpdateProfile';
 
 type EntryProps = {
@@ -14,13 +15,16 @@ const Entry = ({ label, value }: EntryProps) => (
   </div>
 );
 
-export const Profile = () => {
-  const { user } = useAuth();
+export const UserProfile = () => {
+  // const { user } = useAuth();
 
-  if (!user) return null;
+  // if (!user) return null;
 
   return (
-    <ContentLayout title="Profile">
+    <ContentLayout title="">
+      <div className="m-auto my-10">
+        <img src={designerAvatar} alt="" className="m-auto w-px-112" />
+      </div>
       <div className="bg-white shadow overflow-hidden sm:rounded-lg">
         <div className="px-4 py-5 sm:px-6">
           <div className="flex justify-between">
@@ -31,11 +35,11 @@ export const Profile = () => {
         </div>
         <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
           <dl className="sm:divide-y sm:divide-gray-200">
-            <Entry label="First Name" value={user.firstName} />
-            <Entry label="Last Name" value={user.lastName} />
-            <Entry label="Email Address" value={user.email} />
-            <Entry label="Role" value={user.role} />
-            <Entry label="Bio" value={user.bio} />
+            <Entry label="First Name" value="" />
+            <Entry label="Last Name" value="" />
+            <Entry label="Email Address" value="" />
+            <Entry label="Role" value="" />
+            <Entry label="Bio" value="" />
           </dl>
         </div>
       </div>
