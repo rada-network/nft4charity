@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-node@v2
       - run: npm install -g yarn
       - run: npm install -g rimraf
-      - run: npm install -g nest
+      - run: npm install -g @nestjs/cli
       - run: yarn build
         working-directory: ./backend
       

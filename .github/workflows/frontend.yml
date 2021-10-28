@@ -26,6 +26,6 @@ jobs:
       - uses: actions/setup-node@v2
       - run: npm install -g yarn
       - run: npm install -g rimraf
-      - run: npm install -g craco
+      - run: npm install -g @craco/craco
       - run: yarn build
         working-directory: ./frontend
