@@ -20,9 +20,9 @@ jobs:
       matrix:
         node-version: [16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
-      - uses: comchangs/action-yarn@v0.1-beta
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
       - run: yarn build
         working-directory: ./backend
       
