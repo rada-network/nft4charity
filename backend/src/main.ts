@@ -1,4 +1,3 @@
-import { ErrorInterceptor } from "./common/interceptors/error.interceptor";
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { GraphQLSchemaHost } from "@nestjs/graphql";
@@ -10,8 +9,10 @@ import { SwaggerModule } from "@nestjs/swagger";
 import { json, urlencoded } from "body-parser";
 import { OpenAPI, useSofa } from "sofa-api";
 import { AppModule } from "./app.module";
-import { httpFileLogger, consoleLogger, httpConsoleLogger } from "./config";
+import { AllExceptionsFilter, authMiddleware } from "./common";
+import { consoleLogger, httpConsoleLogger, httpFileLogger } from "./config";
 import { BASE_URL, PORT, REST_BASE_ROUTE } from "./environments";
+import * as cors from "cors";
 
 const baseRouteRest = REST_BASE_ROUTE;
 
@@ -24,11 +25,18 @@ async function bootstrap() {
   app.use(httpFileLogger);
   app.use(httpConsoleLogger);
 
-  app.useGlobalInterceptors(new ErrorInterceptor());
   app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   app.use(/^\/rest\/(.*)\/?$/i, urlencoded({ extended: true }));
   app.use(/^\/rest\/(.*)\/?$/i, json());
+
+  app.use(
+    cors({
+      origin: true,
+    }),
+  );
+  app.use(authMiddleware);
 
   await app.init();
 
