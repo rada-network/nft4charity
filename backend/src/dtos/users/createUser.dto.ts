@@ -1,5 +1,17 @@
-import { Field, InputType } from "@nestjs/graphql";
-import { IsEmail, IsString } from "class-validator";
+import { Field, InputType, ObjectType } from "@nestjs/graphql";
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator";
+
+@InputType()
+export class CreateWalletWithUserDto {
+  @Field({ description: "Network of the wallet" })
+  @IsString()
+  @IsNotEmpty()
+  platform: string;
+
+  @Field({ nullable: true, defaultValue: "" })
+  @IsOptional()
+  currency?: string;
+}
 
 @InputType()
 export class CreateUserDto {
@@ -15,7 +27,6 @@ export class CreateUserDto {
   @IsEmail()
   email: string;
 
-  @Field()
-  @IsString()
-  password: string;
+  @Field(() => CreateWalletWithUserDto)
+  wallet: CreateWalletWithUserDto;
 }
