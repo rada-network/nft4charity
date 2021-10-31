@@ -34,6 +34,7 @@ contract('Store', (accounts) => {
       assert.notEqual(address, undefined)
     })
   })
+  // Only Admin can manage whitelist: User in whitelist can create campaign
   describe('whitelist', async () => {
     it('add successfully', async () => {
       await store.addWhitelister(accounts[0]);
@@ -48,6 +49,8 @@ contract('Store', (accounts) => {
   })
 
   describe('campaign', async () => {
+    // Only whitelister can create campaign, 
+    // creator specify Name, tokenaddress(tokentype for this campaign), NFTslot and minimum price to get NFT
     it('create successfully', async () => {
       await store.createCampaign("FIRST", radatoken.address, 10, 10, {"from": accounts[1]})
       const thiscampaign = await store.campaigns(0);
@@ -57,6 +60,8 @@ contract('Store', (accounts) => {
       assert.equal(thiscampaign.creator, accounts[1])
       assert.equal(thiscampaign.tokenAddress, radatoken.address)
     }),
+
+    // Donor transfer token to Store contract and mint NFT  
     it('donate sucessfully', async () => {
 
       await radatoken.approve(store.address, 20);
@@ -70,16 +75,19 @@ contract('Store', (accounts) => {
       const t = await radatoken.balanceOf(store.address);
       console.log("Current radatoken in Store Contract ", t.toNumber())
     })
+    // Check NFT of donor
     it('NFT gift', async () => {
       const nftcount0 = await store.balanceOf(accounts[0])
       const nftcount2 = await store.balanceOf(accounts[2])
       console.log(nftcount0.toNumber());
       console.log(nftcount2.toNumber());
     })
+    // Only creator add distributers
     it('add distributer successfully', async () => {
       await store.addDistributor(0, accounts[2], {"from": accounts[1]})
       await store.addDistributor(0, accounts[3], {"from": accounts[1]})
     })
+    // Only creator allow distributer withdraw token from Store contract
     it('distributed successfully', async () => {
       await store.distributing(0, 0, 15, {"from": accounts[1]})
       await store.distributing(0, 1, 5, {"from": accounts[1]})
@@ -91,6 +99,7 @@ contract('Store', (accounts) => {
       assert.equal(x.toNumber(), 15)
       assert.equal(y.toNumber(), 5)
     })
+    // Only creator can end this campaign
     it('ending successfully', async () => {
       
       const thiscampaign = await store.campaigns(0)
