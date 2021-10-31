@@ -110,12 +110,12 @@ contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
     
     function donatingNFT(uint _campaignId, uint _amount, string memory _tokenURI) public {
         require(campaigns[_campaignId].slot > 0, "Campaign has no nft slot");
-        require(_amount > campaigns[_campaignId].price, "Donate amount must greater or equal than price");
+        require(_amount >= campaigns[_campaignId].price, "Donate amount must greater or equal than price");
 
         // Send it to contract, allow creator to withdraw
         IERC20(campaigns[_campaignId].tokenAddress).transferFrom(msg.sender, address(this), _amount);
 
-
+            
         campaigns[_campaignId].current += _amount;
         donorsOfCampaign[_campaignId].push(Donor(msg.sender, _amount, false));
 
