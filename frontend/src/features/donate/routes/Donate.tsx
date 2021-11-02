@@ -7,7 +7,7 @@ import contentCopySVG from '@/assets/icons/content_copy.svg';
 import cryptoYellow from '@/assets/icons/cryptoYellow.svg';
 import qrCodeSVG from '@/assets/icons/qrCode.svg';
 import vaccineVirus from '@/assets/images/vaccineVirus.svg';
-import { Table } from '@/components/Elements';
+import { Spinner, Table } from '@/components/Elements';
 import { SelectField } from '@/components/Form';
 import { InputField } from '@/components/Form/InputField';
 import { LatestContributor } from '@/components/LatestContributor';
@@ -101,7 +101,7 @@ export const Donate = () => {
   const { data, loading, error } = useQuery(CampaignByQuery, {
     variables: { id },
   });
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Spinner />;
   if (error) return <p>Oh no... {error.message}</p>;
 
   const renderTable = () => {
