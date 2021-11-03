@@ -38,22 +38,24 @@ contract('Store', (accounts) => {
   })
   // Only Admin can manage whitelist: User in whitelist can create campaign
   describe('whitelist', async () => {
-    it('add successfully', async () => {
+    it('add whitelist successfully', async () => {
       await store.addWhitelister(accounts[0]);
       await store.addWhitelister(accounts[1]);
       assert(store.isWhitelister(accounts[0]));
       assert(store.isWhitelister(accounts[1]));
     }),
-    it('remove successfully', async () => {
+    it('remove whitelist successfully', async () => {
       await store.removeWhitelister(accounts[0]);
-      assert(store.isWhitelister(accounts[0]))
+      const check =  await store.isWhitelister(accounts[0]);
+      console.log(check);
+      assert.equal(check, false);
     })
   })
 
   describe('campaign', async () => {
     // Only whitelister can create campaign, 
     // creator specify Name, Token(tokentype for this campaign), NFTslot and minimum price to get NFT
-    it('create successfully', async () => {
+    it('create campaign successfully', async () => {
       await store.createCampaign("FIRSTCAMPAIGN", radatoken.address, 10, 10, {"from": accounts[1]})
       const thiscampaign = await store.campaigns(0);
       console.log("Creator: ", thiscampaign.creator)
@@ -67,7 +69,7 @@ contract('Store', (accounts) => {
     }),
 
     // Donor transfer token to Campaign's Wallet and mint NFT  
-    it('donate sucessfully', async () => {
+    it('donate campaign sucessfully', async () => {
       
       await radatoken.approve(store.address, 20, {"from":accounts[0]});
       await store.donatingNFT(0, 20, "thisisIPFShash0", {"from":accounts[0]}) 
@@ -82,13 +84,13 @@ contract('Store', (accounts) => {
       assert.equal(thiscampaign.slot.toNumber(), 9)
     })
     // Check NFT of donor
-    it('NFT gift', async () => {
-      const nftcount0 = await store.MyOwnNFT(0, accounts[0])
-      const nftcount2 = await store.MyOwnNFT(0, accounts[1])
+    it('NFT gift campaign', async () => {
+      const nftcount0 = await store.myOwnNFT(0, accounts[0])
+      const nftcount2 = await store.myOwnNFT(0, accounts[1])
       console.log(nftcount0.toNumber()); 
       console.log(nftcount2.toNumber()); 
      
-      const ownerOfNFT0 = await store.OwnerOfNFT(0, 0) 
+      const ownerOfNFT0 = await store.ownerOfNFT(0, 0) 
       assert.equal(nftcount0.toNumber(), 1)
       assert.equal(nftcount2.toNumber(), 0)
       assert.equal(ownerOfNFT0, accounts[0])
@@ -112,7 +114,7 @@ contract('Store', (accounts) => {
       assert.equal(y.toNumber(), 5)
     })
     // Only creator can end this campaign
-    it('ending successfully', async () => {
+    it('ending campaign successfully', async () => {
       
       const thiscampaign = await store.campaigns(0)
       assert.equal(thiscampaign.ended, false)

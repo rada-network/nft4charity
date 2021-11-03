@@ -144,10 +144,10 @@ contract Store is Ownable, ReentrancyGuard {
     function _mintNFT(uint _campaignId, address _to, string memory _tokenURI) internal onlyOwner{
         RadaNFTToken(campaigns[_campaignId].wallet).mint(_to, _tokenURI);
     }
-    function OwnerOfNFT(uint _campaignId, uint _tokenId) public view returns(address) {
+    function ownerOfNFT(uint _campaignId, uint _tokenId) public view returns(address) {
         return RadaNFTToken(campaigns[_campaignId].wallet).ownerOf(_tokenId);
     } 
-    function MyOwnNFT(uint _campaignId, address _user) public view returns(uint) {
+    function myOwnNFT(uint _campaignId, address _user) public view returns(uint) {
         return RadaNFTToken(campaigns[_campaignId].wallet).balanceOf(_user);
     }
 
