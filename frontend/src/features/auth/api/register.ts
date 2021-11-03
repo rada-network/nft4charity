@@ -1,6 +1,6 @@
-import { axios } from '@/lib/axios';
-
 import { UserResponse } from '../types';
+
+import { axios } from '@/lib/axios';
 
 export type RegisterCredentialsDTO = {
   email: string;

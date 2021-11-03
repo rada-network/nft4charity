@@ -39,11 +39,26 @@ function useWeb3Modal(config: any = {}) {
     const newProvider = await web3Modal.connect();
     setProvider(new Web3Provider(newProvider));
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const token = await Web3Token.sign(async (msg: string) => await signer.signMessage(msg), '1d');
-    console.log(newProvider);
-    console.log(window.ethereum);
-    console.log(token);
+
+    const tokenHeader = localStorage.getItem('token');
+    const expiredTimeToken = localStorage.getItem('expiredTimeToken');
+
+    if (
+      !tokenHeader ||
+      !expiredTimeToken ||
+      (expiredTimeToken && parseInt(expiredTimeToken) < Date.now())
+    ) {
+      const signer = provider.getSigner();
+      const token = await Web3Token.sign(
+        async (msg: string) => await signer.signMessage(msg),
+        '1w'
+      );
+      console.log(newProvider);
+      console.log(window.ethereum);
+      localStorage.setItem('token', token);
+      localStorage.setItem('expiredTimeToken', (Date.now() + 7 * 24 * 60 * 60).toString());
+    }
+
     setSignedInAddress(newProvider.selectedAddress);
   }, [web3Modal]);
 

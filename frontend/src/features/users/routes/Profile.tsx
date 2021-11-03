@@ -1,8 +1,9 @@
+import { UpdateProfile } from '../components/UpdateProfile';
+
 import designerAvatar from '@/assets/images/designerAvatar.png';
 import { ContentLayout } from '@/components/Layout';
 
 // import { useAuth } from '@/lib/auth';
-import { UpdateProfile } from '../components/UpdateProfile';
 
 type EntryProps = {
   label: string;
@@ -39,7 +40,6 @@ export const UserProfile = () => {
             <Entry label="Last Name" value="" />
             <Entry label="Email Address" value="" />
             <Entry label="Role" value="" />
-            <Entry label="Bio" value="" />
           </dl>
         </div>
       </div>
