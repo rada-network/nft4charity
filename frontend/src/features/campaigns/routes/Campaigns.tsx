@@ -1,5 +1,6 @@
 import { gql, useQuery } from '@apollo/client';
 
+import { Spinner } from '@/components/Elements';
 import { Link } from '@/components/Elements/Link/Link';
 
 const AllCampaignsQuery = gql`
@@ -18,7 +19,7 @@ const AllCampaignsQuery = gql`
 
 export const Campaigns = () => {
   const { data, loading, error } = useQuery(AllCampaignsQuery);
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Spinner />;
   if (error) return <p>Oh no... {error.message}</p>;
 
   return (

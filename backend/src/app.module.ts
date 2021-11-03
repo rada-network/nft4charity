@@ -7,9 +7,11 @@ import { AppService } from "./app.service";
 import { GraphqlService, TypeOrmService } from "./config";
 import { DateScalar } from "./config/graphql/scalars";
 import * as Resolvers from "./resolvers";
+import { FileModule } from "./file.module";
 
 @Module({
   imports: [
+    FileModule,
     ConfigModule.forRoot(),
     GraphQLModule.forRootAsync({
       useClass: GraphqlService,

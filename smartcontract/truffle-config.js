@@ -15,6 +15,15 @@ module.exports = {
       timeoutBlocks: 200,
       skipDryRun: true,
     },
+    rinkerby: {
+      provider: () =>
+        new HDWalletProvider([""], ``, 0, 1),
+      port: 8545,
+      network_id: "4", // Rinkeby ID 4
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: true,
+     }
   },
 
   mocha: {},

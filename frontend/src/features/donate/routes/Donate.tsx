@@ -1,170 +1,19 @@
 import { gql, useQuery } from '@apollo/client';
-// import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 
 import contentCopySVG from '@/assets/icons/content_copy.svg';
 import cryptoYellow from '@/assets/icons/cryptoYellow.svg';
 import qrCodeSVG from '@/assets/icons/qrCode.svg';
 import vaccineVirus from '@/assets/images/vaccineVirus.svg';
-import { Table } from '@/components/Elements';
+import { Spinner, Table } from '@/components/Elements';
 import { SelectField } from '@/components/Form';
 import { InputField } from '@/components/Form/InputField';
 import { LatestContributor } from '@/components/LatestContributor';
 import { formatDate, formatDateTypeNumber } from '@/utils/format';
 
-const renderTable = () => {
-  return (
-    <Table
-      isShowHeader={false}
-      data={[
-        {
-          id: '1',
-          wallet_address: '0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee',
-          amount: '10 ETH',
-          sent_date: 1633860939,
-          wishes: 'Thanks for great action!',
-        },
-        {
-          id: '2',
-          wallet_address: '0x95O5Bae9EC2C7Bbbb366AD5008444A6D354334ee',
-          amount: '5 BNB',
-          sent_date: 1633860939,
-          wishes: 'Thanks for great action!',
-        },
-        {
-          id: '3',
-          wallet_address: '0x95O5Bae9EC2C7Bbbb366AD5008444A6D354334ee',
-          amount: '0.5 BTC',
-          sent_date: 1633860939,
-          wishes: 'Thanks for great action!',
-        },
-        {
-          id: '4',
-          wallet_address: '0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee',
-          amount: '10 ETH',
-          sent_date: 1633860939,
-          wishes: 'Thanks for great action!',
-        },
-        {
-          id: '5',
-          wallet_address: '0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee',
-          amount: '10 ETH',
-          sent_date: 1633860939,
-          wishes: 'Thanks for great action!',
-        },
-        {
-          id: '6',
-          wallet_address: '0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee',
-          amount: '10 ETH',
-          sent_date: 1633860939,
-          wishes: 'Thanks for great action!',
-        },
-        {
-          id: '7',
-          wallet_address: '0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee',
-          amount: '10 ETH',
-          sent_date: 1633860939,
-          wishes: 'Thanks for great action!',
-        },
-        {
-          id: '8',
-          wallet_address: '0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee',
-          amount: '10 ETH',
-          sent_date: 1633860939,
-          wishes: 'Thanks for great action!',
-        },
-        {
-          id: '9',
-          wallet_address: '0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee',
-          amount: '10 ETH',
-          sent_date: 1633860939,
-          wishes: 'Thanks for great action!',
-        },
-        {
-          id: '10',
-          wallet_address: '0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee',
-          amount: '10 ETH',
-          sent_date: 1633860939,
-          wishes: 'Thanks for great action!',
-        },
-        {
-          id: '11',
-          wallet_address: '0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee',
-          amount: '10 ETH',
-          sent_date: 1633860939,
-          wishes: 'Thanks for great action!',
-        },
-        {
-          id: '12',
-          wallet_address: '0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee',
-          amount: '10 ETH',
-          sent_date: 1633860939,
-          wishes: 'Thanks for great action!',
-        },
-        {
-          id: '13',
-          wallet_address: '0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee',
-          amount: '10 ETH',
-          sent_date: 1633860939,
-          wishes: 'Thanks for great action!',
-        },
-        {
-          id: '14',
-          wallet_address: '0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee',
-          amount: '10 ETH',
-          sent_date: 1633860939,
-          wishes: 'Thanks for great action!',
-        },
-        {
-          id: '15',
-          wallet_address: '0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee',
-          amount: '10 ETH',
-          sent_date: 1633860939,
-          wishes: 'Thanks for great action!',
-        },
-        {
-          id: '16',
-          wallet_address: '0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee',
-          amount: '10 ETH',
-          sent_date: 1633860939,
-          wishes: 'Thanks for great action!',
-        },
-      ]}
-      columns={[
-        {
-          title: 'Wallet Address',
-          field: 'wallet_address',
-        },
-        {
-          title: 'Amount',
-          field: 'amount',
-          Cell({ entry: { amount } }) {
-            return <span className="text-yellow-nft4 font-bold">{amount}</span>;
-          },
-        },
-        {
-          title: 'Sent Date',
-          field: 'sent_date',
-          Cell({ entry: { sent_date } }) {
-            return (
-              <span className="font-Open italic text-sm font-semibold">
-                {formatDateTypeNumber(sent_date)}
-              </span>
-            );
-          },
-        },
-        {
-          title: '',
-          field: 'wishes',
-          Cell({ entry: { wishes } }) {
-            return <span className="font-Open italic text-sm">{wishes}</span>;
-          },
-        },
-      ]}
-    />
-  );
-};
+import { WalletFilter } from '../types/index';
 
 const CampaignByQuery = gql`
   query Campaign($id: String!) {
@@ -181,8 +30,8 @@ const CampaignByQuery = gql`
 `;
 
 const GetListWalletByCampaignId = gql`
-  query {
-    walletFilter(wallet: { campaignId: "615db44161c08b12f6b79cc8" }) {
+  query wallet($campaignId: String!) {
+    walletFilter(wallet: { campaignId: $campaignId }) {
       address
       platform
       balance
@@ -192,20 +41,112 @@ const GetListWalletByCampaignId = gql`
   }
 `;
 
-export const Donate = () => {
-  // const [addressWallet] = useState('');
+const GetTransactions = gql`
+  query Wallet($id: String!) {
+    wallet(id: $id) {
+      _id
+      currency
+      transaction: transaction {
+        id: _id
+        walletId
+        currency
+        amount
+        createdAt
+        sourceAddress
+        description
+      }
+    }
+  }
+`;
 
-  const { register, handleSubmit } = useForm();
-  const onSubmit = (data: any) => alert(JSON.stringify(data));
+export const Donate = () => {
+  const { register, handleSubmit, control, reset } = useForm();
   const { id } = useParams();
-  const { data: listWallet } = useQuery(GetListWalletByCampaignId);
-  console.log('listWallet', listWallet);
+
+  const { data: listWallet } = useQuery(GetListWalletByCampaignId, {
+    variables: { campaignId: id },
+  });
+
+  const walletAddress = useWatch({
+    name: 'network',
+    control,
+  });
+
+  useEffect(() => {
+    setTimeout(() => {
+      reset({
+        network: listWallet?.walletFilter[0].address,
+      });
+    }, 1000);
+  }, [reset, listWallet]);
+
+  const { data: transactions } = useQuery(GetTransactions, {
+    variables: {
+      id: listWallet?.walletFilter.find((item: WalletFilter) => item.address === walletAddress)
+        ?._id,
+    },
+  });
+
+  const onSubmit = (data: any) => alert(JSON.stringify(data));
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(walletAddress);
+
+    (document as any).querySelector('.editor').innerText = 'Copied';
+    setTimeout(() => {
+      (document as any).querySelector('.editor').innerText = '';
+    }, 3000);
+  };
 
   const { data, loading, error } = useQuery(CampaignByQuery, {
     variables: { id },
   });
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Spinner />;
   if (error) return <p>Oh no... {error.message}</p>;
+
+  const renderTable = () => {
+    return (
+      <Table
+        isShowHeader={false}
+        data={transactions?.wallet?.transaction}
+        columns={[
+          {
+            title: '',
+            field: 'id',
+          },
+          {
+            title: 'Wallet Address',
+            field: 'sourceAddress',
+          },
+          {
+            title: 'Amount',
+            field: 'amount',
+            Cell({ entry: { amount } }) {
+              return <span className="text-yellow-nft4 font-bold">{amount}</span>;
+            },
+          },
+          {
+            title: 'Sent Date',
+            field: 'createdAt',
+            Cell({ entry: { createdAt } }) {
+              return (
+                <span className="font-Open italic text-sm font-semibold">
+                  {formatDateTypeNumber(createdAt)}
+                </span>
+              );
+            },
+          },
+          {
+            title: '',
+            field: 'description',
+            Cell({ entry: { description } }) {
+              return <p className="font-Open italic text-sm">{description}</p>;
+            },
+          },
+        ]}
+      />
+    );
+  };
 
   return (
     <>
@@ -242,8 +183,8 @@ export const Donate = () => {
                     className="w-52 mr-10"
                     options={
                       listWallet
-                        ? listWallet?.walletFilter.map((item: any) => {
-                            return { label: item?.currency, value: item?.currency };
+                        ? listWallet?.walletFilter.map((item: WalletFilter) => {
+                            return { label: item?.currency, value: item?.address };
                           })
                         : []
                     }
@@ -258,9 +199,10 @@ export const Donate = () => {
                 </div>
                 <div className="flex mt-2">
                   <span className="font-Open text-sm text-black-555 mr-5 items-center flex">
-                    0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee
+                    {walletAddress}
                   </span>
-                  <img src={contentCopySVG} alt="" />
+                  <img src={contentCopySVG} alt="" onClick={copyToClipboard} />
+                  <span className="editor ml-5 text-sm italic"></span>
                 </div>
               </li>
               <li className="mr-10">

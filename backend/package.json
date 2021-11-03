@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "prebuild": "rimraf dist",
+    "prebuild": "yarn install && rimraf dist",
     "build": "nest build",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -41,6 +41,7 @@
     "@nestjs/swagger": "^5.1.0",
     "@nestjs/typeorm": "^8.0.2",
     "apollo-server-fastify": "^3.3.0",
+    "aws-sdk": "^2.1004.0",
     "body-parser": "^1.19.0",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",

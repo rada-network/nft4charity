@@ -21,6 +21,7 @@
   "devDependencies": {
     "@commitlint/cli": "^12.1.4",
     "@commitlint/config-conventional": "^12.1.4",
+    "autoprefixer": "^10.3.7",
     "concurrently": "^6.2.0",
     "husky": "^7.0.1",
     "lint-staged": "^11.0.1",
@@ -32,5 +33,14 @@
       "yarn --cwd backend eslint"
     ],
     "backend/**/*.{json,md}": "yarn --cwd backend prettier"
+  },
+  "dependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "ethereum-waffle": "^3.4.0",
+    "ethers": "^5.4.7",
+    "hardhat": "^2.6.5",
+    "ipfs-http-client": "50.1.2",
+    "web3modal": "^1.9.4"
   }
 }

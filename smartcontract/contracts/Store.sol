@@ -4,93 +4,177 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
-import "./RadaNFTToken.sol";
 
-contract Store is Ownable, ReentrancyGuard {
-    RadaNFTToken public radaNFTToken;
-    address public marketplaceToken;
+import "./RadaToken.sol";
 
-    mapping(uint256 => uint256) public itemPrices;
 
-    event Listing(address indexed owner, uint256 indexed nftId, uint256 price);
+contract Store is Ownable, ReentrancyGuard, ERC721URIStorage {
+    
 
-    event Unlisting(address indexed owner, uint256 indexed nftId);
+    RadaToken currencyToken;
 
-    event Purchase(
-        address indexed previousOwner,
-        address indexed newOwner,
-        uint256 indexed nftId,
-        uint256 listingPrice
-    );
-
-    event PriceUpdated(
-        address indexed owner,
-        uint256 indexed nftId,
-        uint256 oldPrice,
-        uint256 newPrice
-    );
-
-    constructor(RadaNFTToken _radaNFTToken, address _marketplaceToken) {
-        radaNFTToken = _radaNFTToken;
-        marketplaceToken = _marketplaceToken;
+    struct Campaign {
+        address creator;
+        string name;
+        uint current;
+        uint price;
+        uint slot;
+        bool ended;
+        
     }
+    struct Donor {
+        address wallet;
+        uint amount;
+        bool voted;
+    }
+    struct Distributor {
+        address wallet;
+        uint amount;
+    }
+    
 
-    function listing(uint256 _nftId, uint256 _price) public onlyOwner {
+    uint private _campaign_count;
+    uint private _nft_count;
+
+    mapping(address => bool) private whitelist; // user in whitelist can create campaign
+    mapping(uint => Donor[]) public donorsOfCampaign;
+    mapping(uint => Distributor[]) public distributorsOfCampaign;
+    mapping(uint => Campaign) public campaigns;
+    
+    mapping(uint => uint) public nftToCampaign;
+    
+
+    
+    event campaignCreated(uint _campaignId, address _creator);
+    event nftMined(uint _tokenID, address _creator);
+    event donated(uint _campaignId, address _donor, uint _amount);
+    event distributorAdded(uint _campaignId, address _distributor);
+    event campaignEnded(uint _campaignId);
+    event distributed(uint _campaignId, address _distributor, uint _amount); 
+
+
+
+    constructor () ERC721("Gift Rada", "RadaNFT") Ownable() {
+        
+    }
+    
+    modifier onlyWhitelister() {
         require(
-            radaNFTToken.ownerOf(_nftId) == _msgSender(),
+            whitelist[msg.sender] == true,
+            "Ownable: caller is not in the whitelist"
+        );
+        _;
+    }
+    modifier onlyOwnerOfToken(uint _nftId){
+        require(
+            msg.sender == ownerOf(_nftId),
             "You are not the owner"
         );
-        radaNFTToken.transferFrom(owner(), address(this), _nftId);
-
-        itemPrices[_nftId] = _price;
-
-        emit Listing(owner(), _nftId, _price);
+        _;
+    }
+    modifier onlyOwnerOfCampaign(uint _campaignId) {
+        require(
+            msg.sender == campaigns[_campaignId].creator,
+            "You are not owner of campaign"
+            );
+        _;
+    }
+    // set token interface 
+    function setRadaERC20Interface(address _currencytoken) external onlyOwner {
+        currencyToken = RadaToken(_currencytoken);
+    }
+    
+    
+    // whitelist methods
+    function addWhitelister(address _user) external onlyOwner {
+        whitelist[_user] = true;
+    }
+    function removeWhitelister(address _user) external onlyOwner {
+        whitelist[_user] = false;
+    }
+    function isWhitelister(address _user) external view returns (bool) {
+        return whitelist[_user];
     }
 
-    function unlisting(uint256 _nftId) public onlyOwner {
-        require(_msgSender() == owner(), "You are not the owner");
+    // campaign methods
+    function createCampaign(string memory _name, uint _slot, uint _price) public onlyWhitelister {
+        
+        campaigns[_campaign_count] = Campaign(msg.sender, _name, 0, _slot, _price, false);
+        emit campaignCreated(_campaign_count, msg.sender);
+        
+        _campaign_count += 1;
 
-        delete itemPrices[_nftId];
+        
+    }
+    
+    function donatingNFT(uint _campaignId, uint _amount, string memory _tokenURI) public {
+        require(campaigns[_campaignId].slot > 0, "Campaign has no nft slot");
+        require(_amount > campaigns[_campaignId].price, "Donate amount must greater or equal than price");
 
-        radaNFTToken.transferFrom(address(this), owner(), _nftId);
+        // Send it to contract, allow creator to withdraw
+        currencyToken.transferFrom(msg.sender, address(this), _amount);
+       
 
-        emit Unlisting(owner(), _nftId);
+        campaigns[_campaignId].current += _amount;
+        donorsOfCampaign[_campaignId].push(Donor(msg.sender, _amount, false));
+
+
+        // Donor mint itself
+        _safeMint(msg.sender, _nft_count);
+        _setTokenURI(_nft_count, _tokenURI);
+        nftToCampaign[_nft_count] = _campaignId;
+        _nft_count += 1;
+        campaigns[_campaignId].slot -=  1;
+
+        emit donated(_campaignId, msg.sender, _amount);
+        
+    }
+    function donatingNormal(uint _campaignId, uint _amount) public {
+        require(_amount > campaigns[_campaignId].price, "Donate amount must greater or equal than price");
+
+         // Send it to contract, allow creator to withdraw
+        currencyToken.transferFrom(msg.sender, address(this), _amount);
+
+
+        campaigns[_campaignId].current += _amount;
+        donorsOfCampaign[_campaignId].push(Donor(msg.sender, _amount, false));
+
+
+        emit donated(_campaignId, msg.sender, _amount);
+    }
+    function addDistributor(uint _campaignId, address _distributor) public onlyOwnerOfCampaign(_campaignId){
+        
+        distributorsOfCampaign[_campaignId].push(Distributor(_distributor, 0));
+        
+        emit distributorAdded(_campaignId, _distributor);
     }
 
-    function buy(uint256 _nftId) external {
-        address previousOwner = owner();
-        address newOwner = _msgSender();
-
-        _trade(_nftId);
-
-        emit Purchase(previousOwner, newOwner, _nftId, itemPrices[_nftId]);
+    function endingCampaign(uint _campaignId) public onlyOwnerOfCampaign(_campaignId){
+        campaigns[_campaignId].ended = true;
+        emit campaignEnded(_campaignId);
     }
 
-    function _trade(uint256 _nftId) private {
-        IERC20(marketplaceToken).transferFrom(
-            _msgSender(),
-            owner(),
-            itemPrices[_nftId]
-        );
+    function distributing(uint _campaignId, uint _distributorId, uint _amount) public onlyOwnerOfCampaign(_campaignId) {
+        
+        require(campaigns[_campaignId].current >= _amount, "Campaign out of amount money");
+        
+              
+        
+        address _distributorWallet = distributorsOfCampaign[_campaignId][_distributorId].wallet;
 
-        if (msg.value != 0) {
-            payable(_msgSender()).transfer(msg.value);
-        }
+        currencyToken.transfer(_distributorWallet, _amount); // distributing from contract to distributor
+        
+        campaigns[_campaignId].current -= _amount;
+        
+        distributorsOfCampaign[_campaignId][_distributorId].amount += _amount;
 
-        radaNFTToken.transferFrom(address(this), _msgSender(), _nftId);
-
-        delete itemPrices[_nftId];
+        emit distributed(_campaignId, _distributorWallet, _amount);
     }
 
-    function updatePrice(uint256 _nftId, uint256 _price) public onlyOwner {
-        require(_msgSender() == owner(), "You are not the owner");
-
-        uint256 oldPrice = itemPrices[_nftId];
-        itemPrices[_nftId] = _price;
-
-        emit PriceUpdated(_msgSender(), _nftId, oldPrice, _price);
-    }
 }
+
