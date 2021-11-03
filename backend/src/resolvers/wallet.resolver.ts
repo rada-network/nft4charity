@@ -2,13 +2,11 @@ import { NotFoundException } from "@nestjs/common";
 import {
   Args,
   Float,
-  Mutation,
   Parent,
   Query,
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
-import { PaginationParamsDto } from "src/common";
 import {
   CreateWalletDto,
   PaginatedTransaction,
@@ -16,6 +14,7 @@ import {
 } from "src/dtos";
 import { Campaign, Transaction, User, Wallet } from "src/entities";
 import { FindManyOptions, getMongoRepository } from "typeorm";
+import { PaginationParamsDto } from "../common";
 
 type entryType = [key: string, value: string | number | boolean];
 
@@ -36,11 +35,9 @@ export class WalletResolver {
   @Query(() => Wallet)
   async wallet(@Args("id") id: string): Promise<Wallet> {
     const wallet = await getMongoRepository(Wallet).findOne(id);
-
     if (!wallet) {
       throw new NotFoundException("Wallet not found.");
     }
-
     return wallet;
   }
 
@@ -72,32 +69,6 @@ export class WalletResolver {
     }, 0);
   }
 
-  @ResolveField(() => User)
-  async user(@Parent() wallet: Wallet): Promise<User> {
-    const user = await getMongoRepository(User).findOne(wallet.userId);
-    if (!user) {
-      throw new NotFoundException("User not found.");
-    }
-
-    return user;
-  }
-
-  @ResolveField(() => Campaign, { nullable: true })
-  async campaign(@Parent() wallet: Wallet): Promise<Campaign | null> {
-    if (!wallet.campaignId) {
-      return null;
-    }
-    const campaign = await getMongoRepository(Campaign).findOne(
-      wallet.campaignId,
-    );
-
-    if (!campaign) {
-      throw new NotFoundException("Campaign not found.");
-    }
-
-    return campaign;
-  }
-
   @ResolveField(() => PaginatedTransaction)
   async transaction(
     @Parent() wallet: Wallet,
@@ -127,7 +98,6 @@ export class WalletResolver {
     return res;
   }
 
-  @Mutation(() => Wallet)
   async createWallet(@Args("wallet") walletInput: CreateWalletDto) {
     const { userId, campaignId } = walletInput;
 

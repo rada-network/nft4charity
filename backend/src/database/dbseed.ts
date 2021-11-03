@@ -60,7 +60,6 @@ async function seed() {
       firstName: name.findName(),
       lastName: name.lastName(),
       email: internet.email(),
-      password: hexaDecimal(32),
     });
 
     await userRepo.save(user);

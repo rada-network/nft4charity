@@ -62,3 +62,12 @@ export class Wallet {
     this.updatedAt = new Date();
   }
 }
+
+@ObjectType()
+export class WalletBasic {
+  @Field()
+  _id: string;
+
+  @Field()
+  address: string;
+}
