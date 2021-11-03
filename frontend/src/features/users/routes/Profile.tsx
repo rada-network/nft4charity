@@ -1,8 +1,9 @@
+import { UpdateProfile } from '../components/UpdateProfile';
+
 import designerAvatar from '@/assets/images/designerAvatar.png';
 import { ContentLayout } from '@/components/Layout';
 
 // import { useAuth } from '@/lib/auth';
-import { UpdateProfile } from '../components/UpdateProfile';
 
 type EntryProps = {
   label: string;
