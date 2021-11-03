@@ -1,12 +1,12 @@
 import { PencilIcon } from '@heroicons/react/solid';
 import * as z from 'zod';
 
+import { UpdateProfileDTO, useUpdateProfile } from '../api/updateProfile';
+
 import { Button } from '@/components/Elements';
 import { Form, FormDrawer, InputField } from '@/components/Form';
 import { TextAreaField } from '@/components/Form/TextareaField';
 import { useAuth } from '@/lib/auth';
-
-import { UpdateProfileDTO, useUpdateProfile } from '../api/updateProfile';
 
 const schema = z.object({
   email: z.string().min(1, 'Required'),

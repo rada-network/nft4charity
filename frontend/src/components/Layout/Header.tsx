@@ -1,11 +1,11 @@
 import * as React from 'react';
 
+import { Link } from '../Elements/Link/Link';
+
 import homeSVG from '@/assets/icons/home.svg';
 import languageSVG from '@/assets/icons/language.svg';
 import walletSVG from '@/assets/icons/wallet.svg';
 import useWeb3Modal from '@/hooks/useWeb3Modal';
-
-import { Link } from '../Elements/Link/Link';
 
 export const Header = () => {
   const [provider, loadWeb3Modal, logoutOfWeb3Modal] = useWeb3Modal();
