@@ -10,7 +10,7 @@ import Web3Modal from 'web3modal';
 // You can get a key for free at https://infura.io/register
 const INFURA_ID = 'INVALID_INFURA_KEY';
 
-const NETWORK_NAME = 'mainnet';
+const NETWORK_NAME = 'localhost';
 
 function useWeb3Modal(config: any = {}) {
   const [provider, setProvider] = useState<any>();
@@ -29,6 +29,7 @@ function useWeb3Modal(config: any = {}) {
         package: WalletConnectProvider,
         options: {
           infuraId,
+          // network: 'http://127.0.0.1:7545'
         },
       },
     },
