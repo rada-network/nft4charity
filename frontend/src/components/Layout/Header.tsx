@@ -8,7 +8,7 @@ import walletSVG from '@/assets/icons/wallet.svg';
 import useWeb3Modal from '@/hooks/useWeb3Modal';
 
 export const Header = () => {
-  const [provider, loadWeb3Modal, logoutOfWeb3Modal] = useWeb3Modal();
+  const [provider, loadWeb3Modal, logoutOfWeb3Modal, setSignedInAddress] = useWeb3Modal();
   return (
     <>
       <div className="max-width mx-auto">
@@ -86,7 +86,7 @@ export const Header = () => {
               >
                 <img className="h-7 w-auto" src={walletSVG} alt="wallet icon" />
                 <p className="font-bold text-sm lg:text-xl md:m-auto text-white ml-1">
-                  {!provider ? 'Connect' : 'Disconnect'}
+                  {!provider ? 'Connect' : setSignedInAddress}
                 </p>
               </button>
             </li>

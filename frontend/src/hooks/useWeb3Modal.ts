@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { Web3Provider } from '@ethersproject/providers';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
-import Web3Token from 'web3-token';
 import Web3Modal from 'web3modal';
 
 // Enter a valid infura key here to avoid being rate limited
@@ -39,28 +37,13 @@ function useWeb3Modal(config: any = {}) {
   const loadWeb3Modal = useCallback(async () => {
     const newProvider = await web3Modal.connect();
     setProvider(new Web3Provider(newProvider));
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-    const tokenHeader = localStorage.getItem('token');
-    const expiredTimeToken = localStorage.getItem('expiredTimeToken');
-
-    if (
-      !tokenHeader ||
-      !expiredTimeToken ||
-      (expiredTimeToken && parseInt(expiredTimeToken) < Date.now())
-    ) {
-      const signer = provider.getSigner();
-      const token = await Web3Token.sign(
-        async (msg: string) => await signer.signMessage(msg),
-        '1w'
-      );
-      console.log(newProvider);
-      console.log(window.ethereum);
-      localStorage.setItem('token', token);
-      localStorage.setItem('expiredTimeToken', (Date.now() + 7 * 24 * 60 * 60).toString());
-    }
-
-    setSignedInAddress(newProvider.selectedAddress);
+    const walletAddress = newProvider.selectedAddress;
+    const shortenAddress =
+      walletAddress.substr(0, 4) +
+      '...' +
+      walletAddress.substr(walletAddress.length - 4, walletAddress.length);
+    setSignedInAddress(shortenAddress);
   }, [web3Modal]);
 
   const logoutOfWeb3Modal = useCallback(
