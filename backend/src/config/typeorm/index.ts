@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from "@nestjs/typeorm";
-import { MONGODB_URL } from "src/environments";
+import { MONGODB_URL } from "../../environments";
 import { getMetadataArgsStorage } from "typeorm";
 
 @Injectable()

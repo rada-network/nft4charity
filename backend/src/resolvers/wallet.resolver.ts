@@ -7,14 +7,14 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
+import { FindManyOptions, getMongoRepository } from "typeorm";
+import { PaginationParamsDto } from "../common";
 import {
   CreateWalletDto,
   PaginatedTransaction,
   WalletFilterDto,
-} from "src/dtos";
-import { Campaign, Transaction, User, Wallet } from "src/entities";
-import { FindManyOptions, getMongoRepository } from "typeorm";
-import { PaginationParamsDto } from "../common";
+} from "../dtos";
+import { Campaign, Transaction, User, Wallet } from "../entities";
 
 type entryType = [key: string, value: string | number | boolean];
 

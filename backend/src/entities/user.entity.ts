@@ -2,7 +2,7 @@ import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { Expose, plainToClass } from "class-transformer";
 import { Column, Entity, ObjectID, ObjectIdColumn } from "typeorm";
 import { ObjectID as ObjectIDConstructor } from "mongodb";
-import { Role } from "src/common";
+import { Role } from "../common";
 
 @Entity({ name: "users" })
 @ObjectType()
