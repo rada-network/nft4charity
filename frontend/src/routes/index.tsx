@@ -1,10 +1,10 @@
 import { useRoutes } from 'react-router-dom';
 
-import { Landing } from '@/features/misc';
-import { useAuth } from '@/lib/auth';
-
 import { protectedRoutes } from './protected';
 import { publicRoutes } from './public';
+
+import { Landing } from '@/features/misc';
+import { useAuth } from '@/lib/auth';
 
 export const AppRoutes = () => {
   const auth = useAuth();

@@ -37,7 +37,13 @@ function useWeb3Modal(config: any = {}) {
   const loadWeb3Modal = useCallback(async () => {
     const newProvider = await web3Modal.connect();
     setProvider(new Web3Provider(newProvider));
-    setSignedInAddress(newProvider.selectedAddress);
+
+    const walletAddress = newProvider.selectedAddress;
+    const shortenAddress =
+      walletAddress.substr(0, 4) +
+      '...' +
+      walletAddress.substr(walletAddress.length - 4, walletAddress.length);
+    setSignedInAddress(shortenAddress);
   }, [web3Modal]);
 
   const logoutOfWeb3Modal = useCallback(
