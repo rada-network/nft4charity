@@ -72,6 +72,7 @@ contract('Store', (accounts) => {
     it('donate campaign sucessfully', async () => {
       
       await radatoken.approve(store.address, 20, {"from":accounts[0]});
+      
       await store.donatingNFT(0, 20, "thisisIPFShash0", {"from":accounts[0]}) 
       
       const thiscampaign = await store.campaigns(0)
