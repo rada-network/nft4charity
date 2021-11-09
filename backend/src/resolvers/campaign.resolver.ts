@@ -8,7 +8,7 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import CreateCampaignDto from "src/dtos/campaigns/createCampaign.dto";
-import { Campaign, User, Wallet } from "src/entities";
+import { Campaign, User, Wallet, WalletBasic } from "src/entities";
 import { getMongoRepository } from "typeorm";
 
 @Resolver(() => Campaign)
@@ -29,22 +29,13 @@ export class CampaignResolver {
     return campaign;
   }
 
-  @ResolveField(() => User)
-  async user(@Parent() campaign: Campaign): Promise<User> {
-    const user = await getMongoRepository(User).findOne(campaign.userId);
-
-    if (!user) {
-      throw new NotFoundException("User not found!");
-    }
-
-    return user;
-  }
-
-  @ResolveField(() => [Wallet])
-  async wallet(@Parent() campaign: Campaign): Promise<Wallet[]> {
-    return await getMongoRepository(Wallet).find({
+  @ResolveField(() => [WalletBasic])
+  async wallets(@Parent() campaign: Campaign): Promise<WalletBasic[]> {
+    const wallets = await getMongoRepository(Wallet).find({
       campaignId: campaign._id.toString(),
     });
+
+    return wallets.map((w) => ({ _id: w._id.toString(), address: w.address }));
   }
 
   @Mutation(() => Campaign)
