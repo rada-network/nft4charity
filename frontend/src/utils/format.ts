@@ -11,3 +11,7 @@ export const formatDateTypeNumber = (date: number) => {
 
   return dayjs(date).format('DD/MM/YYYY');
 };
+
+export const formatShortenAddress = (address: string) => {
+  return address.substr(0, 4) + '...' + address.substr(address.length - 4, address.length);
+};

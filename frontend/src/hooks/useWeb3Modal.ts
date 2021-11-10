@@ -3,6 +3,8 @@ import { Web3Provider } from '@ethersproject/providers';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { useCallback, useEffect, useState } from 'react';
 import Web3Modal from 'web3modal';
+import Web3 from 'web3';
+import { formatShortenAddress } from '@/utils/format';
 
 // Enter a valid infura key here to avoid being rate limited
 // You can get a key for free at https://infura.io/register
@@ -33,16 +35,27 @@ function useWeb3Modal(config: any = {}) {
     },
   });
 
+  // const convertBalance = (provider: any) => {
+  //   console.log('provider', provider);
+  //   switch (provider._network.name) {
+  //     case 'bnb': {
+  //       const web3 = new Web3('https://bsc-dataseed1.binance.org:443');
+  //       return web3.eth.getBalance()
+  //     }
+  //   }
+  // };
+
   // Open wallet selection modal.
   const loadWeb3Modal = useCallback(async () => {
     const newProvider = await web3Modal.connect();
     setProvider(new Web3Provider(newProvider));
 
-    const walletAddress = newProvider.selectedAddress;
-    const shortenAddress =
-      walletAddress.substr(0, 4) +
-      '...' +
-      walletAddress.substr(walletAddress.length - 4, walletAddress.length);
+    const web3 = new Web3('https://bsc-dataseed1.binance.org:443');
+    // convertBalance(new Web3Provider(newProvider));
+    const balance = await web3.eth.getBalance(newProvider.selectedAddress);
+    console.log('//////', balance);
+
+    const shortenAddress = formatShortenAddress(newProvider.selectedAddress);
     setSignedInAddress(shortenAddress);
   }, [web3Modal]);
 

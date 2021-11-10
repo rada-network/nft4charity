@@ -2,7 +2,6 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 
 const tokenHeader = localStorage.getItem('token');
-console.log('tokenHeader', tokenHeader);
 
 const apolloClient = new ApolloClient({
   uri: 'https://api.rada.charity/graphql',
