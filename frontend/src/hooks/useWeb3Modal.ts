@@ -35,24 +35,25 @@ function useWeb3Modal(config: any = {}) {
     },
   });
 
-  // const convertBalance = (provider: any) => {
-  //   console.log('provider', provider);
-  //   switch (provider._network.name) {
-  //     case 'bnb': {
-  //       const web3 = new Web3('https://bsc-dataseed1.binance.org:443');
-  //       return web3.eth.getBalance()
-  //     }
-  //   }
-  // };
+  const convertBalance = (provider: any, address: string) => {
+    console.log('provider', provider);
+    console.log('---------------', provider?.network);
+    switch (provider?._network?.name) {
+      case 'bnb': {
+        const web3 = new Web3('https://bsc-dataseed1.binance.org:443');
+        console.log('web3', web3);
+        return web3.eth.getBalance(address);
+      }
+    }
+  };
 
   // Open wallet selection modal.
   const loadWeb3Modal = useCallback(async () => {
     const newProvider = await web3Modal.connect();
     setProvider(new Web3Provider(newProvider));
 
-    const web3 = new Web3('https://bsc-dataseed1.binance.org:443');
-    // convertBalance(new Web3Provider(newProvider));
-    const balance = await web3.eth.getBalance(newProvider.selectedAddress);
+    const web3Provider = await new Web3Provider(newProvider);
+    const balance = await convertBalance(web3Provider, newProvider.selectedAddress);
     console.log('//////', balance);
 
     const shortenAddress = formatShortenAddress(newProvider.selectedAddress);
