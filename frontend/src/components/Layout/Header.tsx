@@ -8,7 +8,7 @@ import walletSVG from '@/assets/icons/wallet.svg';
 import useWeb3Modal from '@/hooks/useWeb3Modal';
 
 export const Header = () => {
-  const [provider, loadWeb3Modal, logoutOfWeb3Modal, setSignedInAddress] = useWeb3Modal();
+  const [provider, loadWeb3Modal, logoutOfWeb3Modal, setSignedInAddress, balance] = useWeb3Modal();
   return (
     <>
       <div className="max-width mx-auto">
@@ -70,10 +70,10 @@ export const Header = () => {
             <li className="mr-10 text-sm lg:text-xl">
               <Link to={`/mint`}>Mint</Link>
             </li>
-            <li className="mr-10 text-sm lg:text-xl">Certificate</li>
           </ul>
           <ul className="flex items-center">
             <li className="flex">
+              <span className="px-5 my-auto">{balance}</span>
               <button
                 className="btn flex bg-button-purple p-2 rounded-3xl"
                 onClick={() => {

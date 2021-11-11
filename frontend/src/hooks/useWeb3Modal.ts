@@ -4,7 +4,7 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import { useCallback, useEffect, useState } from 'react';
 import Web3Modal from 'web3modal';
 import Web3 from 'web3';
-import { formatShortenAddress } from '@/utils/format';
+import { formatBalance, formatShortenAddress } from '@/utils/format';
 
 // Enter a valid infura key here to avoid being rate limited
 // You can get a key for free at https://infura.io/register
@@ -16,6 +16,8 @@ function useWeb3Modal(config: any = {}) {
   const [provider, setProvider] = useState<any>();
   const [autoLoaded, setAutoLoaded] = useState(false);
   const [signedInAddress, setSignedInAddress] = useState('');
+  const [balance, setBalance] = useState('');
+
   const { autoLoad = true, infuraId = INFURA_ID, NETWORK = NETWORK_NAME } = config;
 
   // Web3Modal also supports many other wallets.
@@ -35,14 +37,16 @@ function useWeb3Modal(config: any = {}) {
     },
   });
 
-  const convertBalance = (provider: any, address: string) => {
-    console.log('provider', provider);
-    console.log('---------------', provider?.network);
-    switch (provider?._network?.name) {
-      case 'bnb': {
-        const web3 = new Web3('https://bsc-dataseed1.binance.org:443');
-        console.log('web3', web3);
-        return web3.eth.getBalance(address);
+  const calculateBalance = async (web3Provider: any, web3: any, address: string) => {
+    const result = await web3.eth.getBalance(address);
+
+    switch (web3Provider?.provider?.networkVersion) {
+      case '56': {
+        return `${formatBalance(web3.utils.fromWei(result, 'ether'))} BNB`;
+      }
+
+      default: {
+        return `${formatBalance(web3.utils.fromWei(result, 'ether'))} ETH`;
       }
     }
   };
@@ -53,8 +57,10 @@ function useWeb3Modal(config: any = {}) {
     setProvider(new Web3Provider(newProvider));
 
     const web3Provider = await new Web3Provider(newProvider);
-    const balance = await convertBalance(web3Provider, newProvider.selectedAddress);
-    console.log('//////', balance);
+    const web3 = new Web3(newProvider);
+
+    const balance = await calculateBalance(web3Provider, web3, newProvider.selectedAddress);
+    setBalance(balance);
 
     const shortenAddress = formatShortenAddress(newProvider.selectedAddress);
     setSignedInAddress(shortenAddress);
@@ -77,7 +83,7 @@ function useWeb3Modal(config: any = {}) {
     }
   }, [autoLoad, autoLoaded, loadWeb3Modal, setAutoLoaded, web3Modal.cachedProvider]);
 
-  return [provider, loadWeb3Modal, logoutOfWeb3Modal, signedInAddress];
+  return [provider, loadWeb3Modal, logoutOfWeb3Modal, signedInAddress, balance];
 }
 
 export default useWeb3Modal;

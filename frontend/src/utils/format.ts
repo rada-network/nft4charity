@@ -15,3 +15,7 @@ export const formatDateTypeNumber = (date: number) => {
 export const formatShortenAddress = (address: string) => {
   return address.substr(0, 4) + '...' + address.substr(address.length - 4, address.length);
 };
+
+export const formatBalance = (number: string) => {
+  return parseFloat(number).toFixed(4);
+};
