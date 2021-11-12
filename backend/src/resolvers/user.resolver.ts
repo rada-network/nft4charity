@@ -12,11 +12,18 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { getMongoRepository } from "typeorm";
-import { AuthGuard, CurrentUserAddress, Roles, Role } from "../common";
+import {
+  CurrentUserAddress,
+  Role,
+  Roles,
+  AuthGuard,
+  RolesGuard,
+} from "../common";
 import { CreateUserDto, UpdateUserDto } from "../dtos";
 import { Campaign, User, Wallet, WalletBasic } from "../entities";
 
 @Resolver(() => User)
+@UseGuards(AuthGuard, RolesGuard)
 export class UserResolver {
   async users(): Promise<User[]> {
     return getMongoRepository(User).find();
@@ -75,7 +82,6 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  @UseGuards(AuthGuard)
   async createUser(
     @Args("user") userInput: CreateUserDto,
     @CurrentUserAddress() userAddress: string | null,

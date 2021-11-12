@@ -23,21 +23,27 @@ declare global {
 
 export async function authMiddleware(
   req: Request,
-  res: Response,
+  _: Response,
   next: NextFunction,
 ) {
-  try {
-    const token =
-      req.headers["authorization"] || req.headers["Authorization"] || "";
-    const { address } = await Web3Token.verify(token);
-    req.currentUserAddress = address || null;
+  const token =
+    req.headers["authorization"] || req.headers["Authorization"] || "";
 
-    const wallet = await getMongoRepository(Wallet).findOne({ address });
-    const user = await getMongoRepository(UserEntity).findOne(wallet.userId);
-    req.user = user || null;
-  } catch (err) {
-    if (err instanceof Error && err.message === "Token expired") {
-      return next(new UnauthorizedException("Token expired"));
+  if (token) {
+    try {
+      const { address } = await Web3Token.verify(token);
+      req.currentUserAddress = address || null;
+    } catch (err) {}
+  }
+
+  if (req.currentUserAddress) {
+    const wallet = await getMongoRepository(Wallet).findOne({
+      address: req.currentUserAddress,
+    });
+
+    if (wallet) {
+      const user = await getMongoRepository(UserEntity).findOne(wallet.userId);
+      req.user = user || null;
     }
   }
 
@@ -48,10 +54,15 @@ export const CurrentUserAddress = createParamDecorator(
   (data: unknown, context: ExecutionContext): string | null => {
     const ctx = GqlExecutionContext.create(context);
     const { req } = ctx.getContext();
-    try {
-      return req.currentUserAddress || req.raw.currentUserAddress;
-    } catch (error) {
-      return null;
+
+    if (req["user"]) {
+      return req["user"];
     }
+
+    if (req.raw && req.raw["user"]) {
+      return req.raw["user"];
+    }
+
+    return null;
   },
 );
