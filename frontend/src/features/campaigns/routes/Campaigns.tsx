@@ -4,21 +4,37 @@ import { Spinner } from '@/components/Elements';
 import { Link } from '@/components/Elements/Link/Link';
 
 const AllCampaignsQuery = gql`
-  query {
-    campaigns {
+  query wallet {
+    walletFilter {
       _id
-      name
-      description
-      goal
-      startedAt
-      endedAt
-      coverImgUrl
+      address
+      currency
+      createdAt
+      updatedAt
+      campaign: campaign {
+        name
+        description
+        startedAt
+        endedAt
+        coverImgUrl
+        thumbnailImgUrl
+      }
+      transaction: transaction {
+        _id
+        walletId
+        description
+        currency
+        amount
+        status
+        createdAt
+      }
     }
   }
 `;
 
 export const Campaigns = () => {
   const { data, loading, error } = useQuery(AllCampaignsQuery);
+  console.log('data', data);
   if (loading) return <Spinner />;
   if (error) return <p>Oh no... {error.message}</p>;
 
