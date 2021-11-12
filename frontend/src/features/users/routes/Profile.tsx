@@ -5,6 +5,8 @@ import { ContentLayout } from '@/components/Layout';
 
 // import { useAuth } from '@/lib/auth';
 
+// import { useAuth } from '@/lib/auth';
+
 type EntryProps = {
   label: string;
   value: string;
@@ -40,7 +42,6 @@ export const UserProfile = () => {
             <Entry label="Last Name" value="" />
             <Entry label="Email Address" value="" />
             <Entry label="Role" value="" />
-            <Entry label="Bio" value="" />
           </dl>
         </div>
       </div>
