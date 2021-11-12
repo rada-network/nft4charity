@@ -1,11 +1,11 @@
-import { Module } from "@nestjs/common";
+import { Module, ValidationPipe } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { APP_GUARD } from "@nestjs/core";
+import { APP_FILTER, APP_PIPE } from "@nestjs/core";
 import { GraphQLModule } from "@nestjs/graphql";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { RolesGuard } from "./common";
+import { AllExceptionsFilter } from "./common";
 import { GraphqlService, TypeOrmService } from "./config";
 import { DateScalar } from "./config/graphql/scalars";
 import { FileModule } from "./file.module";
@@ -27,7 +27,8 @@ import * as Resolvers from "./resolvers";
     AppService,
     ...Object.values(Resolvers),
     DateScalar,
-    { provide: APP_GUARD, useClass: RolesGuard },
+    { provide: APP_PIPE, useClass: ValidationPipe },
+    { provide: APP_FILTER, useClass: AllExceptionsFilter },
   ],
 })
 export class AppModule {}
