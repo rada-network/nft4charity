@@ -84,8 +84,6 @@ describe("Authentication (e2e)", () => {
       .set("Authorization", token)
       .send(requestBody);
 
-    console.log(res.body);
-
     expectError(res, "Token expired");
   });
 
