@@ -55,12 +55,12 @@ export const CurrentUserAddress = createParamDecorator(
     const ctx = GqlExecutionContext.create(context);
     const { req } = ctx.getContext();
 
-    if (req["user"]) {
-      return req["user"];
+    if (req["currentUserAddress"]) {
+      return req["currentUserAddress"];
     }
 
-    if (req.raw && req.raw["user"]) {
-      return req.raw["user"];
+    if (req.raw && req.raw["currentUserAddress"]) {
+      return req.raw["currentUserAddress"];
     }
 
     return null;
