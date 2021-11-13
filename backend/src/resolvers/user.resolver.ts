@@ -58,7 +58,6 @@ export class UserResolver {
   }
 
   @Query(() => String)
-  @Roles(Role.USER)
   async myAddress(
     @CurrentUserAddress() address: string | null,
   ): Promise<string | null> {
