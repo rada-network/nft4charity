@@ -13,10 +13,10 @@ import {
 } from "@nestjs/graphql";
 import { getMongoRepository } from "typeorm";
 import {
+  AuthGuard,
   CurrentUserAddress,
   Role,
   Roles,
-  AuthGuard,
   RolesGuard,
 } from "../common";
 import { CreateUserDto, UpdateUserDto } from "../dtos";
@@ -86,13 +86,22 @@ export class UserResolver {
     @CurrentUserAddress() userAddress: string | null,
   ): Promise<User> {
     const { wallet: createWalletDto, ...createUserDto } = userInput;
-
     const wallet = await getMongoRepository(Wallet).findOne({
       address: userAddress,
     });
 
     if (wallet) {
       throw new BadRequestException("User alrealy exist.");
+    }
+
+    const user = await getMongoRepository(User).findOne({
+      email: userInput.email,
+    });
+
+    if (user) {
+      throw new BadRequestException(
+        "Email already exist, use create wallet instead.",
+      );
     }
 
     const now = new Date();

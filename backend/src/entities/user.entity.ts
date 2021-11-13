@@ -27,6 +27,16 @@ export class User {
   @Field()
   email: string;
 
+  @Column({ type: "bool", default: false })
+  @Expose()
+  @Field(() => Boolean, { defaultValue: false })
+  isEmailVerified = false;
+
+  @Column({ type: "datetime", default: null, nullable: true })
+  @Expose()
+  @Field({ defaultValue: null, nullable: true })
+  emailVerifiedAt: Date = null;
+
   @Column({ type: "enum", enum: Role, array: true, default: () => [Role.USER] })
   @Expose()
   @Field(() => [Role], { defaultValue: [Role.USER] })
