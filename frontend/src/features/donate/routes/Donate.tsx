@@ -66,7 +66,6 @@ export const Donate = () => {
   const { data: listWallet } = useQuery(GetListWalletByCampaignId, {
     variables: { campaignId: id },
   });
-  console.log('listWallet', listWallet);
 
   const walletAddress = useWatch({
     name: 'network',
