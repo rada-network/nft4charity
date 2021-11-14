@@ -36,7 +36,6 @@ const AllCampaignsQuery = gql`
 
 export const Campaigns = () => {
   const { data, loading, error } = useQuery(AllCampaignsQuery);
-  console.log('data', data?.walletFilter);
   if (loading) return <Spinner />;
   if (error) return <p>Oh no... {error.message}</p>;
 
@@ -74,7 +73,7 @@ export const Campaigns = () => {
             className="w-full h-full bottom-0 absolute top-0 right-0 left-0 object-cover"
           />
           <div className="absolute top-10 right-10 rounded-lg p-5 w-1/3 bg-black bg-opacity-25 backdrop-blur text-white">
-            <h2 className="text-4xl font-Open font-bold">Rada Charity</h2>
+            <h2 className="text-4xl font-Open font-bold">Rada NFT 4 Charity</h2>
             <span className="text-base mt-5">
               The Charity Wallet is designed for donors who do not specify the donation projects and
               allow BCF to distribute the fund accordingly. Our blockchain-based system will allow
