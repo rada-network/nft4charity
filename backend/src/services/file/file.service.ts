@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { S3 } from "aws-sdk";
-import { ResponsePutPresignedUrlDto } from "./dtos/files/getFileUrl.dto";
+import { ResponsePutPresignedUrlDto } from "src/dtos";
 
 const PUT_OBJECT = "putObject";
 const GET_OBJECT = "getObject";
