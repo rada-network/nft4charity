@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import * as nodemailer from "nodemailer";
-import { verifyMail } from "src/assets";
+import { verifyMail, changeMail } from "src/assets";
 import { consoleLogger, mailConfig } from "src/config";
 
 @Injectable()
@@ -10,7 +10,7 @@ export class MailService {
     email: string,
     token: string,
   ): Promise<boolean> {
-    const transporter = await MailService.createTransporter();
+    const transporter = MailService.createTransporter();
     const socials = MailService.createSocials();
     const buttonLink = `${mailConfig.project.mailVerificationUrl}?token=${token}`;
 
@@ -38,7 +38,49 @@ export class MailService {
     return new Promise<boolean>((resolve) =>
       transporter.sendMail(mailOptions, async (error) => {
         if (error) {
-          console.log(error);
+          consoleLogger.warn("Some thing went wrong when sending email.");
+          resolve(false);
+        }
+        resolve(true);
+      }),
+    );
+  }
+
+  static async sendChangeEmailMail(
+    name: string,
+    email: string,
+    token: string,
+    newEmail: string,
+  ): Promise<boolean> {
+    const transporter = MailService.createTransporter();
+    const socials = MailService.createSocials();
+    const buttonLink = `${mailConfig.project.mailChangeUrl}?token=${token}`;
+
+    const mail = changeMail
+      .replace(new RegExp("--PersonName--", "g"), name)
+      .replace(new RegExp("--ProjectName--", "g"), mailConfig.project.name)
+      .replace(
+        new RegExp("--ProjectAddress--", "g"),
+        mailConfig.project.address,
+      )
+      .replace(new RegExp("--ProjectLogo--", "g"), mailConfig.project.logoUrl)
+      .replace(new RegExp("--ProjectSlogan--", "g"), mailConfig.project.slogan)
+      .replace(new RegExp("--ProjectColor--", "g"), mailConfig.project.color)
+      .replace(new RegExp("--ProjectLink--", "g"), mailConfig.project.url)
+      .replace(new RegExp("--NewEmail--", "g"), newEmail)
+      .replace(new RegExp("--Socials--", "g"), socials)
+      .replace(new RegExp("--ButtonLink--", "g"), buttonLink);
+
+    const mailOptions = {
+      from: `"${mailConfig.mail.senderCredentials.name}" <${mailConfig.mail.senderCredentials.email}>`,
+      to: email,
+      subject: `Change Your ${mailConfig.project.name} Account's Email`,
+      html: mail,
+    };
+
+    return new Promise<boolean>((resolve) =>
+      transporter.sendMail(mailOptions, async (error) => {
+        if (error) {
           consoleLogger.warn("Some thing went wrong when sending email.");
           resolve(false);
         }

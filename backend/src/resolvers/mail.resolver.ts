@@ -67,4 +67,59 @@ export class MailResolver {
 
     return MailService.sendVerifyEmailMail(user.firstName, email, token);
   }
+
+  @Query(() => Boolean)
+  @Roles(Role.USER)
+  async changeMail(
+    @Args("email") email: string,
+    @Args("newEmail") newEmail: string,
+  ): Promise<boolean> {
+    if (!isEmail(email) || !isEmail(newEmail)) {
+      throw new BadRequestException("Arguemnt must be an valid email");
+    }
+
+    if (await getMongoRepository(User).findOne({ email: newEmail })) {
+      throw new NotFoundException("Email already exist!");
+    }
+
+    const user = await getMongoRepository(User).findOne({ email });
+    if (!user.isEmailVerified) {
+      throw new BadRequestException("Your previous email is not verified.");
+    }
+
+    const lastReqAt = user.emailVerifiedAt;
+    if (lastReqAt && getTimeToNow(lastReqAt, "minute") < RESEND_TIME) {
+      const validTime = new Date(lastReqAt);
+      validTime.setMinutes(validTime.getMinutes() + RESEND_TIME);
+      const seconds = Math.abs(getTimeToNow(validTime, "second"));
+
+      throw new BadRequestException(
+        `Pls wait after ${seconds} seconds to re-send the mail.`,
+      );
+    }
+
+    const now = new Date();
+    const payload = {
+      sub: user._id.toString(),
+      email: newEmail,
+    };
+    const token = this.jwtService.sign(payload, {
+      expiresIn: MAIL_EXPIRE_TIME,
+    });
+
+    user.emailVerifiedAt = now;
+
+    try {
+      await getMongoRepository(User).save(user);
+    } catch (error) {
+      throw new InternalServerErrorException("Server error when updating user");
+    }
+
+    return MailService.sendChangeEmailMail(
+      user.firstName,
+      email,
+      token,
+      newEmail,
+    );
+  }
 }

@@ -8,6 +8,7 @@ const IS_TEST = process.env.NODE_ENV === "test";
 
 ok(IS_PRODUCTION ? process.env.MAIL_JWT_SECRET : true);
 ok(IS_PRODUCTION ? process.env.MAIL_VERIFICATION_URL : true);
+ok(IS_PRODUCTION ? process.env.MAIL_CHANGE_URL : true);
 
 ok(IS_TEST ? process.env.TEST_PORT : process.env.MONGODB_URL);
 
@@ -25,14 +26,21 @@ const MONGODB_TESTING_URL = `mongodb://localhost:${process.env.TEST_PORT}/nft4ch
 // Define global environment variables
 const BASE_URL = process.env.BASE_URL || "localhost";
 
+const MAIL_CHANGE__URL =
+  process.env.MAIL_CHANGE__URL || "http://localhost:8080/change-mail";
+
 const MAIL_EXPIRE_TIME = process.env.MAIL_EXPIRE_TIME || "1m";
 const MAIL_JWT_SECRET = process.env.MAIL_JWT_SECRET || "SOME_STRONG_SECRET";
+
 const MAIL_RESEND_VERIFICATION_TIME_MINUTE =
   +process.env.MAIL_RESEND_VERIFICATION_TIME_MINUTE || 3;
+
 const MAIL_SENDER_EMAIL = process.env.MAIL_SENDER_EMAIL || "noreply@gmail.com";
 const MAIL_SENDER_NAME = process.env.MAIL_SENDER_NAME || "NFT4Charity Team";
+
 const MAIL_VERIFICATION_URL =
   process.env.MAIL_VERIFICATION_URL || "http://localhost:8080/verify-mail";
+
 const MONGODB_URL = IS_TEST ? MONGODB_TESTING_URL : process.env.MONGODB_URL;
 
 const NODE_ENV = process.env.NODE_ENV || "development";
@@ -56,6 +64,7 @@ const SENTRY_DSN = process.env.SENTRY_DSN || "";
 
 export {
   BASE_URL,
+  MAIL_CHANGE__URL,
   MAIL_EXPIRE_TIME,
   MAIL_JWT_SECRET,
   MAIL_RESEND_VERIFICATION_TIME_MINUTE,
