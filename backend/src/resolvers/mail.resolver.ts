@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  InternalServerErrorException,
   NotFoundException,
   UseGuards,
 } from "@nestjs/common";
@@ -8,8 +9,12 @@ import { JwtService } from "@nestjs/jwt";
 import { isEmail } from "class-validator";
 import { AuthGuard, Role, Roles, RolesGuard } from "src/common";
 import { User } from "src/entities";
-import { MAIL_EXPIRE_TIME } from "src/environments";
+import {
+  MAIL_EXPIRE_TIME,
+  MAIL_RESEND_VERIFICATION_TIME_MINUTE as RESEND_TIME,
+} from "src/environments";
 import { MailService } from "src/services";
+import { getTimeToNow } from "src/utils";
 import { getMongoRepository } from "typeorm";
 
 @Resolver()
@@ -29,6 +34,21 @@ export class MailResolver {
       throw new NotFoundException("Email not found.");
     }
 
+    if (user.isEmailVerified) {
+      throw new BadRequestException("User already verified.");
+    }
+
+    const lastVerifyAt = user.emailVerifiedAt;
+    if (lastVerifyAt && getTimeToNow(lastVerifyAt, "minute") < RESEND_TIME) {
+      const validTime = new Date(lastVerifyAt);
+      validTime.setMinutes(validTime.getMinutes() + RESEND_TIME);
+      const seconds = Math.abs(getTimeToNow(validTime, "second"));
+
+      throw new BadRequestException(
+        `Pls wait after ${seconds} seconds to re-send the mail.`,
+      );
+    }
+
     const now = new Date();
     const payload = {
       sub: user._id.toString(),
@@ -38,6 +58,13 @@ export class MailResolver {
     });
 
     user.emailVerifiedAt = now;
+
+    try {
+      await getMongoRepository(User).save(user);
+    } catch (error) {
+      throw new InternalServerErrorException("Server error when updating user");
+    }
+
     return MailService.sendVerifyEmailMail(user.firstName, email, token);
   }
 }

@@ -1,9 +1,10 @@
 import { Module } from "@nestjs/common";
+import { JwtModule } from "@nestjs/jwt";
+import { MAIL_JWT_SECRET } from "src/environments";
 import { MailController } from "./mail.controller";
-import { MailService } from "./mail.service";
 
 @Module({
+  imports: [JwtModule.register({ secret: MAIL_JWT_SECRET })],
   controllers: [MailController],
-  providers: [MailService],
 })
 export class MailModule {}

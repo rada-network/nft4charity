@@ -1,6 +1,7 @@
 import {
   MAIL_SENDER_EMAIL,
   MAIL_SENDER_NAME,
+  MAIL_VERIFICATION_URL,
   PROJECT_ADDRESS,
   PROJECT_COLOR,
   PROJECT_LOGO_URL,
@@ -31,7 +32,7 @@ export const mailConfig = {
     color: PROJECT_COLOR,
     socials: [["GitHub", "https://github.com/rada-network/nft4charity"]],
     url: "https://www-beta.rada.charity/",
-    mailVerificationUrl: "http://localhost:3000/verify-email",
+    mailVerificationUrl: MAIL_VERIFICATION_URL,
     mailChangeUrl: "http://localhost:3000/auth/change-email",
   },
 };
