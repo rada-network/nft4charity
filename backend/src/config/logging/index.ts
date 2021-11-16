@@ -1,5 +1,5 @@
 import * as morgan from "morgan";
-import { SENTRY_DSN } from "src/environments";
+import { SENTRY_DSN } from "../../environments";
 import { config, createLogger, transports, format } from "winston";
 
 // eslint-disable-next-line

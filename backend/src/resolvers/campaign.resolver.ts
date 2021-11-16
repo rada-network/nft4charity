@@ -7,8 +7,8 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
-import CreateCampaignDto from "src/dtos/campaigns/createCampaign.dto";
-import { Campaign, User, Wallet, WalletBasic } from "src/entities";
+import { CreateCampaignDto } from "../dtos";
+import { Campaign, User, Wallet, WalletBasic } from "../entities";
 import { getMongoRepository } from "typeorm";
 
 @Resolver(() => Campaign)

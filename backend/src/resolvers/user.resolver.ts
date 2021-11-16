@@ -12,11 +12,18 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { getMongoRepository } from "typeorm";
-import { AuthGuard, CurrentUserAddress, Roles, Role } from "../common";
+import {
+  AuthGuard,
+  CurrentUserAddress,
+  Role,
+  Roles,
+  RolesGuard,
+} from "../common";
 import { CreateUserDto, UpdateUserDto } from "../dtos";
 import { Campaign, User, Wallet, WalletBasic } from "../entities";
 
 @Resolver(() => User)
+@UseGuards(AuthGuard, RolesGuard)
 export class UserResolver {
   async users(): Promise<User[]> {
     return getMongoRepository(User).find();
@@ -51,7 +58,6 @@ export class UserResolver {
   }
 
   @Query(() => String)
-  @Roles(Role.USER)
   async myAddress(
     @CurrentUserAddress() address: string | null,
   ): Promise<string | null> {
@@ -75,19 +81,27 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  @UseGuards(AuthGuard)
   async createUser(
     @Args("user") userInput: CreateUserDto,
     @CurrentUserAddress() userAddress: string | null,
   ): Promise<User> {
     const { wallet: createWalletDto, ...createUserDto } = userInput;
-
     const wallet = await getMongoRepository(Wallet).findOne({
       address: userAddress,
     });
 
     if (wallet) {
       throw new BadRequestException("User alrealy exist.");
+    }
+
+    const user = await getMongoRepository(User).findOne({
+      email: userInput.email,
+    });
+
+    if (user) {
+      throw new BadRequestException(
+        "Email already exist, use create wallet instead.",
+      );
     }
 
     const now = new Date();

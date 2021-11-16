@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   Injectable,
   SetMetadata,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { GqlExecutionContext } from "@nestjs/graphql";
@@ -26,13 +27,18 @@ export class RolesGuard implements CanActivate {
 
     const ctx = GqlExecutionContext.create(context);
     const { req } = ctx.getContext();
-    try {
-      return (
-        requiredRoles.some((role) => req.user?.roles?.includes(role)) ||
-        requiredRoles.some((role) => req.raw.user?.roles?.includes(role))
-      );
-    } catch (error) {
-      return false;
+    let user = null;
+
+    if (req["user"]) {
+      user = req.user;
+    } else if (req.raw && req.raw["user"]) {
+      user = req.raw.user;
     }
+
+    if (!user) {
+      throw new UnauthorizedException("User not register");
+    }
+
+    return requiredRoles.some((role) => user.roles.includes(role));
   }
 }
