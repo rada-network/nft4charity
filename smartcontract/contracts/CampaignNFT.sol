@@ -4,22 +4,17 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/utils/Context.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
 
 
-contract CampaignNFT is Ownable, ERC721URIStorage {
-    
+contract CampaignNFT is Ownable, ERC721URIStorage{
     address public token;
     uint public current;
     uint public price;
     uint public slot;
-    bool ended;
+    bool public ended;
     uint public tokenId;
     
-
     struct Donor {
         address wallet;
         uint amount;
@@ -27,6 +22,7 @@ contract CampaignNFT is Ownable, ERC721URIStorage {
     }
     struct Distributor {
         address wallet;
+        uint max;
         uint amount;
         int votes;
     }
@@ -38,6 +34,10 @@ contract CampaignNFT is Ownable, ERC721URIStorage {
     mapping(address => uint) distributorToId;
     mapping(string => bool) usedURI;
     
+    event donated(address donor, uint amount);
+    event distributed(address distributor, uint amount);
+    event withdrawed(address distributor, uint amount);
+    event distributorAdded(address distributor);
     
 
     modifier onlyDonor() {
@@ -56,7 +56,7 @@ contract CampaignNFT is Ownable, ERC721URIStorage {
         ended = false;
         transferOwnership(_creator);
     }
-    function donating(uint _amount, string memory _tokenURI) external {
+    function donatingNFT(uint _amount, string memory _tokenURI) external {
         require(slot > 0, "Campaign has no nft slot");
         require(_amount >= price, "Donate amount must greater or equal than price");
         require(usedURI[_tokenURI]==false, "TokenURI is already taken");
@@ -64,56 +64,59 @@ contract CampaignNFT is Ownable, ERC721URIStorage {
         IERC20(token).transferFrom(msg.sender, address(this), _amount);
         donorsCount += 1;
         donors[donorsCount] = Donor(msg.sender, _amount, _amount);
-        isDonor[msg.sender] = true;
+        donorToId[msg.sender] = donorsCount;
         current += _amount;
-
+        
+        tokenId += 1;
         _safeMint(msg.sender, tokenId);
         _setTokenURI(tokenId, _tokenURI);
-        tokenId += 1;
-
+        slot -= 1;
     }
-    function addDistributor(address _distributor) public onlyOwner {
+    function donating(uint _amount) external {
+        require(_amount >= price, "Donate amount must greater or equal than price");
+        IERC20(token).transferFrom(msg.sender, address(this), _amount);
+        donorsCount += 1;
+        donors[donorsCount] = Donor(msg.sender, _amount, _amount);
+        donorToId[msg.sender] = donorsCount;
+        current += _amount;
+    }
+    function addDistributor(address _distributor) external onlyOwner {
         distributorsCount += 1;
-        distributors[distributorsCount] = Distributor(_distributor, 0, 0);
-        isDistributor[_distributor] = true;
+        distributors[distributorsCount] = Distributor(_distributor, 0, 0, 0);
+        distributorToId[_distributor] = distributorsCount;
     }
-    function endingCampaign() public onlyOwner {
-        ended = true;
+    function setMaxForDistributor(uint _distributorId, uint _max) external onlyOwner {
+        require(distributors[_distributorId].votes >= 0, "Not enough votes to be accepted");
+        distributors[_distributorId].max = _max;
     }
+    function withdraw(uint _amount) external {
+        require(_amount <= distributors[distributorToId[msg.sender]].max, "Amount is exceed the maximum set for distributor ");
+        require(_amount <= current, "Campaign out of amount money");
 
-    // Owner can distribute to Distributor
-    function distribute(uint _distributorId, uint _amount) public onlyOwner {
-        require(distributors[_distributorId].votes > 0, "Distributor is not accepted distributor yet");
-        require(current >= _amount, "Campaign out of amount money");
-        
-        address _distributorWallet = distributors[_distributorId].wallet;
-        IERC20(token).transferFrom(address(this), _distributorWallet, _amount); 
+        // IERC20(token).transferFrom(address(this), msg.sender, _amount); 
+        IERC20(token).transfer(msg.sender, _amount);
+        current -= _amount;
+        distributors[distributorToId[msg.sender]].max -= _amount;
+        distributors[distributorToId[msg.sender]].amount += _amount;
+    }
+    function distribute(uint _distributorId, uint _amount) external onlyOwner {
+        IERC20(token).transfer(distributors[_distributorId].wallet, _amount);
         current -= _amount;
         distributors[_distributorId].amount += _amount;
-
     }
-    // Distributor can withdraw themself: Amount must not exceed the number of votes
-    function withdraw(uint _amount) public onlyAcceptedDistributor {
-        require(distributors[distributorToId[msg.sender]].votes >= _amount, "Amount is exceed distributor votes");
-        require(current >= _amount, "Campaign out of amount money");
-
-        IERC20(token).transferFrom(address(this), msg.sender, _amount); 
-        current -= _amount;
-        distributors[distributorToId[msg.sender]].votes -= _amount;
-        distributors[distributorToId[msg.sender]].amount += _amount;
-
-    }
-
-    function vote(uint _distributorId, uint _vote, bool _up) public onlyDonor {
+    function vote(uint _distributorId, uint _vote, bool _up) external onlyDonor {
         require(donors[donorToId[msg.sender]].votes >= _vote, "Not enough votes");
         
         if(_up){
-            distributors[_distributorId].votes += _vote;
+            distributors[_distributorId].votes += int(_vote);
         }else{
-            distributors[_distributorId].votes -= _vote;
+            distributors[_distributorId].votes -= int(_vote);
         }
         donors[donorToId[msg.sender]].votes -= _vote;
         
+    }
+    function end() external onlyOwner {
+        ended = true;
     }
 }
 
