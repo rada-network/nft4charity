@@ -1,4 +1,6 @@
-const HDWalletProvider = require("@truffle/hdwallet-provider");
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+const fs = require('fs');
+const mnemonic = fs.readFileSync(".secret").toString().trim();
 
 module.exports = {
   networks: {
@@ -9,7 +11,7 @@ module.exports = {
     },
     bscTestnet: {
       provider: () =>
-        new HDWalletProvider([""], `https://data-seed-prebsc-1-s1.binance.org:8545/`, 0, 1),
+        new HDWalletProvider(mnemonic, `https://data-seed-prebsc-1-s1.binance.org:8545/`, 0, 1),
       network_id: 97,
       confirmations: 2,
       timeoutBlocks: 200,
@@ -37,6 +39,6 @@ module.exports = {
   plugins: ["truffle-plugin-verify"],
 
   api_keys: {
-    bscscan: "",
+    bscscan: "4MGAZ22T6V9SVC7S5FC4QZAX1MJ3GWZ8R1",
   },
 };
