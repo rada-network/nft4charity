@@ -56,29 +56,27 @@ contract CampaignNFT is Ownable, ERC721URIStorage{
         ended = false;
         transferOwnership(_creator);
     }
-    function donatingNFT(uint _amount, string memory _tokenURI) external {
+    function mint(string memory _tokenURI) external {
         require(slot > 0, "Campaign has no nft slot");
-        require(_amount >= price, "Donate amount must greater or equal than price");
         require(usedURI[_tokenURI]==false, "TokenURI is already taken");
         
-        IERC20(token).transferFrom(msg.sender, address(this), _amount);
+        IERC20(token).transferFrom(msg.sender, address(this), price);
         donorsCount += 1;
-        donors[donorsCount] = Donor(msg.sender, _amount, _amount);
+        donors[donorsCount] = Donor(msg.sender, price, price);
         donorToId[msg.sender] = donorsCount;
-        current += _amount;
+        current += price;
         
         tokenId += 1;
         _safeMint(msg.sender, tokenId);
         _setTokenURI(tokenId, _tokenURI);
         slot -= 1;
     }
-    function donating(uint _amount) external {
-        require(_amount >= price, "Donate amount must greater or equal than price");
-        IERC20(token).transferFrom(msg.sender, address(this), _amount);
+    function donate() external {
+        IERC20(token).transferFrom(msg.sender, address(this), price);
         donorsCount += 1;
-        donors[donorsCount] = Donor(msg.sender, _amount, _amount);
+        donors[donorsCount] = Donor(msg.sender, price, price);
         donorToId[msg.sender] = donorsCount;
-        current += _amount;
+        current += price;
     }
     function addDistributor(address _distributor) external onlyOwner {
         distributorsCount += 1;

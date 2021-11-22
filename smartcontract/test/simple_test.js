@@ -53,7 +53,7 @@ contract('Store', (accounts) => {
   describe('createcampaign', async () => {
     // Only whitelister can create campaign, 
     it('create successfully', async () => {
-      await store.createCampaign("FIRSTCAMPAIGN", radatoken.address, 10, 10, {"from": accounts[1]})
+      await store.createCampaign("FIRSTCAMPAIGN", radatoken.address, 10, 20, {"from": accounts[1]})
       const thiscampaign = await store.campaigns(1);
       console.log("Creator: ", thiscampaign.creator)
       console.log("Wallet: ", thiscampaign.wallet)
@@ -73,8 +73,8 @@ contract('Store', (accounts) => {
       const campaign1 = await CampaignNFT.at(thiscampaign.wallet)
 
 
-      await radatoken.approve(campaign1.address, 20, {"from":accounts[0]});
-      await campaign1.donatingNFT(20, "thisisIPFShash1", {"from":accounts[0]}) 
+      await radatoken.approve(campaign1.address, 20, {"from":accounts[0]}); 
+      await campaign1.mint("thisisIPFShash1", {"from":accounts[0]}) 
       
       
       const t = await radatoken.balanceOf(thiscampaign.wallet);     
