@@ -35,6 +35,12 @@ cron.schedule(`*/${cronCheckInterval} * * * *`, async () => {
   console.warn(`Cron job every ${cronCheckInterval} minutes`);
   try {
     const wallets = await getWallets();
+    if (wallets == null)
+    {
+      console.warn(`There is no wallets available. Go sleep for another ${cronCheckInterval} minutes`)
+      return;
+    }
+      
     const walletAddress = wallets.map((w) => w.address);
     let dict = wallets.reduce((a, x) => ({ ...a, [x.address]: x._id }), {});
     if (walletAddress.length > 0) {
