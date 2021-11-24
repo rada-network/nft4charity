@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
-import { MAIL_JWT_SECRET } from "src/environments";
+import { MAIL_JWT_SECRET } from "../../environments";
 import { MailController } from "./mail.controller";
 
 @Module({

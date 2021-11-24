@@ -9,7 +9,7 @@ import {
   PROJECT_NAME,
   PROJECT_SLOGAN,
   SENDGRID_API_KEY,
-} from "src/environments";
+} from "../../environments";
 
 export const mailConfig = {
   mail: {
