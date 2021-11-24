@@ -139,3 +139,6 @@ function isValid(item) {
 }
 
 console.warn("start cronjob");
+console.info(`ETHER_SCAN_API_BASE_URL is ${ETHER_SCAN_API_BASE_URL}`)
+console.info(`ETHER_SCAN_API_KEY is ${ETHER_SCAN_API_KEY}`)
+console.info(`MONGODB_URL is ${MONGODB_URL}`)
