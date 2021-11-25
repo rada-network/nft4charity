@@ -2,6 +2,7 @@ import { gql, useQuery } from '@apollo/client';
 
 import { Spinner } from '@/components/Elements';
 import { formatBalance } from '@/utils/format';
+import { Link } from '@/components/Elements/Link/Link';
 import Countdown from 'react-countdown';
 
 const AllCampaignsQuery = gql`
@@ -13,6 +14,7 @@ const AllCampaignsQuery = gql`
       createdAt
       updatedAt
       campaign: campaign {
+        _id
         name
         description
         startedAt
@@ -36,6 +38,7 @@ const AllCampaignsQuery = gql`
 
 export const Campaigns = () => {
   const { data, loading, error } = useQuery(AllCampaignsQuery);
+  console.log('data', data);
   if (loading) return <Spinner />;
   if (error) return <p>Oh no... {error.message}</p>;
 
@@ -87,18 +90,23 @@ export const Campaigns = () => {
         </div>
 
         <div className="w-2/3 m-auto grid grid-cols-2 gap-4 mt-16">
+          {/* <Link to={`/donate/${link._id}`}>{link.name}</Link> */}
           {data?.walletFilter.map((item: Record<string, any>, index: number) => {
             return (
               <div key={index} className="w-full">
-                <div className="relative">
-                  <img src={item?.campaign?.coverImgUrl} alt="" />
-                  <div className="absolute bottom-0 p-5 w-full bg-black bg-opacity-25">
-                    <p className="text-white text-lg font-bold font-Merriweather">
-                      {item?.campaign?.name}
-                    </p>
-                    <p className="text-white font-Open text-sm">{item?.campaign?.description}</p>
+                <Link to={`/donate/${item?.campaign?._id}`}>
+                  <div className="relative">
+                    <img src={item?.campaign?.coverImgUrl} alt="" />
+                    <div className="absolute bottom-0 p-5 w-full bg-black bg-opacity-25">
+                      <p className="text-white text-lg font-bold font-Merriweather">
+                        {item?.campaign?.name}
+                      </p>
+                      <p className="text-white font-Open text-sm whitespace-pre-wrap overflow-hidden overflow-ellipsis line-clamp-1">
+                        {item?.campaign?.description}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                </Link>
                 <div className="shadow">
                   <div className="p-5">
                     <span className="font-bold text-xl font-Merriweather">Total raised: </span>
