@@ -34,11 +34,12 @@ contract CampaignNFT is Ownable, ERC721URIStorage{
     mapping(address => uint) distributorToId;
     mapping(string => bool) usedURI;
     
-    event donated(address donor, uint amount);
+    event minted(address donor);
+    event donated(address donor);
     event distributed(address distributor, uint amount);
     event withdrawed(address distributor, uint amount);
     event distributorAdded(address distributor);
-    
+    event voted(address voter, address candidate, uint votes, bool up);
 
     modifier onlyDonor() {
         require(donorToId[msg.sender] != 0, "You are not donor of campaign");
@@ -56,53 +57,75 @@ contract CampaignNFT is Ownable, ERC721URIStorage{
         ended = false;
         transferOwnership(_creator);
     }
-    function mint(string memory _tokenURI) external {
+    function mint(string memory _tokenURI) public {
         require(slot > 0, "Campaign has no nft slot");
         require(usedURI[_tokenURI]==false, "TokenURI is already taken");
         
         IERC20(token).transferFrom(msg.sender, address(this), price);
-        donorsCount += 1;
-        donors[donorsCount] = Donor(msg.sender, price, price);
-        donorToId[msg.sender] = donorsCount;
-        current += price;
         
-        tokenId += 1;
+        if(donorToId[msg.sender]!=0){
+            donors[donorToId[msg.sender]].amount += price;
+        } else{
+            donorsCount += 1;
+            donors[donorsCount] = Donor(msg.sender, price, price);
+            donorToId[msg.sender] = donorsCount;    
+        }
+        
+        current += price;
+
         _safeMint(msg.sender, tokenId);
         _setTokenURI(tokenId, _tokenURI);
+        tokenId += 1;
         slot -= 1;
+
+        emit minted(msg.sender);
     }
-    function donate() external {
+    function donate() public {
         IERC20(token).transferFrom(msg.sender, address(this), price);
-        donorsCount += 1;
-        donors[donorsCount] = Donor(msg.sender, price, price);
-        donorToId[msg.sender] = donorsCount;
+        
+        if(donorToId[msg.sender]!=0){
+            donors[donorToId[msg.sender]].amount += price;
+        } else{
+            donorsCount += 1;
+            donors[donorsCount] = Donor(msg.sender, price, price);
+            donorToId[msg.sender] = donorsCount;    
+        }
         current += price;
+
+        emit donated(msg.sender);
     }
-    function addDistributor(address _distributor) external onlyOwner {
+    function addDistributor(address _distributor) public onlyOwner {
+        require(distributorToId[_distributor]==0, 'This address is added before');
         distributorsCount += 1;
         distributors[distributorsCount] = Distributor(_distributor, 0, 0, 0);
         distributorToId[_distributor] = distributorsCount;
+
+        emit distributorAdded(_distributor);
     }
-    function setMaxForDistributor(uint _distributorId, uint _max) external onlyOwner {
+    function setMaxForDistributor(uint _distributorId, uint _max) public onlyOwner {
         require(distributors[_distributorId].votes >= 0, "Not enough votes to be accepted");
         distributors[_distributorId].max = _max;
+
     }
-    function withdraw(uint _amount) external {
+    function withdraw(uint _amount) public {
         require(_amount <= distributors[distributorToId[msg.sender]].max, "Amount is exceed the maximum set for distributor ");
         require(_amount <= current, "Campaign out of amount money");
-
-        // IERC20(token).transferFrom(address(this), msg.sender, _amount); 
+        
         IERC20(token).transfer(msg.sender, _amount);
         current -= _amount;
         distributors[distributorToId[msg.sender]].max -= _amount;
         distributors[distributorToId[msg.sender]].amount += _amount;
+
+        emit withdrawed(msg.sender, _amount);
     }
-    function distribute(uint _distributorId, uint _amount) external onlyOwner {
+    function distribute(uint _distributorId, uint _amount) public onlyOwner {
         IERC20(token).transfer(distributors[_distributorId].wallet, _amount);
         current -= _amount;
         distributors[_distributorId].amount += _amount;
+
+        emit distributed(distributors[_distributorId].wallet, _amount);
     }
-    function vote(uint _distributorId, uint _vote, bool _up) external onlyDonor {
+    function vote(uint _distributorId, uint _vote, bool _up) public onlyDonor {
         require(donors[donorToId[msg.sender]].votes >= _vote, "Not enough votes");
         
         if(_up){
@@ -112,9 +135,10 @@ contract CampaignNFT is Ownable, ERC721URIStorage{
         }
         donors[donorToId[msg.sender]].votes -= _vote;
         
+        emit voted(msg.sender, distributors[_distributorId].wallet, _vote, _up);
     }
-    function end() external onlyOwner {
-        ended = true;
+    function end() public onlyOwner {
+        ended = true; 
     }
 }
 
