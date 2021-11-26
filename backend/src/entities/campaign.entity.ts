@@ -1,3 +1,4 @@
+import { CampaignType } from "../common/enums";
 import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
 import { Expose, plainToClass } from "class-transformer";
 import { Column, Entity, ObjectID, ObjectIdColumn } from "typeorm";
@@ -44,6 +45,15 @@ export class Campaign {
   @Expose()
   @Field({ nullable: true })
   thumbnailImgUrl?: string;
+
+  @Column({
+    default: () => CampaignType.FUND_RAISE,
+    enum: CampaignType,
+    type: "enum",
+  })
+  @Expose()
+  @Field(() => CampaignType, { defaultValue: CampaignType.FUND_RAISE })
+  type: CampaignType;
 
   @Column()
   @Expose()
