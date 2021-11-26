@@ -7,9 +7,16 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
-import { CreateCampaignDto } from "../dtos";
-import { Campaign, User, Wallet, WalletBasic } from "../entities";
+import { CampaignType } from "src/common";
 import { getMongoRepository } from "typeorm";
+import { CreateCampaignDto } from "../dtos";
+import {
+  Campaign,
+  CampaignNftMetaData,
+  User,
+  Wallet,
+  WalletBasic,
+} from "../entities";
 
 @Resolver(() => Campaign)
 export class CampaignResolver {
@@ -36,6 +43,19 @@ export class CampaignResolver {
     });
 
     return wallets.map((w) => ({ _id: w._id.toString(), address: w.address }));
+  }
+
+  @ResolveField(() => CampaignNftMetaData, { nullable: true })
+  async nftMetadata(
+    @Parent() campaign: Campaign,
+  ): Promise<CampaignNftMetaData | null> {
+    if (campaign.type !== CampaignType.NFT) {
+      return null;
+    }
+
+    return await getMongoRepository(CampaignNftMetaData).findOne({
+      campaignId: campaign._id.toString(),
+    });
   }
 
   @Mutation(() => Campaign)
