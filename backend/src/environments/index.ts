@@ -6,6 +6,8 @@ dotenv.config();
 const IS_PRODUCTION = process.env.NODE_ENV === "production";
 const IS_TEST = process.env.NODE_ENV === "test";
 
+ok(process.env.IPFS_BASE_URL);
+
 ok(IS_PRODUCTION ? process.env.MAIL_JWT_SECRET : true);
 ok(IS_PRODUCTION ? process.env.MAIL_VERIFICATION_URL : true);
 ok(IS_PRODUCTION ? process.env.MAIL_CHANGE_URL : true);
@@ -25,6 +27,8 @@ const MONGODB_TESTING_URL = `mongodb://localhost:${process.env.TEST_PORT}/nft4ch
 
 // Define global environment variables
 const BASE_URL = process.env.BASE_URL || "localhost";
+
+const IPFS_BASE_URL = process.env.IPFS_BASE_URL;
 
 const MAIL_CHANGE__URL =
   process.env.MAIL_CHANGE__URL || "http://localhost:8080/change-mail";
@@ -64,6 +68,7 @@ const SENTRY_DSN = process.env.SENTRY_DSN || "";
 
 export {
   BASE_URL,
+  IPFS_BASE_URL,
   MAIL_CHANGE__URL,
   MAIL_EXPIRE_TIME,
   MAIL_JWT_SECRET,

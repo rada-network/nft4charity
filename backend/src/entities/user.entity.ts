@@ -60,7 +60,6 @@ export class User {
       }),
     );
 
-    this._id = (user && user._id) || this._id || new ObjectIDConstructor();
     this.roles = this.roles || [Role.USER];
     this.createdAt = this.createdAt || new Date();
     this.updatedAt = new Date();

@@ -2,6 +2,9 @@ ACCOUNT_MNEMONIC=YOUR_ACCOUNT_MNEMONIC # For testing
 
 BASE_URL=api.rada.charity
 
+# No trailing slash '/'
+IPFS_BASE_URL="https://ipfs.moralis.io:2053/ipfs"
+
 CHAIN_PROVIDER_URL=YOUR_CHAIN_PROVIDER_URL # For testing
 
 MAIL_EXPIRE_TIME='1m'

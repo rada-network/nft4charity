@@ -86,7 +86,10 @@ export class UserResolver {
     @CurrentUserAddress() userAddress: string | null,
   ): Promise<User> {
     const { wallet: createWalletDto, ...createUserDto } = userInput;
-    const wallet = await getMongoRepository(Wallet).findOne({
+    const userRepo = getMongoRepository(User);
+    const walletRepo = getMongoRepository(Wallet);
+
+    const wallet = await walletRepo.findOne({
       address: userAddress,
     });
 
@@ -94,7 +97,7 @@ export class UserResolver {
       throw new BadRequestException("User alrealy exist.");
     }
 
-    const user = await getMongoRepository(User).findOne({
+    const user = await userRepo.findOne({
       email: userInput.email,
     });
 
@@ -105,24 +108,23 @@ export class UserResolver {
     }
 
     const now = new Date();
-    let newUser = getMongoRepository(User).create({
-      ...createUserDto,
-      createdAt: now,
-      updatedAt: now,
-    });
+    const newUser = await userRepo.save(
+      userRepo.create({
+        ...createUserDto,
+        createdAt: now,
+        updatedAt: now,
+      }),
+    );
 
-    let newWallet = getMongoRepository(Wallet).create({
-      ...createWalletDto,
-      createdAt: now,
-      updatedAt: now,
-      address: userAddress,
-      userId: newUser._id.toString(),
-    });
-
-    [newUser, newWallet] = await Promise.all([
-      await getMongoRepository(User).save(newUser),
-      await getMongoRepository(Wallet).save(newWallet),
-    ]);
+    walletRepo.save(
+      walletRepo.create({
+        ...createWalletDto,
+        createdAt: now,
+        updatedAt: now,
+        address: userAddress,
+        userId: newUser._id.toString(),
+      }),
+    );
 
     return newUser;
   }
