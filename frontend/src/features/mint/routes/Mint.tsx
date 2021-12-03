@@ -1,26 +1,63 @@
 import Coverflow from 'react-coverflow';
+import React, { useEffect, useState } from 'react';
 
 import contentCopySVG from '@/assets/icons/content_copy.svg';
 import designerAvatar from '@/assets/images/designerAvatar.png';
-import donatePNG from '@/assets/images/donate.png';
-import nftItemPNG from '@/assets/images/nftItem.png';
-import nftItemBuffaloPNG from '@/assets/images/nftItemBuffalo.png';
+// import donatePNG from '@/assets/images/donate.png';
+// import nftItemPNG from '@/assets/images/nftItem.png';
+// import nftItemBuffaloPNG from '@/assets/images/nftItemBuffalo.png';
 import { BlockLists } from '@/components/BlockLists';
-import { Table } from '@/components/Elements';
+import { Table, Spinner } from '@/components/Elements';
 import { SelectField } from '@/components/Form';
 import { InputField } from '@/components/Form/InputField';
 import { LatestContributor } from '@/components/LatestContributor';
 import { formatDateTypeNumber } from '@/utils/format';
 
-const dataListBlock = [
-  { title: 'Clothes', content: 'Hologram jacket', rate: '6% have this collectibles' },
-  { title: 'Mounth', content: 'Large smile', rate: '10% have this collectibles' },
-  { title: 'Eyes', content: 'Angry Eyes', rate: '10% have this collectibles' },
-  { title: 'Glasses', content: 'Pixel glasses', rate: '10% have this collectibles' },
-  { title: 'Head', content: 'Undercut', rate: '10% have this collectibles' },
-  { title: 'Hat', content: 'Fez hat', rate: '10% have this collectibles' },
-  { title: 'Jewelry', content: 'Silver stud', rate: '10% have this collectibles' },
-];
+import { gql, useQuery } from '@apollo/client';
+
+interface ImageAttributes {
+  name: string;
+  rarity: string;
+}
+interface Image {
+  dna: string;
+  name: string;
+  description: string;
+  image: string;
+  edition: number;
+  data: number;
+  attributes: ImageAttributes[];
+}
+
+const campaignId = '61a141e81998d34796f65639';
+const QueryMintCampaign = gql`
+  query getCampaign($id: String!) {
+    campaign(id: $id) {
+      _id
+      name
+      description
+      goal
+      startedAt
+      endedAt
+      coverImgUrl
+      thumbnailImgUrl
+      type
+      createdAt
+      updatedAt
+      userId
+      wallets {
+        _id
+        address
+      }
+      nftMetadata {
+        _id
+        campaignId
+        ipfsBaseUrl
+        nftUrls
+      }
+    }
+  }
+`;
 
 const renderTable = () => {
   return (
@@ -176,6 +213,38 @@ const renderTable = () => {
 };
 
 export const Mint = () => {
+  const [imgList, setImgList] = useState<Image[]>([]);
+  const [currentActiveImg, setCurrentActiveImg] = useState<number>(0);
+
+  const {
+    data: campaignData,
+    loading,
+    error,
+  } = useQuery(QueryMintCampaign, {
+    variables: { id: campaignId },
+  });
+
+  useEffect(() => {
+    if (campaignData) {
+      const getImg = campaignData.campaign.nftMetadata.nftUrls.map(async (url: string) => {
+        return await fetch(url).then((response) => response.json());
+      });
+      Promise.all(getImg).then((img) => {
+        setImgList(img as Image[]);
+      });
+    }
+  }, [campaignData]);
+
+  const attributesBlocks =
+    imgList.length > 0
+      ? imgList[currentActiveImg].attributes.map((item) => {
+          return { title: '', content: item.name, rate: item.rarity };
+        })
+      : [];
+
+  if (loading) return <Spinner />;
+  if (error) return <p>Oh no... {error.message}</p>;
+
   return (
     <>
       <div className="relative bg-main-pattern">
@@ -186,11 +255,19 @@ export const Mint = () => {
           navigation={false}
           enableScroll={false}
           clickable={true}
-          active={0}
+          active={currentActiveImg}
         >
-          <img src={nftItemPNG} alt="" className="m-auto height-full" />
-          <img src={nftItemBuffaloPNG} alt="" className="m-auto height-full" />
-          <img src={donatePNG} alt="" className="m-auto height-full" />
+          {imgList.map((img) => (
+            <img
+              onClick={() => {
+                setCurrentActiveImg(img.edition - 1);
+              }}
+              key={img.edition}
+              src={img.image}
+              alt=""
+              className="m-auto height-full"
+            />
+          ))}
         </Coverflow>
       </div>
 
@@ -240,7 +317,7 @@ export const Mint = () => {
       </div>
 
       <div className="container my-10 w-4/5 m-auto">
-        <BlockLists listBlock={dataListBlock} />
+        <BlockLists listBlock={attributesBlocks} />
       </div>
 
       <div className="mt-28 mb-10">
