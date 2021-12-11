@@ -6,6 +6,7 @@ import {
 import {
   Args,
   Float,
+  Int,
   Mutation,
   Parent,
   Query,
@@ -19,7 +20,7 @@ import {
   PaginatedTransaction,
   WalletFilterDto,
 } from "../dtos";
-import { Campaign, Transaction, User, Wallet } from "../entities";
+import { Campaign, Transaction, User, Wallet, WalletBasic } from "../entities";
 
 type entryType = [key: string, value: string | number | boolean];
 
@@ -33,6 +34,29 @@ function buildFilterOptions(
   });
 
   return filterOptions;
+}
+
+@Resolver(() => WalletBasic)
+export class WalletBasicResolver {
+  @ResolveField(() => Float)
+  async balance(@Parent() wallet: Wallet): Promise<number> {
+    const transactions = await getMongoRepository(Transaction).find({
+      walletId: wallet._id.toString(),
+    });
+
+    return transactions.reduce((acc, cur) => {
+      return acc + cur.amount;
+    }, 0);
+  }
+
+  @ResolveField(() => Int)
+  async numberOfTransaction(@Parent() wallet): Promise<number> {
+    const [_, count] = await getMongoRepository(Transaction).findAndCount({
+      walletId: wallet._id.toString(),
+    });
+
+    return count;
+  }
 }
 
 @Resolver(() => Wallet)
