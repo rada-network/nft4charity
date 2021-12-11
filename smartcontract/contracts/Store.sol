@@ -15,13 +15,13 @@ contract Store is Ownable, ReentrancyGuard {
     uint public _campaign_count;
     mapping(address => bool) private whitelist; // user in whitelist can create campaign
     mapping(uint => Campaign) public campaigns;
-    
+
     event campaignCreated(uint _campaignId, address _creator, address _wallet);
 
     modifier onlyWhitelister() {
         require(whitelist[msg.sender] == true, "Ownable: caller is not in the whitelist");
         _;
-    }    
+    }
     modifier onlyOwnerOfCampaign(uint _campaignId) {
         require(msg.sender == campaigns[_campaignId].creator, "You are not owner of campaign");
         _;
@@ -42,11 +42,11 @@ contract Store is Ownable, ReentrancyGuard {
     // campaign methods
     function createCampaign(string memory _name, address _token, uint _slot, uint _price) public onlyWhitelister {
         CampaignNFT newCampaign = new CampaignNFT(msg.sender, _name, _token, _slot, _price);
-        _campaign_count += 1; 
+        _campaign_count += 1;
         campaigns[_campaign_count] = Campaign(msg.sender, address(newCampaign));
         emit campaignCreated(_campaign_count, msg.sender, address(newCampaign));
     }
-    
+
 
 }
 
