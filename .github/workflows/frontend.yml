@@ -5,28 +5,26 @@ name: build frontend
 
 on:
   push:
-    branches: [ develop ]
+    branches: [develop]
     paths:
       - frontend/**
       - smartcontract/**
       - .github/workflows/frontend.yml
   pull_request:
-    branches: [ develop ]
+    branches: [develop]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
-      - run: npm install -g yarn
-      - run: npm install -g rimraf
-      - run: npm install -g @craco/craco
-      - run: yarn install
-      - run: yarn build
+        with:
+          node-version: "14.17"
+      - name: Build code
         working-directory: ./frontend
+        run: |
+          npm install -g yarn
+          npm install -g @craco/craco
+          yarn install
+          yarn build
