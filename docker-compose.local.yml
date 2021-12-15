@@ -1,29 +1,75 @@
 version: "3.8"
 
+volumes:
+  nft-charity-mongodb:
+
+networks:
+  nft-charity:
+    driver: bridge
+
 services:
   backend:
     container_name: backend
     restart: always
+    env_file:
+      - ./backend/.env.dev
     build:
       context: backend
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    environment:
-      - MACHINE_NAME=kimworkbook
-      - MONGODB_URL=mongodb://mongodb
     volumes:
       - ./backend:/app
       - /app/node_modules
+    depends_on:
+      - mongodb
+    networks:
+      - nft-charity
+
+  mongodb:
+    container_name: mongodb
+    image : mongo
+    restart: always
+    environment:
+    - PUID=1000
+    - PGID=1000
+    volumes:
+    - nft-charity-mongodb:/data/db
+    ports:
+    - 27017:27017
+    networks:
+      - nft-charity
+
+  frontend:
+    container_name: frontend
+    restart: always
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8089:80"
+    env_file:
+      - ./frontend/.env.dev
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - nft-charity
 
   cronjob:
     container_name: cronjob
     restart: always
     build:
       context: workers
-      dockerfile: Dockerfile
+      dockerfile: local.Dockerfile
     environment:
       - CRON_CHECK_INTERVAL_IN_MINUTES=5
       - MONGODB_URL=MONGODB_URL
       - ETHER_SCAN_API_BASE_URL=ETHER_SCAN_API_BASE_URL
       - ETHER_SCAN_API_KEY=ETHER_SCAN_API_KEY
+    depends_on:
+      - backend
+    networks:
+      - nft-charity
