@@ -1,2 +1,7 @@
-export const API_URL = process.env.REACT_APP_API_URL as string;
-export const JWT_SECRET = '123456' as string;
+const config = {
+  REST_URL: process.env.REACT_APP_REST_URL,
+  GRAPHQL_URL: process.env.REACT_APP_GRAPHQL_URL,
+  JWT_SECRET: process.env.REACT_APP_JWT_SECRET,
+};
+
+export default config;
