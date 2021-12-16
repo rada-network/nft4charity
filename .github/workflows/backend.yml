@@ -5,27 +5,27 @@ name: build backend
 
 on:
   push:
-    branches: [ develop ]
+    branches: [develop]
     paths:
       - backend/**
       - smartcontract/**
       - .github/workflows/backend.yml
   pull_request:
-    branches: [ develop ]
+    branches: [develop]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
-      - run: npm install -g yarn
-      - run: npm install -g rimraf
-      - run: npm install -g @nestjs/cli
-      - run: yarn build
+        with:
+          node-version: "14.17"
+      - name: Build code
         working-directory: ./backend
-      
+        run: |
+          npm install -g yarn
+          npm install -g rimraf
+          npm install -g @nestjs/cli
+          yarn install
+          yarn build
