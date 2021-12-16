@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 
 COPY ./package.json ./yarn.lock ./
 RUN apk --no-cache add git
-RUN yarn install --slient
+RUN yarn install --slient --network-timeout 100000
 
 COPY ./src ./src
 COPY ./public ./public

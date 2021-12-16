@@ -43,7 +43,11 @@ $ run_local.sh
 
 ### To run local, we need to have .env file
 
-Create .env file in `backend` folder
+Update `.env.dev` file in `backend` folder
+
+Setup the memory of you docker machine to 4GB (like image below).
+
+![No pic](/images/docker.png)
 
 ### To run smart contract tests, go to smartcontracts folder and run
 
