@@ -20,7 +20,7 @@ import {
   RolesGuard,
 } from "../common";
 import { CreateUserDto, UpdateUserDto } from "../dtos";
-import { Campaign, User, Wallet, WalletBasic } from "../entities";
+import { Campaign, User, Wallet, WalletBasic, Image } from "../entities";
 
 @Resolver(() => User)
 @UseGuards(AuthGuard, RolesGuard)
@@ -70,6 +70,14 @@ export class UserResolver {
       userId: user._id.toString(),
     });
     return wallets.map((w) => ({ _id: w._id.toString(), address: w.address }));
+  }
+
+  @ResolveField(() => [Image])
+  async images(@Parent() user: User): Promise<Image[]> {
+    const images = await getMongoRepository(Image).find({
+      userId: user._id.toString(),
+    });
+    return images;
   }
 
   @ResolveField(() => [String])

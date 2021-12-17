@@ -4,3 +4,4 @@ export * from "./partner.entity";
 export * from "./transaction.entity";
 export * from "./user.entity";
 export * from "./wallet.entity";
+export * from "./image.entity";

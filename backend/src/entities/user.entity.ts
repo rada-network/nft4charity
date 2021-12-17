@@ -1,7 +1,6 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { Expose, plainToClass } from "class-transformer";
 import { Column, Entity, ObjectID, ObjectIdColumn } from "typeorm";
-import { ObjectID as ObjectIDConstructor } from "mongodb";
 import { Role } from "../common";
 
 @Entity({ name: "users" })
@@ -26,6 +25,41 @@ export class User {
   @Expose()
   @Field()
   email: string;
+
+  @Column()
+  @Expose()
+  @Field({ nullable: true })
+  description?: string;
+
+  @Column()
+  @Expose()
+  @Field({ nullable: true })
+  facebookUrl?: string;
+
+  @Column()
+  @Expose()
+  @Field({ nullable: true })
+  tiwtterUrl?: string;
+
+  @Column()
+  @Expose()
+  @Field({ nullable: true })
+  youtubeUrl?: string;
+
+  @Column()
+  @Expose()
+  @Field({ nullable: true })
+  instagramUrl?: string;
+
+  @Column()
+  @Expose()
+  @Field({ nullable: true })
+  frontIdentifierUrl?: string;
+
+  @Column()
+  @Expose()
+  @Field({ nullable: true })
+  backIdentifierUrl?: string;
 
   @Column({ type: "bool", default: false })
   @Expose()
