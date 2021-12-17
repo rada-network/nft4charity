@@ -14,6 +14,7 @@ import { SelectField } from '@/components/Form';
 import { InputField } from '@/components/Form/InputField';
 import { LatestContributor } from '@/components/LatestContributor';
 import { formatDate, formatDateTypeNumber } from '@/utils/format';
+import donateDistributorPNG from '@/assets/images/donateDistributor.png';
 
 const CampaignByQuery = gql`
   query Campaign($id: String!) {
@@ -104,7 +105,7 @@ export const Donate = () => {
   if (loading) return <Spinner />;
   if (error) return <p>Oh no... {error.message}</p>;
 
-  const renderTable = () => {
+  const renderRecentDonationsTable = () => {
     return (
       <Table
         isShowHeader={false}
@@ -141,6 +142,109 @@ export const Donate = () => {
             field: 'description',
             Cell({ entry: { description } }) {
               return <p className="font-Open italic text-sm">{description}</p>;
+            },
+          },
+        ]}
+      />
+    );
+  };
+
+  const renderDistributorsTable = () => {
+    return (
+      <Table
+        isShowHeader={true}
+        data={[
+          {
+            id: '1',
+            distributor: {
+              name: 'Team A',
+              address: '0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee',
+              image: donateDistributorPNG,
+            },
+            budget: '90%',
+            compled: '1000 USDT',
+            notes: 'Thanks for great action!',
+          },
+          {
+            id: '2',
+            distributor: {
+              name: 'Team A',
+              address: '0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee',
+              image: donateDistributorPNG,
+            },
+            budget: '90%',
+            compled: '1000 USDT',
+            notes: 'Thanks for great action!',
+          },
+          {
+            id: '3',
+            distributor: {
+              name: 'Team A',
+              address: '0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee',
+              image: donateDistributorPNG,
+            },
+            budget: '90%',
+            compled: '1000 USDT',
+            notes: 'Thanks for great action!',
+          },
+          {
+            id: '4',
+            distributor: {
+              name: 'Team A',
+              address: '0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee',
+              image: donateDistributorPNG,
+            },
+            budget: '90%',
+            compled: '1000 USDT',
+            notes: 'Thanks for great action!',
+          },
+          {
+            id: '5',
+            distributor: {
+              name: 'Team A',
+              address: '0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee',
+              image: donateDistributorPNG,
+            },
+            budget: '90%',
+            compled: '1000 USDT',
+            notes: 'Thanks for great action!',
+          },
+        ]}
+        columns={[
+          {
+            title: 'Distributor',
+            field: 'distributor',
+            Cell({ entry: { distributor } }) {
+              return (
+                <div className="flex space-x-4">
+                  <img src={distributor.image} />
+                  <div className="flex flex-col space-y-2">
+                    <span className="font-bold">{distributor.name}</span>
+                    <span>{distributor.address}</span>
+                  </div>
+                </div>
+              );
+            },
+          },
+          {
+            title: 'Budget',
+            field: 'budget',
+            Cell({ entry: { budget } }) {
+              return <span className="font-bold">{budget}</span>;
+            },
+          },
+          {
+            title: 'Compled',
+            field: 'compled',
+            Cell({ entry: { compled } }) {
+              return <span className="font-bold">{compled}</span>;
+            },
+          },
+          {
+            title: 'Notes',
+            field: 'notes',
+            Cell({ entry: { notes } }) {
+              return <span className="font-Open italic text-sm">{notes}</span>;
             },
           },
         ]}
@@ -227,7 +331,8 @@ export const Donate = () => {
 
       <div className="w-4/5 m-auto">
         <LatestContributor />
-        <div className="mt-10">{renderTable()}</div>
+        <div className="mt-10">{renderRecentDonationsTable()}</div>
+        <div className="mt-10">{renderDistributorsTable()}</div>
       </div>
     </>
   );

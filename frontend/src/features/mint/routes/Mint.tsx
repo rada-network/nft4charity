@@ -25,7 +25,7 @@ const dataListBlock = [
 const renderTable = () => {
   return (
     <Table
-      isShowHeader={false}
+      isShowHeader={true}
       data={[
         {
           id: '1',
@@ -142,7 +142,14 @@ const renderTable = () => {
       ]}
       columns={[
         {
-          title: 'Wallet Address',
+          title: 'STT',
+          field: 'id',
+          Cell({ entry: { id } }) {
+            return <span className="font-Open text-sm font-semibold">{id}</span>;
+          },
+        },
+        {
+          title: 'Distributor',
           field: 'wallet_address',
         },
         {
