@@ -1,0 +1,25 @@
+{
+  "name": "girl 2",
+  "description": "a girl with orange jacket",
+  "image": null,
+  "date": null,
+  "attributes": [
+    {
+      "trait_type": "hair",
+      "value": "long"
+    },
+    {
+      "trait_type": "hair_color",
+      "value": "green"
+    },
+
+    {
+      "trait_type": "accessories",
+      "value": "jacket"
+    },
+    {
+      "trait_type": "shoes_color",
+      "value": "orange"
+    }
+  ]
+}

@@ -7,9 +7,16 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
-import CreateCampaignDto from "src/dtos/campaigns/createCampaign.dto";
-import { Campaign, User, Wallet } from "src/entities";
+import { CampaignType } from "src/common";
 import { getMongoRepository } from "typeorm";
+import { CreateCampaignDto } from "../dtos";
+import {
+  Campaign,
+  CampaignNftMetaData,
+  User,
+  Wallet,
+  WalletBasic,
+} from "../entities";
 
 @Resolver(() => Campaign)
 export class CampaignResolver {
@@ -29,20 +36,24 @@ export class CampaignResolver {
     return campaign;
   }
 
-  @ResolveField(() => User)
-  async user(@Parent() campaign: Campaign): Promise<User> {
-    const user = await getMongoRepository(User).findOne(campaign.userId);
+  @ResolveField(() => [WalletBasic])
+  async wallets(@Parent() campaign: Campaign): Promise<WalletBasic[]> {
+    const wallets = await getMongoRepository(Wallet).find({
+      campaignId: campaign._id.toString(),
+    });
 
-    if (!user) {
-      throw new NotFoundException("User not found!");
-    }
-
-    return user;
+    return wallets.map((w) => ({ _id: w._id.toString(), address: w.address }));
   }
 
-  @ResolveField(() => [Wallet])
-  async wallet(@Parent() campaign: Campaign): Promise<Wallet[]> {
-    return await getMongoRepository(Wallet).find({
+  @ResolveField(() => CampaignNftMetaData, { nullable: true })
+  async nftMetadata(
+    @Parent() campaign: Campaign,
+  ): Promise<CampaignNftMetaData | null> {
+    if (campaign.type !== CampaignType.NFT) {
+      return null;
+    }
+
+    return await getMongoRepository(CampaignNftMetaData).findOne({
       campaignId: campaign._id.toString(),
     });
   }

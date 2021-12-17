@@ -1,27 +1,59 @@
+import { gql, useMutation } from '@apollo/client';
 import { PencilIcon } from '@heroicons/react/solid';
+import { useState } from 'react';
 import * as z from 'zod';
+
+import { UpdateProfileDTO } from '../api/updateProfile';
 
 import { Button } from '@/components/Elements';
 import { Form, FormDrawer, InputField } from '@/components/Form';
-import { TextAreaField } from '@/components/Form/TextareaField';
 import { useAuth } from '@/lib/auth';
-
-import { UpdateProfileDTO, useUpdateProfile } from '../api/updateProfile';
 
 const schema = z.object({
   email: z.string().min(1, 'Required'),
   firstName: z.string().min(1, 'Required'),
   lastName: z.string().min(1, 'Required'),
-  bio: z.string(),
+  password: z.string().min(8, 'Required'),
 });
+
+const CreateUser = gql`
+  mutation ($user: CreateUserDto!) {
+    createUser(user: $user) {
+      firstName
+      lastName
+      email
+      password
+    }
+  }
+`;
 
 export const UpdateProfile = () => {
   const { user } = useAuth();
-  const updateProfileMutation = useUpdateProfile();
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [createUser] = useMutation(CreateUser);
+  const handleSubmit = (values: any) => {
+    setIsLoading(true);
+
+    createUser({
+      variables: {
+        user: {
+          firstName: values.firstName,
+          lastName: values.lastName,
+          email: values.email,
+          password: values.password,
+        },
+      },
+    });
+
+    setIsLoading(false);
+    setIsSuccess(true);
+  };
 
   return (
     <FormDrawer
-      isDone={updateProfileMutation.isSuccess}
+      isDone={isSuccess}
       triggerButton={
         <Button startIcon={<PencilIcon className="h-4 w-4" />} size="sm">
           Update Profile
@@ -29,27 +61,22 @@ export const UpdateProfile = () => {
       }
       title="Update Profile"
       submitButton={
-        <Button
-          form="update-profile"
-          type="submit"
-          size="sm"
-          isLoading={updateProfileMutation.isLoading}
-        >
+        <Button form="update-profile" type="submit" size="sm" isLoading={isLoading}>
           Submit
         </Button>
       }
     >
       <Form<UpdateProfileDTO['data'], typeof schema>
         id="update-profile"
-        onSubmit={async (values) => {
-          await updateProfileMutation.mutateAsync({ data: values });
+        onSubmit={(values) => {
+          handleSubmit(values);
         }}
         options={{
           defaultValues: {
             firstName: user?.firstName,
             lastName: user?.lastName,
             email: user?.email,
-            bio: user?.bio,
+            password: user?.password,
           },
         }}
         schema={schema}
@@ -72,11 +99,11 @@ export const UpdateProfile = () => {
               error={formState.errors['email']}
               registration={register('email')}
             />
-
-            <TextAreaField
-              label="Bio"
-              error={formState.errors['bio']}
-              registration={register('bio')}
+            <InputField
+              label="Password"
+              type="password"
+              error={formState.errors['password']}
+              registration={register('password')}
             />
           </>
         )}

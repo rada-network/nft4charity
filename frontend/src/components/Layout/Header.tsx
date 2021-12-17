@@ -1,14 +1,14 @@
 import * as React from 'react';
 
+import { Link } from '../Elements/Link/Link';
+
 import homeSVG from '@/assets/icons/home.svg';
 import languageSVG from '@/assets/icons/language.svg';
 import walletSVG from '@/assets/icons/wallet.svg';
 import useWeb3Modal from '@/hooks/useWeb3Modal';
 
-import { Link } from '../Elements/Link/Link';
-
 export const Header = () => {
-  const [provider, loadWeb3Modal, logoutOfWeb3Modal] = useWeb3Modal();
+  const [provider, loadWeb3Modal, logoutOfWeb3Modal, setSignedInAddress, balance] = useWeb3Modal();
   return (
     <>
       <div className="max-width mx-auto">
@@ -70,10 +70,10 @@ export const Header = () => {
             <li className="mr-10 text-sm lg:text-xl">
               <Link to={`/mint`}>Mint</Link>
             </li>
-            <li className="mr-10 text-sm lg:text-xl">Certificate</li>
           </ul>
           <ul className="flex items-center">
             <li className="flex">
+              <span className="px-5 my-auto">{balance}</span>
               <button
                 className="btn flex bg-button-purple p-2 rounded-3xl"
                 onClick={() => {
@@ -86,7 +86,7 @@ export const Header = () => {
               >
                 <img className="h-7 w-auto" src={walletSVG} alt="wallet icon" />
                 <p className="font-bold text-sm lg:text-xl md:m-auto text-white ml-1">
-                  {!provider ? 'Connect' : 'Disconnect'}
+                  {!provider ? 'Connect' : setSignedInAddress}
                 </p>
               </button>
             </li>

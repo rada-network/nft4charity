@@ -1,18 +1,14 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { Expose } from "class-transformer";
-import {
-  IsBoolean,
-  IsEthereumAddress,
-  IsOptional,
-  IsString,
-} from "class-validator";
+import { IsEmail, IsOptional, IsString } from "class-validator";
 
 @InputType()
 export class CreateWalletDto {
   @Expose()
-  @Field()
-  @IsEthereumAddress()
-  address: string;
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  campaignId?: string;
 
   @Expose()
   @Field({ nullable: true })
@@ -22,23 +18,11 @@ export class CreateWalletDto {
 
   @Expose()
   @Field()
-  @IsString() // TODO: does this decorator check empty string
-  platform: string;
-
-  @Expose()
-  @Field({ nullable: true })
-  @IsBoolean()
-  @IsOptional()
-  isVerified?: boolean;
+  @IsEmail()
+  userEmail: string;
 
   @Expose()
   @Field()
-  @IsString()
-  userId: string;
-
-  @Expose()
-  @Field({ nullable: true })
-  @IsString()
-  @IsOptional()
-  campaignId?: string;
+  @IsString() // TODO: does this decorator check empty string
+  platform: string;
 }

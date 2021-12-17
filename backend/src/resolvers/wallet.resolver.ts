@@ -1,21 +1,26 @@
-import { NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  NotFoundException,
+  UseGuards,
+} from "@nestjs/common";
 import {
   Args,
   Float,
+  Int,
   Mutation,
   Parent,
   Query,
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
-import { PaginationParamsDto } from "src/common";
+import { FindManyOptions, getMongoRepository } from "typeorm";
+import { AuthGuard, CurrentUserAddress, PaginationParamsDto } from "../common";
 import {
   CreateWalletDto,
   PaginatedTransaction,
   WalletFilterDto,
-} from "src/dtos";
-import { Campaign, Transaction, User, Wallet } from "src/entities";
-import { FindManyOptions, getMongoRepository } from "typeorm";
+} from "../dtos";
+import { Campaign, Transaction, User, Wallet, WalletBasic } from "../entities";
 
 type entryType = [key: string, value: string | number | boolean];
 
@@ -31,16 +36,37 @@ function buildFilterOptions(
   return filterOptions;
 }
 
+@Resolver(() => WalletBasic)
+export class WalletBasicResolver {
+  @ResolveField(() => Float)
+  async balance(@Parent() wallet: Wallet): Promise<number> {
+    const transactions = await getMongoRepository(Transaction).find({
+      walletId: wallet._id.toString(),
+    });
+
+    return transactions.reduce((acc, cur) => {
+      return acc + cur.amount;
+    }, 0);
+  }
+
+  @ResolveField(() => Int)
+  async numberOfTransaction(@Parent() wallet): Promise<number> {
+    const [_, count] = await getMongoRepository(Transaction).findAndCount({
+      walletId: wallet._id.toString(),
+    });
+
+    return count;
+  }
+}
+
 @Resolver(() => Wallet)
 export class WalletResolver {
   @Query(() => Wallet)
   async wallet(@Args("id") id: string): Promise<Wallet> {
     const wallet = await getMongoRepository(Wallet).findOne(id);
-
     if (!wallet) {
       throw new NotFoundException("Wallet not found.");
     }
-
     return wallet;
   }
 
@@ -72,32 +98,6 @@ export class WalletResolver {
     }, 0);
   }
 
-  @ResolveField(() => User)
-  async user(@Parent() wallet: Wallet): Promise<User> {
-    const user = await getMongoRepository(User).findOne(wallet.userId);
-    if (!user) {
-      throw new NotFoundException("User not found.");
-    }
-
-    return user;
-  }
-
-  @ResolveField(() => Campaign, { nullable: true })
-  async campaign(@Parent() wallet: Wallet): Promise<Campaign | null> {
-    if (!wallet.campaignId) {
-      return null;
-    }
-    const campaign = await getMongoRepository(Campaign).findOne(
-      wallet.campaignId,
-    );
-
-    if (!campaign) {
-      throw new NotFoundException("Campaign not found.");
-    }
-
-    return campaign;
-  }
-
   @ResolveField(() => PaginatedTransaction)
   async transaction(
     @Parent() wallet: Wallet,
@@ -127,29 +127,44 @@ export class WalletResolver {
     return res;
   }
 
+  @UseGuards(AuthGuard)
   @Mutation(() => Wallet)
-  async createWallet(@Args("wallet") walletInput: CreateWalletDto) {
-    const { userId, campaignId } = walletInput;
-
-    const user = await getMongoRepository(User).findOne(userId);
+  async createWallet(
+    @Args("wallet") createWalletDto: CreateWalletDto,
+    @CurrentUserAddress() userAddress: string,
+  ) {
+    const { userEmail, ...createWalletInput } = createWalletDto;
+    const user = await getMongoRepository(User).findOne({ email: userEmail });
     if (!user) {
-      throw new NotFoundException("User not found.");
+      throw new NotFoundException("Email not registered.");
     }
 
-    if (campaignId) {
-      const campaign = await getMongoRepository(Campaign).findOne(campaignId);
+    if (createWalletDto.campaignId) {
+      const campaign = await getMongoRepository(Campaign).findOne(
+        createWalletDto.campaignId,
+      );
       if (!campaign) {
         throw new NotFoundException("Campaign not found.");
       }
     }
 
+    const wallet = await getMongoRepository(Wallet).findOne({
+      address: userAddress,
+    });
+    if (wallet) {
+      throw new BadRequestException("Wallet already exist.");
+    }
+
     const now = new Date();
-    const wallet = await getMongoRepository(Wallet).create({
-      ...walletInput,
+    const newWallet = getMongoRepository(Wallet).create({
+      ...createWalletInput,
+      address: userAddress,
       createdAt: now,
+      isVerified: false,
       updatedAt: now,
+      userId: user._id.toString(),
     });
 
-    return getMongoRepository(Wallet).save(wallet);
+    return getMongoRepository(Wallet).save(newWallet);
   }
 }

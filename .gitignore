@@ -50,11 +50,14 @@ cache/
 # build json SC
 smartcontract/build/*
 
-# yarn.lock
 yarn.lock
-admin/yarn.lock
-thangle/yarn.lock
+*/yarn.lock
+*/package-lock.json
 
 *.tmp.yml
 
 *.env
+
+generator/layers/*
+generator/outputs/metadata/*
+generator/outputs/punks/*
