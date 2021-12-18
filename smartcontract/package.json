@@ -1,23 +1,34 @@
 {
-  "name": "RADA",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "compile": "truffle compile",
-    "migrate": "truffle migrate --network bscTestnet",
-    "verify": "truffle run verify Name@Address --network bscTestnet"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@openzeppelin/contracts": "^4.3.2",
-    "@truffle/hdwallet-provider": "^1.5.0",
-    "chai": "^4.3.4",
-    "chai-as-promised": "^7.1.1",
-    "mocha": "^9.1.3"
-  },
-  "devDependencies": {
-    "truffle-plugin-verify": "^0.5.15"
-  }
+    "name": "RADA",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "compile": "truffle compile",
+        "migrate": "truffle migrate --network bscTestnet",
+        "verify": "truffle run verify Name@Address --network bscTestnet",
+        "generate-types": "typechain --target=truffle-v5 'build/contracts/*.json'",
+        "postinstall": "truffle compile && yarn generate-types"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@openzeppelin/contracts": "^4.3.2",
+        "@truffle/hdwallet-provider": "^1.5.0",
+        "@typechain/truffle-v5": "^6.0.0",
+        "@types/bn.js": "^4.11.6",
+        "@types/chai": "^4.2.11",
+        "@types/mocha": "^7.0.2",
+        "@types/web3": "^1.2.2",
+        "chai": "^4.3.4",
+        "chai-as-promised": "^7.1.1",
+        "ganache": "^6.4.5",
+        "mocha": "^9.1.3",
+        "truffle": "^5.4.24",
+        "typechain": "^6.0.5",
+        "typescript": "^4.5.4"
+    },
+    "devDependencies": {
+        "truffle-plugin-verify": "^0.5.15"
+    }
 }
