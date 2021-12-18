@@ -3,12 +3,12 @@ FROM node:14-alpine
 LABEL maintainer="nft4charity.dev@rada.io"
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY workers/package*.json ./
 
-COPY src/campaign.js ./
-COPY src/cronjob.js ./
-COPY src/transaction.js ./
-COPY src/wallet.js ./
+COPY workers/src/campaign.js ./
+COPY workers/src/cronjob.js ./
+COPY workers/src/transaction.js ./
+COPY workers/src/wallet.js ./
 
 RUN npm install
 

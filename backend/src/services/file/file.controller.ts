@@ -3,13 +3,13 @@ import {
   Get,
   HttpException,
   HttpStatus,
-  Request,
   Query,
+  Request,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { ApiCreatedResponse, ApiQuery } from "@nestjs/swagger";
 import { extname } from "path";
-import { ResponsePutPresignedUrlDto } from "./dtos/files/getFileUrl.dto";
+import { ResponsePutPresignedUrlDto } from "src/dtos";
 import { FileService } from "./file.service";
 
 @Controller()

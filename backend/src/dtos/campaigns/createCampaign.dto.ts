@@ -9,7 +9,7 @@ import {
 } from "class-validator";
 
 @InputType()
-export default class CreateCampaignDto {
+export class CreateCampaignDto {
   @Field()
   @IsNotEmpty()
   @IsString()

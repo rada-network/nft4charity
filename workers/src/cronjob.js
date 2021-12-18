@@ -35,6 +35,12 @@ cron.schedule(`*/${cronCheckInterval} * * * *`, async () => {
   console.warn(`Cron job every ${cronCheckInterval} minutes`);
   try {
     const wallets = await getWallets();
+    if (wallets == null)
+    {
+      console.warn(`There is no wallets available. Go sleep for another ${cronCheckInterval} minutes`)
+      return;
+    }
+      
     const walletAddress = wallets.map((w) => w.address);
     let dict = wallets.reduce((a, x) => ({ ...a, [x.address]: x._id }), {});
     if (walletAddress.length > 0) {
@@ -133,3 +139,6 @@ function isValid(item) {
 }
 
 console.warn("start cronjob");
+console.info(`ETHER_SCAN_API_BASE_URL is ${ETHER_SCAN_API_BASE_URL}`)
+console.info(`ETHER_SCAN_API_KEY is ${ETHER_SCAN_API_KEY}`)
+console.info(`MONGODB_URL is ${MONGODB_URL}`)

@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 
+import { WalletFilter } from '../types/index';
+
 import contentCopySVG from '@/assets/icons/content_copy.svg';
 import cryptoYellow from '@/assets/icons/cryptoYellow.svg';
 import qrCodeSVG from '@/assets/icons/qrCode.svg';
@@ -12,8 +14,6 @@ import { SelectField } from '@/components/Form';
 import { InputField } from '@/components/Form/InputField';
 import { LatestContributor } from '@/components/LatestContributor';
 import { formatDate, formatDateTypeNumber } from '@/utils/format';
-
-import { WalletFilter } from '../types/index';
 
 const CampaignByQuery = gql`
   query Campaign($id: String!) {

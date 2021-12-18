@@ -1,0 +1,25 @@
+{
+  "name": "boy 3",
+  "description": "a boy with green hair",
+  "image": null,
+  "date": null,
+  "attributes": [
+    {
+      "trait_type": "hair",
+      "value": "short"
+    },
+    {
+      "trait_type": "hair_color",
+      "value": "green"
+    },
+
+    {
+      "trait_type": "accessories",
+      "value": "jacket"
+    },
+    {
+      "trait_type": "shoes_color",
+      "value": "orange"
+    }
+  ]
+}

@@ -43,15 +43,6 @@ module.exports = {
         ],
         'linebreak-style': ['error', 'unix'],
         'react/prop-types': 'off',
-
-        'import/order': [
-          'error',
-          {
-            groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object'],
-            'newlines-between': 'always',
-            alphabetize: { order: 'asc', caseInsensitive: true },
-          },
-        ],
         'import/default': 'off',
         'import/no-named-as-default-member': 'off',
         'import/no-named-as-default': 'off',

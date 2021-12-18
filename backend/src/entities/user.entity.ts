@@ -1,6 +1,8 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { Expose, plainToClass } from "class-transformer";
 import { Column, Entity, ObjectID, ObjectIdColumn } from "typeorm";
+import { ObjectID as ObjectIDConstructor } from "mongodb";
+import { Role } from "../common";
 
 @Entity({ name: "users" })
 @ObjectType()
@@ -25,10 +27,20 @@ export class User {
   @Field()
   email: string;
 
-  @Column()
+  @Column({ type: "bool", default: false })
   @Expose()
-  @Field()
-  password: string;
+  @Field(() => Boolean, { defaultValue: false })
+  isEmailVerified = false;
+
+  @Column({ type: "datetime", default: null, nullable: true })
+  @Expose()
+  @Field({ defaultValue: null, nullable: true })
+  emailVerifiedAt: Date = null;
+
+  @Column({ type: "enum", enum: Role, array: true, default: () => [Role.USER] })
+  @Expose()
+  @Field(() => [Role], { defaultValue: [Role.USER] })
+  roles: Role[];
 
   @Column()
   @Expose()
@@ -48,6 +60,7 @@ export class User {
       }),
     );
 
+    this.roles = this.roles || [Role.USER];
     this.createdAt = this.createdAt || new Date();
     this.updatedAt = new Date();
   }
