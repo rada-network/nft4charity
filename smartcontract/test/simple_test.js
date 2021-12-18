@@ -40,24 +40,35 @@ contract('Store', (accounts) => {
   describe('createcampaign', async () => {
     // Only whitelister can create campaign, 
     it('create successfully', async () => {
-      await store.createCampaign("FIRSTCAMPAIGN", 1, "https://ipfs/api/{id}", 10, {"from": accounts[1]})
+      await store.createCampaign("FIRSTCAMPAIGN", 1, "https://ipfs.moralis.io:2053/ipfs/QmNnQ2WwSMpdjtD5xvDXUtKqpP9raDcanPBqeXwxXjFWZa/metadata/", 10, {"from": accounts[1]})
       const thiscampaign = await store.campaigns(1);
       console.log("Creator: ", thiscampaign.creator)
       console.log("Wallet: ", thiscampaign.wallet)
-  
+      
+      
       campaign1address = thiscampaign.wallet
 
     })
     // Donor transfer token to Campaign's Wallet and mint NFT  
     it('donate NFT sucessfully', async () => {
       const campaign1 = await CampaignNFT.at(campaign1address)
-
+      const accountABalanceB = await web3.eth.getBalance(accounts[2]);
+      const accountCampB = await web3.eth.getBalance(campaign1address);
+      console.log("acc2 (before)",accountABalanceB)
+      console.log("camp1 (before):",accountCampB)
 
       await campaign1.mint(0, 1, {"from":accounts[2], "value": 2}) 
       
       const current = await campaign1.current()
-
+      
       console.log("Current: ", current.toNumber())
+      
+      
+
+      const accountABalanceA = await web3.eth.getBalance(accounts[2]);
+      const accountCampA = await web3.eth.getBalance(campaign1address);
+      console.log("acc2 (after)",accountABalanceA)
+      console.log("camp1 (after):",accountCampA)
       
     })
     // Check NFT of donor
@@ -66,10 +77,14 @@ contract('Store', (accounts) => {
 
       const nft0count2 = await campaign1.balanceOf(accounts[2], 0)
       const nft1count2 = await campaign1.balanceOf(accounts[2], 1)
+      
+      const uuu =  await campaign1.uri(0)
+      console.log("URI nft0", uuu)
 
       console.log("Total NFT0 of acc2: ",nft0count2.toNumber()); 
       console.log("Total NFT1 of acc2 ",nft1count2.toNumber()); 
 
+      
     })
   })
 })
