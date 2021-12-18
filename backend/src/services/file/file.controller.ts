@@ -1,15 +1,24 @@
 import {
+  BadRequestException,
   Controller,
   Get,
   HttpException,
   HttpStatus,
+  Post,
   Query,
   Request,
+  UploadedFiles,
+  UseInterceptors,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { ApiCreatedResponse, ApiQuery } from "@nestjs/swagger";
+import {
+  AnyFilesInterceptor,
+  FilesInterceptor,
+} from "@webundsoehne/nest-fastify-file-upload";
 import { extname } from "path";
 import { ResponsePutPresignedUrlDto } from "src/dtos";
+import { FileField } from ".";
 import { FileService } from "./file.service";
 
 @Controller()
@@ -60,5 +69,15 @@ export class FileController {
   async generateGetPresignedUrl(@Query() { fileName = "" }): Promise<any> {
     const fileNames = fileName.split(",");
     return this.fileService.generateGetPresignedUrls(fileNames);
+  }
+
+  @Post("upload")
+  @UseInterceptors(FilesInterceptor("images"))
+  async upload(@UploadedFiles() files: FileField[]) {
+    return Promise.all(
+      files.map((f) => {
+        return this.fileService.uploadFile(f);
+      }),
+    );
   }
 }
