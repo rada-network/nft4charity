@@ -2,6 +2,7 @@ import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { S3 } from "aws-sdk";
 import { ResponsePutPresignedUrlDto } from "src/dtos";
+import { FileField } from ".";
 
 const PUT_OBJECT = "putObject";
 const GET_OBJECT = "getObject";
@@ -12,9 +13,11 @@ export class FileService {
   private readonly bucket: string;
   private readonly s3: S3;
   private readonly expires: number;
+  private readonly region: string;
+
   constructor(private readonly configService: ConfigService) {
     this.bucket = this.configService.get<string>("AWS_S3_BUCKET", EMPTY_STRING);
-    const region = this.configService.get<string>(
+    this.region = this.configService.get<string>(
       "AWS_S3_REGION",
       "ap-southeast-1",
     );
@@ -30,7 +33,7 @@ export class FileService {
     };
     this.s3 = new S3({
       credentials: credentials,
-      region: region,
+      region: this.region,
     });
     this.expires = this.configService.get<number>(
       "AWS_S3_PUT_PRESIGNED_EXPIRED_AT",
@@ -90,6 +93,38 @@ export class FileService {
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException();
+    }
+  }
+
+  async uploadFile(file: FileField): Promise<S3.ManagedUpload.SendData> {
+    const { originalname } = file;
+
+    return this.s3_upload(file.buffer, originalname, file.mimetype);
+  }
+
+  private async s3_upload(
+    file: Buffer,
+    name: string,
+    mimetype: string,
+  ): Promise<S3.ManagedUpload.SendData> {
+    const params = {
+      Bucket: this.bucket,
+      Key: String(name),
+      Body: file,
+      ACL: "public-read",
+      ContentType: mimetype,
+      ContentDisposition: "inline",
+      CreateBucketConfiguration: {
+        LocationConstraint: this.region,
+      },
+    };
+
+    try {
+      const s3Response = await this.s3.upload(params).promise();
+
+      return s3Response;
+    } catch (e) {
+      console.log(e);
     }
   }
 }

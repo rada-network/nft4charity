@@ -7,6 +7,7 @@ import {
 import { SwaggerModule } from "@nestjs/swagger";
 import { json, urlencoded } from "body-parser";
 import * as cors from "cors";
+import * as multer from "fastify-multer";
 import { OpenAPI, useSofa } from "sofa-api";
 import { AppModule } from "./app.module";
 import { authMiddleware } from "./common";
@@ -20,6 +21,8 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
   );
+
+  app.register(multer.contentParser);
 
   app.use(httpFileLogger);
   app.use(httpConsoleLogger);
