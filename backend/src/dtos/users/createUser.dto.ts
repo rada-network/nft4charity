@@ -1,5 +1,12 @@
-import { Field, InputType, ObjectType } from "@nestjs/graphql";
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { Field, InputType } from "@nestjs/graphql";
+import {
+  IsArray,
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+} from "class-validator";
 
 @InputType()
 export class CreateWalletWithUserDto {
@@ -14,6 +21,16 @@ export class CreateWalletWithUserDto {
 }
 
 @InputType()
+export class ImageDto {
+  @Field()
+  @IsUrl()
+  url: string;
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  name?: string;
+}
+@InputType()
 export class CreateUserDto {
   @Field()
   @IsString()
@@ -26,6 +43,40 @@ export class CreateUserDto {
   @Field()
   @IsEmail()
   email: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  @IsUrl()
+  youtubeUrl?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  @IsUrl()
+  facebookUrl?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  @IsUrl()
+  instagramUrl?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  @IsUrl()
+  twitterUrl?: string;
+
+  @Field(() => [ImageDto], { nullable: true })
+  @IsArray()
+  @IsOptional()
+  images?: ImageDto[];
 
   @Field(() => CreateWalletWithUserDto)
   wallet: CreateWalletWithUserDto;
