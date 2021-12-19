@@ -5,7 +5,7 @@ import { ethers as Ethers } from "ethers";
 import * as request from "supertest";
 import { getConnection } from "typeorm";
 import { authMiddleware } from "../src/common";
-import { AppModule } from "./../src/app.module";
+import { AppModule } from "../src/app.module";
 
 // eslint-disable-next-line
 const Web3Token = require("web3-token");
