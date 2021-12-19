@@ -2,7 +2,8 @@ import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { S3 } from "aws-sdk";
 import { ResponsePutPresignedUrlDto } from "src/dtos";
-import { FileField } from ".";
+import { FileField, PrefixStoragePath } from ".";
+import { v4 as uuid } from "uuid";
 
 const PUT_OBJECT = "putObject";
 const GET_OBJECT = "getObject";
@@ -96,22 +97,25 @@ export class FileService {
     }
   }
 
-  async uploadFile(file: FileField): Promise<S3.ManagedUpload.SendData> {
+  async uploadFile(
+    file: FileField,
+    folder?: PrefixStoragePath,
+  ): Promise<S3.ManagedUpload.SendData> {
     const { originalname } = file;
-
-    return this.s3_upload(file.buffer, originalname, file.mimetype);
+    return this.s3Upload(file.buffer, originalname, file.mimetype, folder);
   }
 
-  private async s3_upload(
+  private async s3Upload(
     file: Buffer,
     name: string,
     mimetype: string,
+    folder?: PrefixStoragePath,
   ): Promise<S3.ManagedUpload.SendData> {
+    const bucket = folder ? `${this.bucket}/${folder}` : this.bucket;
     const params = {
-      Bucket: this.bucket,
-      Key: String(name),
+      Bucket: bucket,
+      Key: `${uuid()}-${String(name)}`,
       Body: file,
-      ACL: "public-read",
       ContentType: mimetype,
       ContentDisposition: "inline",
       CreateBucketConfiguration: {
@@ -121,7 +125,6 @@ export class FileService {
 
     try {
       const s3Response = await this.s3.upload(params).promise();
-
       return s3Response;
     } catch (e) {
       console.log(e);
