@@ -20,6 +20,7 @@ export class CreateWalletWithUserDto {
   currency?: string;
 }
 
+@InputType()
 export class ImageDto {
   @Field()
   @IsUrl()
