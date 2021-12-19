@@ -41,7 +41,7 @@ export const init = async (web3Provider: any) => {
 
   campaignContract = new web3.eth.Contract(
     CampaignNFT.abi as AbiItem[],
-    '0xd77bD5EbCb449790a252444b00bCbe623E097f66'
+    '0x03481D9C1546b8289E9eF93828dFA834a533c4D3'
   );
 
   isInitialized = true;

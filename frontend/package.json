@@ -23,7 +23,7 @@
     "@walletconnect/web3-provider": "^1.6.6",
     "axios": "^0.21.1",
     "clsx": "^1.1.1",
-    "contracts": "file:./src/web3/contracts",
+    "contracts": "file:./contracts",
     "dayjs": "^1.10.6",
     "dompurify": "^2.2.9",
     "ethers": "^5.5.1",

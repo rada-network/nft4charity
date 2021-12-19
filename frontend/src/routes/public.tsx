@@ -4,6 +4,7 @@ import { Outlet } from 'react-router-dom';
 import { Spinner } from '@/components/Elements';
 import { MainLayout } from '@/components/Layout';
 import { Campaigns } from '@/features/campaigns';
+import { Contractor } from '@/features/contractor';
 import { Donate } from '@/features/donate';
 import { Mint } from '@/features/mint';
 import { Landing } from '@/features/misc';
@@ -33,6 +34,7 @@ export const publicRoutes = [
       { path: '/', element: <Landing /> },
       { path: '/donate/:id', element: <Donate /> },
       { path: '/campaigns', element: <Campaigns /> },
+      { path: '/contractor', element: <Contractor /> },
       { path: '/mint', element: <Mint /> },
       { path: '/user/profile', element: <UserProfile /> },
     ],
