@@ -9,7 +9,7 @@ import {
 } from "@nestjs/graphql";
 import { CampaignType } from "src/common";
 import { getMongoRepository } from "typeorm";
-import { CreateCampaignDto } from "../dtos";
+import { CreateCampaignDto, GetCampaignsDto } from "../dtos";
 import {
   Campaign,
   CampaignNftMetaData,
@@ -21,8 +21,25 @@ import {
 @Resolver(() => Campaign)
 export class CampaignResolver {
   @Query(() => [Campaign])
-  async campaigns(): Promise<Campaign[]> {
-    return getMongoRepository(Campaign).find();
+  async campaigns(
+    @Args() getCampaignsDto?: GetCampaignsDto,
+  ): Promise<Campaign[]> {
+    if (!getCampaignsDto || !getCampaignsDto.type) {
+      return getMongoRepository(Campaign).find();
+    }
+
+    if (getCampaignsDto.type === CampaignType.FUND_RAISE) {
+      return getMongoRepository(Campaign).find({
+        where: {
+          $or: [
+            { type: CampaignType.FUND_RAISE },
+            { type: { $exists: false } },
+          ],
+        },
+      });
+    }
+
+    return getMongoRepository(Campaign).find({ ...getCampaignsDto });
   }
 
   @Query(() => Campaign)

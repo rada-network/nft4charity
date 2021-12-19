@@ -7,5 +7,8 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "setupFilesAfterEnv": ["<rootDir>/setup.ts"],
-  "verbose": true
+  "verbose": true,
+  "moduleNameMapper": {
+    "^src/(.*)$": "<rootDir>/../src/$1"
+  }
 }

@@ -4,7 +4,7 @@ export enum Role {
   USER = "user",
   DONATOR = "donator",
   FUND_RAISER = "fundRaiser",
-  CONTRIBUTROR = "contributor",
+  DISTRIBUTOR = "distributor",
   ADMIN = "admin",
 }
 
