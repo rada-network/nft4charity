@@ -17,8 +17,8 @@ import useWeb3Modal from '@/hooks/useWeb3Modal';
 import { useNotificationStore } from '@/stores/notifications';
 
 interface ImageAttributes {
-  name: string;
-  rarity: string;
+  trait_type: string;
+  value: string;
 }
 interface Image {
   dna: string;
@@ -30,7 +30,7 @@ interface Image {
   attributes: ImageAttributes[];
 }
 
-const campaignId = '61a141e81998d34796f65639';
+const campaignId = '61be4047ab01db34394b52c5';
 const QueryMintCampaign = gql`
   query getCampaign($id: String!) {
     campaign(id: $id) {
@@ -254,7 +254,6 @@ const SelectInput = React.forwardRef<
       ref={ref}
       onChange={onChange}
     >
-      <option value="ethereum">Ethereum</option>
       <option value="bnb">BNB</option>
     </select>
   </div>
@@ -314,7 +313,7 @@ export const Mint = () => {
   const attributesBlocks =
     imgList.length > 0
       ? imgList[currentActiveImg].attributes.map((item) => {
-          return { title: '', content: item.name, rate: item.rarity };
+          return { title: item.trait_type, content: item.value };
         })
       : [];
 

@@ -41,7 +41,7 @@ function useWeb3Modal(config: any = {}) {
     const result = await web3.eth.getBalance(address);
 
     switch (web3Provider?.provider?.networkVersion) {
-      case '56': {
+      case '97': {
         return `${formatBalance(web3.utils.fromWei(result, 'ether'))} BNB`;
       }
 
