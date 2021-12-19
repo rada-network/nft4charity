@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Controller,
   Get,
   HttpException,
@@ -7,18 +6,18 @@ import {
   Post,
   Query,
   Request,
+  Res,
   UploadedFiles,
   UseInterceptors,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { FastifyReply } from "fastify";
 import { ApiCreatedResponse, ApiQuery } from "@nestjs/swagger";
-import {
-  AnyFilesInterceptor,
-  FilesInterceptor,
-} from "@webundsoehne/nest-fastify-file-upload";
+import { FilesInterceptor } from "@webundsoehne/nest-fastify-file-upload";
+import { isEnum } from "class-validator";
 import { extname } from "path";
 import { ResponsePutPresignedUrlDto } from "src/dtos";
-import { FileField } from ".";
+import { FileField, PrefixStoragePath } from ".";
 import { FileService } from "./file.service";
 
 @Controller()
@@ -73,11 +72,21 @@ export class FileController {
 
   @Post("upload")
   @UseInterceptors(FilesInterceptor("images"))
-  async upload(@UploadedFiles() files: FileField[]) {
-    return Promise.all(
+  async upload(
+    @Res() res: FastifyReply,
+    @UploadedFiles() files: FileField[],
+    @Query("folder") folder?: string,
+  ) {
+    if (folder && !isEnum(folder, PrefixStoragePath)) {
+      return res.status(400).send({ message: "Please enter correct folder" });
+    }
+
+    const result = await Promise.all(
       files.map((f) => {
-        return this.fileService.uploadFile(f);
+        return this.fileService.uploadFile(f, folder as PrefixStoragePath);
       }),
     );
+
+    res.send(result);
   }
 }
