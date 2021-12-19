@@ -8,7 +8,7 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { CampaignType } from "src/common";
-import { getMongoRepository, IsNull } from "typeorm";
+import { getMongoRepository } from "typeorm";
 import { CreateCampaignDto, GetCampaignsDto } from "../dtos";
 import {
   Campaign,
@@ -24,20 +24,22 @@ export class CampaignResolver {
   async campaigns(
     @Args() getCampaignsDto?: GetCampaignsDto,
   ): Promise<Campaign[]> {
-    // Refactor later
-    const campaigns = await getMongoRepository(Campaign).find();
-
     if (!getCampaignsDto || !getCampaignsDto.type) {
-      return campaigns;
+      return getMongoRepository(Campaign).find();
     }
 
     if (getCampaignsDto.type === CampaignType.FUND_RAISE) {
-      return campaigns.filter(
-        (c) => !c.type || c.type === CampaignType.FUND_RAISE,
-      );
+      return getMongoRepository(Campaign).find({
+        where: {
+          $or: [
+            { type: CampaignType.FUND_RAISE },
+            { type: { $exists: false } },
+          ],
+        },
+      });
     }
 
-    return campaigns.filter((c) => c.type === getCampaignsDto.type);
+    return getMongoRepository(Campaign).find({ ...getCampaignsDto });
   }
 
   @Query(() => Campaign)
