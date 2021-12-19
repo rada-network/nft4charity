@@ -20,15 +20,15 @@ import {
   RolesGuard,
 } from "../common";
 import { CreateUserDto, UpdateUserDto } from "../dtos";
-import { Campaign, User, Wallet, WalletBasic, Image } from "../entities";
+import { Campaign, Image, User, Wallet, WalletBasic } from "../entities";
 
 @Resolver(() => User)
-@UseGuards(AuthGuard, RolesGuard)
 export class UserResolver {
   async users(): Promise<User[]> {
     return getMongoRepository(User).find();
   }
 
+  @Query(() => User)
   async user(@Args("id") id: string): Promise<User> {
     const user = await getMongoRepository(User).findOne(id);
     if (!user) {
@@ -37,8 +37,18 @@ export class UserResolver {
     return user;
   }
 
+  @Query(() => [User])
+  async distributors(): Promise<User[]> {
+    return getMongoRepository(User).find({
+      where: {
+        roles: { $in: [Role.DISTRIBUTOR] },
+      },
+    });
+  }
+
   @Query(() => User)
   @Roles(Role.USER)
+  @UseGuards(AuthGuard, RolesGuard)
   async me(
     @CurrentUserAddress() currentUserAddress: string | null,
   ): Promise<User> {
@@ -58,6 +68,7 @@ export class UserResolver {
   }
 
   @Query(() => String)
+  @UseGuards(AuthGuard, RolesGuard)
   async myAddress(
     @CurrentUserAddress() address: string | null,
   ): Promise<string | null> {
@@ -89,6 +100,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
+  @UseGuards(AuthGuard, RolesGuard)
   async createUser(
     @Args("user") userInput: CreateUserDto,
     @CurrentUserAddress() userAddress: string | null,
@@ -139,6 +151,7 @@ export class UserResolver {
 
   @Mutation(() => User)
   @Roles(Role.USER)
+  @UseGuards(AuthGuard, RolesGuard)
   async updateUser(
     @CurrentUserAddress() currentUserAddress: string | null,
     @Args("user", { nullable: true, defaultValue: {} })
