@@ -7,4 +7,8 @@ export type User = {
   role: 'ADMIN' | 'USER';
   teamId: string;
   password: string;
+  // facebook?: string;
+  // twitter?: string;
+  // youtube?: string;
+  // instagram?: string;
 } & BaseEntity;

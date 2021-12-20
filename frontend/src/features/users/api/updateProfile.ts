@@ -7,10 +7,18 @@ import { useNotificationStore } from '@/stores/notifications';
 
 export type UpdateProfileDTO = {
   data: {
+    avatar: string;
     email: string;
     firstName: string;
     lastName: string;
     password: string;
+    description: string;
+    facebook: string;
+    twitter: string;
+    youtube: string;
+    instagram: string;
+    passportMT: string;
+    passportMS: string;
   };
 };
 

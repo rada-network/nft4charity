@@ -6,7 +6,7 @@ import * as z from 'zod';
 import { UpdateProfileDTO } from '../api/updateProfile';
 
 import { Button } from '@/components/Elements';
-import { Form, FormDrawer, InputField } from '@/components/Form';
+import { Form, FormDrawer, InputField, UploadImageField } from '@/components/Form';
 import { useAuth } from '@/lib/auth';
 
 const schema = z.object({
@@ -104,6 +104,11 @@ export const UpdateProfile = () => {
               type="password"
               error={formState.errors['password']}
               registration={register('password')}
+            />
+            <UploadImageField 
+              label="Avatar"
+              error={formState.errors['avatar']}
+              registration={register('avatar')}
             />
           </>
         )}
