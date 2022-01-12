@@ -31,8 +31,8 @@ export class CampaignMember {
   @Field(() => Boolean)
   isPrivate: boolean;
 
-  @Column({ type: "enum", enum: CampaignMember, array: true })
+  @Column({ type: "enum", enum: CampaignMember })
   @Expose()
-  @Field(() => [CampaignMember])
-  roles: CampaignRole[];
+  @Field(() => CampaignRole)
+  roles: CampaignRole;
 }
