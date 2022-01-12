@@ -1,7 +1,7 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { Expose, plainToClass } from "class-transformer";
 import { Column, Entity, ObjectID, ObjectIdColumn } from "typeorm";
-import { Role } from "../common";
+import { SystemRole } from "../common";
 
 @Entity({ name: "users" })
 @ObjectType()
@@ -71,10 +71,15 @@ export class User {
   @Field({ defaultValue: null, nullable: true })
   emailVerifiedAt: Date = null;
 
-  @Column({ type: "enum", enum: Role, array: true, default: () => [Role.USER] })
+  @Column({
+    type: "enum",
+    enum: SystemRole,
+    array: true,
+    default: () => [SystemRole.USER],
+  })
   @Expose()
-  @Field(() => [Role], { defaultValue: [Role.USER] })
-  roles: Role[];
+  @Field(() => [SystemRole], { defaultValue: [SystemRole.USER] })
+  roles: SystemRole[];
 
   @Column()
   @Expose()
@@ -94,7 +99,7 @@ export class User {
       }),
     );
 
-    this.roles = this.roles || [Role.USER];
+    this.roles = this.roles || [SystemRole.USER];
     this.createdAt = this.createdAt || new Date();
     this.updatedAt = new Date();
   }

@@ -7,7 +7,7 @@ import {
 import { Args, Query, Resolver } from "@nestjs/graphql";
 import { JwtService } from "@nestjs/jwt";
 import { isEmail } from "class-validator";
-import { AuthGuard, Role, Roles, RolesGuard } from "src/common";
+import { AuthGuard, SystemRole, Roles, RolesGuard } from "src/common";
 import { User } from "src/entities";
 import {
   MAIL_EXPIRE_TIME,
@@ -23,7 +23,7 @@ export class MailResolver {
   constructor(private readonly jwtService: JwtService) {}
 
   @Query(() => Boolean)
-  @Roles(Role.USER)
+  @Roles(SystemRole.USER)
   async verifyMail(@Args("email") email: string): Promise<boolean> {
     if (!isEmail(email)) {
       throw new BadRequestException("Arguemnt must be an valid email");
@@ -69,7 +69,7 @@ export class MailResolver {
   }
 
   @Query(() => Boolean)
-  @Roles(Role.USER)
+  @Roles(SystemRole.USER)
   async changeMail(
     @Args("email") email: string,
     @Args("newEmail") newEmail: string,
