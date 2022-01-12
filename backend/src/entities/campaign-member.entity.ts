@@ -34,7 +34,7 @@ export class CampaignMember {
   @Column({ type: "enum", enum: CampaignMember })
   @Expose()
   @Field(() => CampaignRole)
-  roles: CampaignRole;
+  role: CampaignRole;
 
   @Column()
   @Expose()
