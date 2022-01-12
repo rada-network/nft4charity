@@ -1,4 +1,4 @@
-import { Expose } from "class-transformer";
+import { Expose, plainToClass } from "class-transformer";
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, ObjectID, ObjectIdColumn } from "typeorm";
 import { CampaignRole } from "src/common";
@@ -35,4 +35,26 @@ export class CampaignMember {
   @Expose()
   @Field(() => CampaignRole)
   roles: CampaignRole;
+
+  @Column()
+  @Expose()
+  @Field()
+  createdAt: Date;
+
+  @Column()
+  @Expose()
+  @Field()
+  updatedAt: Date;
+
+  constructor(member: Partial<CampaignMember>) {
+    Object.assign(
+      this,
+      plainToClass(CampaignMember, member, {
+        excludeExtraneousValues: true,
+      }),
+    );
+
+    this.createdAt = this.createdAt || new Date();
+    this.updatedAt = new Date();
+  }
 }
