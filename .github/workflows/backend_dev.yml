@@ -1,0 +1,134 @@
+name: build_and_deploy_service
+
+on:
+  push:
+    branches: [develop]
+    paths:
+      - backend/**
+      - smartcontract/**
+      - .github/workflows/backend.yml
+env:
+  SERVICE_NAME: "nft4charity-be"
+  DOCKER_USERNAME: "cohostai"
+  CONTAINER_SERVICE_NAME: "radastaging3"
+
+jobs:
+  build-service:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14.17"
+      - name: Build vars
+        id: vars
+        run: |
+          echo "::set-output name=image::${{ env.DOCKER_USERNAME }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA"
+          echo "::set-output name=latest::${{ env.DOCKER_USERNAME }}/${{ env.SERVICE_NAME }}:latest"
+      - name: Build Docker image
+        working-directory: ./backend
+        run: docker build -t ${{ steps.vars.outputs.latest }} .
+      - name: Login to DockerHub
+        run: |
+          echo "Authenticating docker.io"
+          echo ${{ secrets.DOCKER_AUTH_TOKEN }} | docker login --username=${{ env.DOCKER_USERNAME }} --password-stdin
+      - name: Push to DockerHub
+        run: |
+          docker push ${{ steps.vars.outputs.latest }}
+
+    outputs:
+      image: ${{ steps.vars.outputs.image }}
+      latest: ${{ steps.vars.outputs.latest }}
+
+  deploy-service-production:
+    needs: [build-service]
+    runs-on: ubuntu-latest
+    steps:
+      - name: prereqs
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "us-east-1"
+        run: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set default.region $AWS_DEFAULT_REGION
+          aws configure set region $AWS_DEFAULT_REGION
+          cat ~/.aws/credentials
+      - name: Install essentials
+        run: |
+          aws --version
+
+          # install LightsailCTL Plugin (https://lightsail.aws.amazon.com/ls/docs/en_us/articles/amazon-lightsail-install-software)
+          sudo apt-get update && sudo apt-get -y install curl jq
+          curl https://s3.us-west-2.amazonaws.com/lightsailctl/latest/linux-amd64/lightsailctl -o /usr/local/bin/lightsailctl
+          chmod +x /usr/local/bin/lightsailctl
+      - name: Release to Amazon Lightsail
+        env:
+          CONTAINER_SERVICE_NAME: ${{ env.CONTAINER_SERVICE_NAME }}
+          MAIL_EXPIRE_TIME: ${{ secrets.MAIL_EXPIRE_TIME }}
+          AWS_S3_ACCESS_KEY_ID: ${{ secrets.AWS_S3_ACCESS_KEY_ID }}
+          MAIL_RESEND_VERIFICATION_TIME_MINUTE: ${{ secrets.MAIL_RESEND_VERIFICATION_TIME_MINUTE }}
+          MONGODB_URL: ${{ secrets.MONGODB_URL }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          MAIL_SENDER_EMAIL: ${{ secrets.MAIL_SENDER_EMAIL }}
+          MAIL_SENDER_NAME: ${{ secrets.MAIL_SENDER_NAME }}
+          MONGODB_SEEDING_URL: ${{ secrets.MONGODB_SEEDING_URL }}
+          MAIL_CHANGE_URL: ${{ secrets.MAIL_CHANGE_URL }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          MAIL_JWT_SECRET: ${{ secrets.MAIL_JWT_SECRET }}
+          MAIL_VERIFICATION_URL: ${{ secrets.MAIL_VERIFICATION_URL }}
+          IPFS_BASE_URL: ${{ secrets.IPFS_BASE_URL }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          AWS_S3_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SECRET_ACCESS_KEY }}
+        run: |
+          echo "Releasing to Amazon Lightsail"
+
+          docker info
+          echo ${{ secrets.DOCKER_AUTH_TOKEN }} | docker login --username=${{ env.DOCKER_USERNAME }} --password-stdin
+          docker pull ${{ needs.build-service.outputs.latest }}
+
+          # upload the docker image for this pipeline
+          aws lightsail push-container-image \
+            --service-name $CONTAINER_SERVICE_NAME  \
+            --label ${{ env.SERVICE_NAME }}-latest  \
+            --image ${{ needs.build-service.outputs.latest }}
+
+          # get uploaded image (its different every time)
+          IMAGE_TAG=$(aws lightsail get-container-images --service $CONTAINER_SERVICE_NAME | jq -r .containerImages[0].image)
+
+          # create a deployment with uploaded docker image
+          aws lightsail create-container-service-deployment \
+            --service-name $CONTAINER_SERVICE_NAME \
+            --containers "{
+              \"$CONTAINER_SERVICE_NAME\": {
+                \"image\": \"$IMAGE_TAG\",
+                \"environment\": {
+                  \"NODE_ENV\": \"production\",
+                  \"MAIL_EXPIRE_TIME\": \"$MAIL_EXPIRE_TIME\",
+                  \"AWS_S3_ACCESS_KEY_ID\": \"$AWS_S3_ACCESS_KEY_ID\",
+                  \"MAIL_RESEND_VERIFICATION_TIME_MINUTE\": \"$MAIL_RESEND_VERIFICATION_TIME_MINUTE\",
+                  \"MONGODB_URL\": \"$MONGODB_URL\",
+                  \"SENDGRID_API_KEY\": \"$SENDGRID_API_KEY\",
+                  \"MAIL_SENDER_EMAIL\": \"$MAIL_SENDER_EMAIL\",
+                  \"MAIL_SENDER_NAME\": \"$MAIL_SENDER_NAME\",
+                  \"MAIL_CHANGE_URL\": \"$MAIL_CHANGE_URL\",
+                  \"AWS_S3_BUCKET\": \"$AWS_S3_BUCKET\",
+                  \"MAIL_JWT_SECRET\": \"$MAIL_JWT_SECRET\",
+                  \"MAIL_VERIFICATION_URL\": \"$MAIL_VERIFICATION_URL\",
+                  \"IPFS_BASE_URL\": \"$IPFS_BASE_URL\",
+                  \"AWS_S3_SECRET_ACCESS_KEY\": \"$AWS_S3_SECRET_ACCESS_KEY\",
+                },
+                \"ports\": {
+                  \"8080\": \"HTTP\"
+                }
+              }
+            }" \
+            --public-endpoint "{
+              \"containerName\": \"$CONTAINER_SERVICE_NAME\",
+              \"containerPort\": 8080,
+              \"healthCheck\": {
+                \"path\": \"/\",
+                \"intervalSeconds\": 10
+              }
+            }"
