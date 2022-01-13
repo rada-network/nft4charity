@@ -1,92 +1,149 @@
-import { useState } from 'react';
-import { gql, useMutation } from '@apollo/client';
-// import designerAvatar from '@/assets/images/designerAvatar.png';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from 'react';
+import { useMutation } from '@apollo/client';
 import * as z from 'zod';
-import { UpdateProfileDTO } from '../api/updateProfile';
 
 import { ContentLayout } from '@/components/Layout';
 import { Form, InputField, TextAreaField, UploadImageField } from '@/components/Form';
-import { Button } from '@/components/Elements';
+import { Button, Spinner } from '@/components/Elements';
+import { useAuth } from '@/hooks/useAuth';
+import { CreateProfileDto, UpdateProfileDto } from '../types';
+import { CREATE_PROFILE, UPDATE_PROFILE } from '../gql';
+import { Navigate } from 'react-router-dom';
+import { useNotificationStore } from '@/stores/notifications';
+import { removeValueEmptyInObject } from '@/utils/helper';
 
 const schema = z.object({
-  avatar: z.string(),
-  email: z.string().min(1, 'Required'),
-  firstName: z.string().min(1, 'Required'),
-  lastName: z.string().min(1, 'Required'),
-  password: z.string().min(8, 'Required'),
+  firstName: z.string().nonempty(),
+  lastName: z.string().nonempty(),
+  email: z.string().email().nonempty(),
   description: z.string(),
-  facebook: z.string(),
-  twitter: z.string(),
-  youtube: z.string(),
-  instagram: z.string(),
-  passportMT: z.string(),
-  passportMS: z.string(),
+  facebookUrl: z.string().url().or(z.literal('')),
+  twitterUrl: z.string().url().or(z.literal('')),
+  youtubeUrl: z.string().url().or(z.literal('')),
+  instagramUrl: z.string().url().or(z.literal('')),
 });
 
-const CreateUser = gql`
-  mutation ($user: CreateUserDto!) {
-    createUser(user: $user) {
-      avatar
-      firstName
-      lastName
-      email
-      password
-      description
-      facebook
-      twitter
-      youtube
-      instagram
-      passportMT
-      passportMS
+export const Profile = () => {
+  const { getProfile, dataProfile } = useAuth();
+  const [createProfile, dataCreateProfile] = useMutation(CREATE_PROFILE);
+  const [updateProfile, dataUpdateProfile] = useMutation(UPDATE_PROFILE);
+
+  const [avatar, setAvatar] = useState(dataProfile.data?.me?.avatar || '');
+  const [passportMT, setPassportMT] = useState(dataProfile.data?.me?.frontIdentifierUrl || '');
+  const [passportMS, setPassportMS] = useState(dataProfile.data?.me?.backIdentifierUrl || '');
+
+  useEffect(() => {
+    getProfile();
+  }, []);
+
+  useEffect(() => {
+    if (dataProfile.data?.me) {
+      setAvatar(dataProfile.data?.me?.avatar || '');
+      setPassportMT(dataProfile.data?.me?.frontIdentifierUrl || '');
+      setPassportMS(dataProfile.data?.me?.backIdentifierUrl || '');
+    }
+  }, [dataProfile.data?.me]);
+
+  useEffect(() => {
+    if (dataCreateProfile.data?.createUser) {
+      useNotificationStore.getState().addNotification({
+        type: 'success',
+        title: 'Create Success',
+      });
+    }
+  }, [dataCreateProfile.data?.createUser]);
+
+  useEffect(() => {
+    if (dataUpdateProfile.data?.updateUser) {
+      useNotificationStore.getState().addNotification({
+        type: 'success',
+        title: 'Update Success',
+      });
+    }
+  }, [dataUpdateProfile.data?.updateUser]);
+
+  useEffect(() => {
+    if (dataCreateProfile.error) {
+      useNotificationStore.getState().addNotification({
+        type: 'error',
+        title: 'Error',
+        message: dataCreateProfile.error?.message,
+      });
+    }
+  }, [dataCreateProfile.error?.message]);
+
+  useEffect(() => {
+    if (dataUpdateProfile.error) {
+      useNotificationStore.getState().addNotification({
+        type: 'error',
+        title: 'Error',
+        message: dataUpdateProfile.error?.message,
+      });
+    }
+  }, [dataUpdateProfile.error?.message]);
+
+  const onSubmit = (values: any) => {
+    const newValues = removeValueEmptyInObject({
+      ...values,
+      avatar: avatar,
+      frontIdentifierUrl: passportMT,
+      backIdentifierUrl: passportMS,
+    });
+    if (dataProfile.data?.me) {
+      const userObject: UpdateProfileDto = {
+        ...newValues,
+      };
+      updateProfile({
+        variables: {
+          user: userObject,
+        },
+      });
+    } else {
+      const userObject: CreateProfileDto = {
+        ...newValues,
+        wallet: {
+          platform: 'ETH',
+        },
+      };
+      createProfile({
+        variables: {
+          user: userObject,
+        },
+      });
+    }
+  };
+
+  if (dataProfile.loading) {
+    return (
+      <div className="h-full w-full flex items-center justify-center">
+        <Spinner size="xl" />
+      </div>
+    );
+  }
+
+  if (dataProfile.error) {
+    if (dataProfile?.error?.message !== 'User not register') {
+      return <Navigate to="/" />;
     }
   }
-`;
-
-export const UserProfile = () => {
-  const [loading, setLoading] = useState(false);
-
-  const [createUser] = useMutation(CreateUser);
-  const handleSubmit = (values: any) => {
-    setLoading(true);
-    createUser({
-      variables: {
-        user: {
-          avatar: values.avatar,
-          firstName: values.firstName,
-          lastName: values.lastName,
-          email: values.email,
-          password: values.password,
-          facebook: values.facebook,
-          twitter: values.twitter,
-          youtube: values.youtube,
-          instagram: values.instagram,
-          passportMT: values.passportMT,
-          passportMS: values.passportMS,
-        },
-      },
-    });
-    setLoading(false);
-  };
 
   return (
     <ContentLayout title="">
       <div className="m-auto shadow rounded-lg bg-white">
-        <Form<UpdateProfileDTO['data'], typeof schema>
-          id="update-profile"
-          onSubmit={(values) => {
-            handleSubmit(values);
-          }}
+        <Form
+          id="profile-form"
+          onSubmit={onSubmit}
           options={{
             defaultValues: {
-              firstName: user?.firstName,
-              lastName: user?.lastName,
-              email: user?.email,
-              password: user?.password,
-              description: '',
-              facebook: '',
-              twitter: '',
-              youtube: '',
-              instagram: '',
+              firstName: dataProfile?.data?.me.firstName || '',
+              lastName: dataProfile?.data?.me.lastName || '',
+              email: dataProfile?.data?.me.email || '',
+              description: dataProfile?.data?.me.description || '',
+              facebookUrl: dataProfile?.data?.me.facebookUrl || '',
+              twitterUrl: dataProfile?.data?.me.twitterUrl || '',
+              youtubeUrl: dataProfile?.data?.me.youtubeUrl || '',
+              instagramUrl: dataProfile?.data?.me.instagramUrl || '',
             },
           }}
           schema={schema}
@@ -98,8 +155,11 @@ export const UserProfile = () => {
                   <h1 className="text-2xl font-bold uppercase mb-5">Account Info</h1>
                   <UploadImageField
                     label="Avatar"
-                    error={formState.errors['avatar']}
-                    registration={register('avatar')}
+                    defaultValue={avatar}
+                    folder="avatar"
+                    onUploadSuccess={(url: string) => {
+                      setAvatar(url);
+                    }}
                   />
                   <InputField
                     label="First Name"
@@ -117,12 +177,6 @@ export const UserProfile = () => {
                     error={formState.errors['email']}
                     registration={register('email')}
                   />
-                  <InputField
-                    label="Password"
-                    type="password"
-                    error={formState.errors['password']}
-                    registration={register('password')}
-                  />
                   <TextAreaField
                     label="Description"
                     error={formState.errors['description']}
@@ -131,26 +185,25 @@ export const UserProfile = () => {
                 </div>
                 <div className="w-1/2 p-5">
                   <h1 className="text-2xl font-bold uppercase mb-5">Your Social Media</h1>
-                  {/* <img src={designerAvatar} alt="" className="m-auto w-px-112" /> */}
                   <InputField
                     label="Facebook"
-                    error={formState.errors['facebook']}
-                    registration={register('facebook')}
+                    error={formState.errors['facebookUrl']}
+                    registration={register('facebookUrl')}
                   />
                   <InputField
                     label="Twitter"
-                    error={formState.errors['twitter']}
-                    registration={register('twitter')}
+                    error={formState.errors['twitterUrl']}
+                    registration={register('twitterUrl')}
                   />
                   <InputField
                     label="Youtube"
-                    error={formState.errors['youtube']}
-                    registration={register('youtube')}
+                    error={formState.errors['youtubeUrl']}
+                    registration={register('youtubeUrl')}
                   />
                   <InputField
                     label="Instagram"
-                    error={formState.errors['instagram']}
-                    registration={register('instagram')}
+                    error={formState.errors['instagramUrl']}
+                    registration={register('instagramUrl')}
                   />
                 </div>
               </div>
@@ -161,22 +214,32 @@ export const UserProfile = () => {
                 <div className="w-1/2 p-5">
                   <UploadImageField
                     label="Passport MT"
-                    error={formState.errors['passportMT']}
-                    registration={register('passportMT')}
+                    defaultValue={passportMT}
+                    folder="identifier"
+                    onUploadSuccess={(url: string) => {
+                      setPassportMT(url);
+                    }}
                   />
                 </div>
                 <div className="w-1/2 p-5">
                   <UploadImageField
                     label="Passport MS"
-                    error={formState.errors['passportMS']}
-                    registration={register('passportMS')}
+                    defaultValue={passportMS}
+                    folder="identifier"
+                    onUploadSuccess={(url: string) => {
+                      setPassportMS(url);
+                    }}
                   />
                 </div>
               </div>
               <div className="flex flex-row flex-wrap">
                 <div className="w-1/1 px-5 pb-5">
-                  <Button form="update-profile" type="submit" size="sm" isLoading={loading}>
-                    Update Profile
+                  <Button
+                    type="submit"
+                    size="sm"
+                    isLoading={dataCreateProfile.loading || dataUpdateProfile.loading}
+                  >
+                    {dataProfile?.data?.me ? 'Update Profile' : 'Create Profile'}
                   </Button>
                 </div>
               </div>

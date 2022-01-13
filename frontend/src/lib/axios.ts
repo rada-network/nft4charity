@@ -5,9 +5,9 @@ import { useNotificationStore } from '@/stores/notifications';
 import storage from '@/utils/storage';
 
 function authRequestInterceptor(config: AxiosRequestConfig) {
-  const token = storage.getToken();
-  if (token) {
-    config.headers.authorization = `${token}`;
+  const userToken = storage.getUserToken();
+  if (userToken) {
+    config.headers.Authorization = `${userToken}`;
   }
   config.headers.Accept = 'application/json';
   return config;

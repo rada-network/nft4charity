@@ -8,7 +8,7 @@ import { Contractor } from '@/features/contractor';
 import { Donate } from '@/features/donate';
 import { Mint } from '@/features/mint';
 import { Landing } from '@/features/misc';
-import { UserProfile } from '@/features/users';
+import { Profile } from '@/features/users';
 
 const App = () => {
   return (
@@ -36,7 +36,7 @@ export const publicRoutes = [
       { path: '/campaigns', element: <Campaigns /> },
       { path: '/contractor', element: <Contractor /> },
       { path: '/mint', element: <Mint /> },
-      { path: '/user/profile', element: <UserProfile /> },
+      { path: '/profile', element: <Profile /> },
     ],
   },
 ];

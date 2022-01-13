@@ -1,14 +1,15 @@
 // /lib/apollo.ts
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import config from '@/config';
+import storage from '@/utils/storage';
 
-const tokenHeader = localStorage.getItem('token');
+const userToken = storage.getUserToken();
 
 const apolloClient = new ApolloClient({
   uri: config.GRAPHQL_URL,
   cache: new InMemoryCache(),
   headers: {
-    authorization: tokenHeader ? `Bearer ${tokenHeader}` : '',
+    Authorization: userToken ? userToken : '',
   },
 });
 

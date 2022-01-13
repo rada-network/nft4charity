@@ -1,14 +1,50 @@
-import * as React from 'react';
-
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Link } from '../Elements/Link/Link';
 
 import homeSVG from '@/assets/icons/home.svg';
+import anonymousImage from '@/assets/images/anonymous.png';
 import languageSVG from '@/assets/icons/language.svg';
 import walletSVG from '@/assets/icons/wallet.svg';
 import useWeb3Modal from '@/hooks/useWeb3Modal';
+import { useAuth } from '@/hooks/useAuth';
+import { useEffect } from 'react';
+import Web3Token from 'web3-token';
+import Web3 from 'web3';
+import storage from '@/utils/storage';
 
 export const Header = () => {
-  const [provider, loadWeb3Modal, logoutOfWeb3Modal, setSignedInAddress, balance] = useWeb3Modal();
+  const [provider, loadWeb3Modal, logoutOfWeb3Modal, signedInAddress] = useWeb3Modal();
+  const { getProfile, dataProfile } = useAuth();
+  useEffect(() => {
+    if (provider) {
+      const userToken = storage.getUserToken();
+      if (!userToken) {
+        signGetToken();
+      } else {
+        getProfile();
+      }
+    }
+  }, [provider]);
+
+  useEffect(() => {
+    if (dataProfile.error) {
+      if (dataProfile?.error?.message === 'User not register') {
+        return;
+      }
+      signGetToken();
+    }
+  }, [dataProfile.error]);
+
+  const signGetToken = async () => {
+    const web3 = new Web3(provider);
+    const token = await Web3Token.sign(
+      (msg: any) => web3.eth.personal.sign(msg, provider.selectedAddress, '', () => {}),
+      '1d'
+    );
+    storage.setUserToken(token);
+    window.location.reload();
+  };
+
   return (
     <>
       <div className="max-width mx-auto">
@@ -60,7 +96,9 @@ export const Header = () => {
           </span>
           <ul className="flex items-center text-center justify-center cursor-pointer font-bold text-base text-black flex-col sm:flex-row">
             <li className="sm:mr-10">
-              <img className="h-5 w-auto" src={homeSVG} alt="home icon" />
+              <Link to={`/`}>
+                <img className="h-5 w-auto" src={homeSVG} alt="home icon" />
+              </Link>
             </li>
             <li className="sm:mr-10 text-sm lg:text-xl">About</li>
             <li className="sm:mr-10 text-sm lg:text-xl">
@@ -73,24 +111,46 @@ export const Header = () => {
           </ul>
           <ul className="flex flex-col sm:flex-row items-center">
             <li className="flex">
-              <span className="sm:px-5 my-auto">{balance}</span>
-              <button
-                className="btn flex bg-button-purple p-2 rounded-3xl items-center"
-                onClick={() => {
-                  if (!provider) {
-                    loadWeb3Modal();
-                  } else {
-                    logoutOfWeb3Modal();
-                  }
-                }}
-              >
-                <img className="h-7 w-auto" src={walletSVG} alt="wallet icon" />
-                <p className="font-bold text-sm lg:text-xl md:m-auto text-white ml-1">
-                  {!provider ? 'Connect' : setSignedInAddress}
-                </p>
-              </button>
+              {!provider ? (
+                <button
+                  className="btn flex bg-button-purple p-2 rounded-3xl"
+                  onClick={() => loadWeb3Modal()}
+                >
+                  <img className="h-7 w-auto" src={walletSVG} alt="wallet icon" />
+                  <span className="font-bold text-sm lg:text-xl md:m-auto text-white ml-1">
+                    Connect
+                  </span>
+                </button>
+              ) : (
+                <Link
+                  to={`/profile`}
+                  className="block btn flex p-2 rounded-3xl border border-slate-500"
+                >
+                  <span className="font-bold text-sm lg:text-xl md:m-auto text-slate-500 ml-1">
+                    {dataProfile.data?.me
+                      ? `${dataProfile.data?.me?.firstName} ${dataProfile.data?.me?.lastName}`
+                      : signedInAddress}
+                  </span>
+                  <img
+                    className="h-7 w-auto ml-2 rounded-full"
+                    src={
+                      dataProfile.data?.me?.avatar ? dataProfile.data?.me?.avatar : anonymousImage
+                    }
+                    alt={
+                      dataProfile.data?.me?.avatar
+                        ? `${dataProfile.data?.me?.firstName} ${dataProfile.data?.me?.lastName}`
+                        : 'anonymous avatar'
+                    }
+                  />
+                </Link>
+              )}
             </li>
-            <li className="flex mt-1 sm:mt-0 sm:ml-5 cursor-pointer">
+            {provider ? (
+              <li className="flex ml-5 cursor-pointer" onClick={() => logoutOfWeb3Modal()}>
+                <span className="pl-2">Disconnect</span>
+              </li>
+            ) : null}
+            <li className="flex ml-5 cursor-pointer">
               <img className="h-6 w-auto" src={languageSVG} alt="language icon" />
               <span className="pl-2">En</span>
             </li>
