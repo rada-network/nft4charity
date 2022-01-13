@@ -1,3 +1,4 @@
+export * from "./campaign-member.resolver";
 export * from "./campaign-nft-metadata.resolver";
 export * from "./campaign.resolver";
 export * from "./mail.resolver";
