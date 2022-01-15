@@ -1,0 +1,29 @@
+{
+  "name": "boy 2",
+  "description": "a boy with hat and luggage",
+  "image": null,
+  "date": null,
+  "attributes": [
+    {
+      "trait_type": "hair",
+      "value": "short"
+    },
+    {
+      "trait_type": "top",
+      "value": "hat"
+    },
+    {
+      "trait_type": "hair_color",
+      "value": "black"
+    },
+
+    {
+      "trait_type": "accessories",
+      "value": "luggage"
+    },
+    {
+      "trait_type": "shoes_color",
+      "value": "red"
+    }
+  ]
+}

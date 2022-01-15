@@ -11,7 +11,7 @@ module.exports = {
     },
     bscTestnet: {
       provider: () =>
-        new HDWalletProvider(mnemonic, `https://data-seed-prebsc-1-s1.binance.org:8545/`, 0, 1),
+        new HDWalletProvider(mnemonic, `https://speedy-nodes-nyc.moralis.io/0d76a30f81e09d5801cad11d/bsc/testnet`, 0, 1),
       network_id: 97,
       confirmations: 2,
       timeoutBlocks: 200,

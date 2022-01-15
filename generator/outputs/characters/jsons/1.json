@@ -1,0 +1,24 @@
+{
+  "name": "girl 1",
+  "description": "a long hair and beautiful girl",
+  "image": null,
+  "date": null,
+  "attributes": [
+    {
+      "trait_type": "hair",
+      "value": "long"
+    },
+    {
+      "trait_type": "hair_color",
+      "value": "blue"
+    },
+    {
+      "trait_type": "accessories",
+      "value": "handbag"
+    },
+    {
+      "trait_type": "shoes_color",
+      "value": "green"
+    }
+  ]
+}

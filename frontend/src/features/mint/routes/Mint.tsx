@@ -1,26 +1,64 @@
 import Coverflow from 'react-coverflow';
-
-import contentCopySVG from '@/assets/icons/content_copy.svg';
-import designerAvatar from '@/assets/images/designerAvatar.png';
-import donatePNG from '@/assets/images/donate.png';
-import nftItemPNG from '@/assets/images/nftItem.png';
-import nftItemBuffaloPNG from '@/assets/images/nftItemBuffalo.png';
+import React, { useEffect, useState } from 'react';
+import clsx from 'clsx';
+// import donatePNG from '@/assets/images/donate.png';
+// import nftItemPNG from '@/assets/images/nftItem.png';
+// import nftItemBuffaloPNG from '@/assets/images/nftItemBuffalo.png';
 import { BlockLists } from '@/components/BlockLists';
-import { Table } from '@/components/Elements';
-import { SelectField } from '@/components/Form';
-import { InputField } from '@/components/Form/InputField';
+import { Table, Spinner } from '@/components/Elements';
 import { LatestContributor } from '@/components/LatestContributor';
 import { formatDateTypeNumber } from '@/utils/format';
 
-const dataListBlock = [
-  { title: 'Clothes', content: 'Hologram jacket', rate: '6% have this collectibles' },
-  { title: 'Mounth', content: 'Large smile', rate: '10% have this collectibles' },
-  { title: 'Eyes', content: 'Angry Eyes', rate: '10% have this collectibles' },
-  { title: 'Glasses', content: 'Pixel glasses', rate: '10% have this collectibles' },
-  { title: 'Head', content: 'Undercut', rate: '10% have this collectibles' },
-  { title: 'Hat', content: 'Fez hat', rate: '10% have this collectibles' },
-  { title: 'Jewelry', content: 'Silver stud', rate: '10% have this collectibles' },
-];
+import { gql, useQuery } from '@apollo/client';
+import { axios } from '@/lib/axios';
+import { Path, useForm, UseFormRegister } from 'react-hook-form';
+import { mintToken } from '@/web3/web3Client';
+import useWeb3Modal from '@/hooks/useWeb3Modal';
+import { useNotificationStore } from '@/stores/notifications';
+
+interface ImageAttributes {
+  trait_type: string;
+  value: string;
+}
+interface Image {
+  dna: string;
+  name: string;
+  description: string;
+  image: string;
+  edition: number;
+  data: number;
+  attributes: ImageAttributes[];
+}
+
+const campaignId = '61be4047ab01db34394b52c5';
+const QueryMintCampaign = gql`
+  query getCampaign($id: String!) {
+    campaign(id: $id) {
+      _id
+      name
+      description
+      goal
+      startedAt
+      endedAt
+      coverImgUrl
+      thumbnailImgUrl
+      type
+      createdAt
+      updatedAt
+      userId
+      wallets {
+        _id
+        address
+      }
+      nftMetadata {
+        _id
+        campaignId
+        ipfsBaseUrl
+        nftUrls
+      }
+    }
+  }
+`;
 
 const renderTable = () => {
   return (
@@ -175,84 +213,164 @@ const renderTable = () => {
   );
 };
 
+interface IFormValues {
+  Network: string;
+  Price: number;
+}
+
+type InputProps = {
+  label: Path<IFormValues>;
+  register: UseFormRegister<IFormValues>;
+  required: boolean;
+  className: string;
+};
+
+const Input = ({ label, register, required, className }: InputProps) => (
+  <div className="text-left">
+    <label className={clsx('block text-sm font-medium text-gray-700', className)}>{label}</label>
+    <input
+      className={clsx(
+        'appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm',
+        className
+      )}
+      {...register(label, { required })}
+    />
+  </div>
+);
+
+// eslint-disable-next-line react/display-name
+const SelectInput = React.forwardRef<
+  HTMLSelectElement,
+  { label: string; className: string } & ReturnType<UseFormRegister<IFormValues>>
+>(({ onChange, name, label, className }, ref) => (
+  <div className="text-left">
+    <label className={clsx('block text-sm font-medium text-gray-700', className)}>{label}</label>
+    <select
+      className={clsx(
+        'mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md',
+        className
+      )}
+      name={name}
+      ref={ref}
+      onChange={onChange}
+    >
+      <option value="bnb">BNB</option>
+    </select>
+  </div>
+));
+
 export const Mint = () => {
+  const [imgList, setImgList] = useState<Image[]>([]);
+  const [currentActiveImg, setCurrentActiveImg] = useState<number>(0);
+  const [provider] = useWeb3Modal();
+  const { register, handleSubmit } = useForm<IFormValues>();
+
+  const {
+    data: campaignData,
+    loading,
+    error,
+  } = useQuery(QueryMintCampaign, {
+    variables: { id: campaignId },
+  });
+
+  const onSubmit = (data: IFormValues) => {
+    mintNFT(data['Price']);
+  };
+
+  useEffect(() => {
+    if (campaignData) {
+      const getImg = campaignData.campaign.nftMetadata.nftUrls.map(async (url: string) => {
+        return await axios.get(url);
+      });
+      Promise.all(getImg).then((img) => {
+        setImgList(img as Image[]);
+      });
+    }
+  }, [campaignData]);
+
+  const mintNFT = (price: number) => {
+    mintToken(provider, imgList[currentActiveImg].edition, price)
+      .then((tx: any) => {
+        console.log(tx);
+        const message = `Transaction complete`;
+        useNotificationStore.getState().addNotification({
+          type: 'success',
+          title: 'Success',
+          message,
+        });
+      })
+      .catch((err: any) => {
+        console.log(err);
+        const message = `Transactio fail with error ${err}`;
+        useNotificationStore.getState().addNotification({
+          type: 'error',
+          title: 'Error',
+          message,
+        });
+      });
+  };
+
+  const attributesBlocks =
+    imgList.length > 0
+      ? imgList[currentActiveImg].attributes.map((item) => {
+          return { title: item.trait_type, content: item.value };
+        })
+      : [];
+
+  if (loading) return <Spinner />;
+  if (error) return <p>Oh no... {error.message}</p>;
+
   return (
     <>
       <div className="relative bg-main-pattern">
         <Coverflow
           width="100%"
-          height="500"
+          height="600"
           displayQuantityOfSide={2}
           navigation={false}
           enableScroll={false}
           clickable={true}
-          active={0}
+          active={currentActiveImg}
         >
-          <img src={nftItemPNG} alt="" className="m-auto height-full" />
-          <img src={nftItemBuffaloPNG} alt="" className="m-auto height-full" />
-          <img src={donatePNG} alt="" className="m-auto height-full" />
+          {imgList.map((img) => (
+            <img
+              onClick={() => {
+                setCurrentActiveImg(img.edition - 1);
+              }}
+              key={img.edition}
+              src={img.image}
+              alt=""
+              className="m-auto height-full"
+            />
+          ))}
         </Coverflow>
       </div>
 
       <div className="transform w-full bg-white shadow-xl p-5 m-auto">
-        <ul className="flex items-start text-center justify-center cursor-pointer font-bold text-base text-black">
-          <li>
-            <InputField
-              className="w-52 mr-10"
-              label="Amount sold"
-              registration={{ name: 'amountSolds' }}
-              type="number"
-            />
-          </li>
-          <li className="mr-10">
-            <div className="flex">
-              <SelectField
-                label="Network"
-                className="w-52 mr-10"
-                options={[
-                  { label: 'Ethereum', value: 'ethereum' },
-                  { label: 'BNB', value: 'bnb' },
-                ]}
-                registration={{
-                  name: 'network',
-                }}
-              />
-              <InputField
-                className="w-52"
-                label="Units"
-                registration={{ name: 'units' }}
-                type="number"
-              />
-            </div>
-            <div className="flex mt-2">
-              <span className="font-Open text-sm text-black-555 mr-5 items-center flex">
-                0x6C35Bae9EC2C7Bbbb366AD5008444A6D354334ee
-              </span>
-              <img src={contentCopySVG} alt="" />
-            </div>
-          </li>
-          <li className="mx-0 my-auto">
-            <button className="btn flex bg-button-purple p-2 rounded-3xl">
-              <span className="font-bold text-xl text-white ml-1">Random Mint</span>
-            </button>
-          </li>
-        </ul>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <ul className="flex items-start text-center justify-center cursor-pointer font-bold text-base text-black">
+            <li className="mr-10">
+              <div className="flex">
+                <SelectInput className="w-52 mr-10" label="Network" {...register('Network')} />
+                <Input className="w-52" label="Price" register={register} required={false} />
+              </div>
+            </li>
+            <li className="mx-0 my-auto">
+              <button
+                className="btn flex bg-button-purple p-2 rounded-3xl"
+                onClick={() => handleSubmit(onSubmit)}
+              >
+                <span className="font-bold text-xl text-white ml-1">Mint</span>
+              </button>
+            </li>
+          </ul>
+        </form>
       </div>
 
       <div className="container my-10 w-4/5 m-auto">
-        <BlockLists listBlock={dataListBlock} />
+        <BlockLists listBlock={attributesBlocks} />
       </div>
 
-      <div className="mt-28 mb-10">
-        <img src={designerAvatar} alt="" className="m-auto w-px-112" />
-        <p className="m-auto w-full flex justify-center flex-none font-Merriweather font-bold text-4xl">
-          Creator - Alex Ace
-        </p>
-        <p className="text-sm w-1/3 m-auto font-Open mt-10 text-center">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua. Ut enim ad minim veniam,...
-        </p>
-      </div>
       <div className="mt-28 mb-10">
         <p className="m-auto w-full flex justify-center flex-none font-Merriweather font-bold text-4xl">
           Recent NFT minting

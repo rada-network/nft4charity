@@ -1,7 +1,6 @@
 export type ListItem = {
   title: string;
   content: string;
-  rate: string;
 };
 
 export type BlockListProps = {
@@ -19,7 +18,6 @@ export const BlockLists = ({ listBlock }: BlockListProps) => {
           >
             <p className="font-Merriweather font-bold text-sm">{item.title}</p>
             <p className="font-Open font-bold text-xl my-5">{item.content}</p>
-            <p className="font-Open italic text-sm">{item.rate}</p>
           </div>
         );
       })}

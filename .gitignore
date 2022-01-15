@@ -57,3 +57,7 @@ yarn.lock
 *.tmp.yml
 
 *.env
+
+generator/layers/*
+generator/outputs/metadata/*
+generator/outputs/punks/*

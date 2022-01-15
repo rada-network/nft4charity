@@ -1,0 +1,25 @@
+{
+  "name": "boy 4",
+  "description": "a boy with oxy tank",
+  "image": null,
+  "date": null,
+  "attributes": [
+    {
+      "trait_type": "hair",
+      "value": "short"
+    },
+    {
+      "trait_type": "hair_color",
+      "value": "light yellow"
+    },
+
+    {
+      "trait_type": "accessories",
+      "value": "oxy tank"
+    },
+    {
+      "trait_type": "shoes_color",
+      "value": "light blue"
+    }
+  ]
+}

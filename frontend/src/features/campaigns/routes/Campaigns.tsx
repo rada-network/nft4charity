@@ -13,24 +13,13 @@ const AllCampaignsQuery = gql`
       currency
       createdAt
       updatedAt
-      campaign: campaign {
-        _id
-        name
-        description
-        startedAt
-        endedAt
-        coverImgUrl
-        thumbnailImgUrl
-        endedAt
-      }
+      campaignId
       transaction: transaction {
-        _id
-        walletId
-        description
-        currency
-        amount
-        status
-        createdAt
+        data {
+          amount
+          status
+          walletId
+        }
       }
     }
   }
@@ -44,7 +33,9 @@ export const Campaigns = () => {
 
   const calculateTotaBalance = (data: Record<string, any>[]) => {
     let res = 0;
+    console.log(data);
     data.map((item: Record<string, any>) => {
+      console.log(item);
       return (res += item.amount);
     });
 
