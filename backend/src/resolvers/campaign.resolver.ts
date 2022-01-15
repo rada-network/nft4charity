@@ -1,4 +1,5 @@
-import { NotFoundException } from "@nestjs/common";
+import { CampaignMember } from "src/entities";
+import { NotFoundException, UseGuards } from "@nestjs/common";
 import {
   Args,
   Mutation,
@@ -7,7 +8,15 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
-import { CampaignType } from "src/common";
+import {
+  AuthGuard,
+  CampaignRole,
+  CampaignType,
+  CurrentUser,
+  Roles,
+  RolesGuard,
+  SystemRole,
+} from "src/common";
 import { getMongoRepository } from "typeorm";
 import { CreateCampaignDto, GetCampaignsDto } from "../dtos";
 import {
@@ -76,22 +85,36 @@ export class CampaignResolver {
   }
 
   @Mutation(() => Campaign)
+  @Roles(SystemRole.USER)
+  @UseGuards(AuthGuard, RolesGuard)
   async createCampaign(
     @Args("campaign") campaignInput: CreateCampaignDto,
+    @CurrentUser() user: User | null,
   ): Promise<Campaign> {
-    const { userId } = campaignInput;
-    const user = await getMongoRepository(User).findOne(userId);
-
     if (!user) {
       throw new NotFoundException("User not found");
     }
 
     const now = new Date();
-    const newCampaign = getMongoRepository(Campaign).create({
+    const newCampaign = await getMongoRepository(Campaign).create({
       ...campaignInput,
+      userId: user._id.toString(),
       createdAt: now,
       updatedAt: now,
     });
-    return getMongoRepository(Campaign).save(newCampaign);
+    await getMongoRepository(Campaign).save(newCampaign);
+
+    const member = await getMongoRepository(CampaignMember).create({
+      campaignId: newCampaign._id.toString(),
+      userId: user._id.toString(),
+      createdAt: now,
+      updatedAt: now,
+      isPrivate: false,
+      isVerified: false,
+      role: CampaignRole.CAMPAIGN_CREATOR,
+    });
+    await getMongoRepository(CampaignMember).save(member);
+
+    return newCampaign;
   }
 }

@@ -1,12 +1,14 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
 import {
   IsDate,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
   IsUrl,
 } from "class-validator";
+import { CampaignType } from "src/common";
 
 @InputType()
 export class CreateCampaignDto {
@@ -35,10 +37,9 @@ export class CreateCampaignDto {
   @IsOptional()
   endedAt?: Date;
 
-  @Field()
-  @IsString()
-  @IsNotEmpty()
-  userId: string;
+  @Field(() => CampaignType)
+  @IsEnum(CampaignType)
+  type: CampaignType;
 
   @Field({ nullable: true })
   @IsUrl()

@@ -37,15 +37,6 @@ export class UserResolver {
     return user;
   }
 
-  // @Query(() => [User])
-  // async distributors(): Promise<User[]> {
-  //   return getMongoRepository(User).find({
-  //     where: {
-  //       roles: { $in: [SystemRole.DISTRIBUTOR] },
-  //     },
-  //   });
-  // }
-
   @Query(() => User)
   @Roles(SystemRole.USER)
   @UseGuards(AuthGuard, RolesGuard)
