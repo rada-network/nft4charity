@@ -15,7 +15,7 @@ import { getMongoRepository } from "typeorm";
 import {
   AuthGuard,
   CurrentUserAddress,
-  Role,
+  SystemRole,
   Roles,
   RolesGuard,
 } from "../common";
@@ -37,17 +37,17 @@ export class UserResolver {
     return user;
   }
 
-  @Query(() => [User])
-  async distributors(): Promise<User[]> {
-    return getMongoRepository(User).find({
-      where: {
-        roles: { $in: [Role.DISTRIBUTOR] },
-      },
-    });
-  }
+  // @Query(() => [User])
+  // async distributors(): Promise<User[]> {
+  //   return getMongoRepository(User).find({
+  //     where: {
+  //       roles: { $in: [SystemRole.DISTRIBUTOR] },
+  //     },
+  //   });
+  // }
 
   @Query(() => User)
-  @Roles(Role.USER)
+  @Roles(SystemRole.USER)
   @UseGuards(AuthGuard, RolesGuard)
   async me(
     @CurrentUserAddress() currentUserAddress: string | null,
@@ -150,7 +150,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  @Roles(Role.USER)
+  @Roles(SystemRole.USER)
   @UseGuards(AuthGuard, RolesGuard)
   async updateUser(
     @CurrentUserAddress() currentUserAddress: string | null,
