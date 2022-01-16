@@ -1,46 +1,31 @@
-import { gql, useQuery } from '@apollo/client';
-
 import { Spinner } from '@/components/Elements';
-import { formatBalance } from '@/utils/format';
 import { Link } from '@/components/Elements/Link/Link';
+import { gql, useQuery } from '@apollo/client';
 import Countdown from 'react-countdown';
 
 const AllCampaignsQuery = gql`
-  query wallet {
-    walletFilter {
+  query getCampaigns {
+    campaigns {
       _id
-      address
-      currency
-      createdAt
-      updatedAt
-      campaignId
-      transaction: transaction {
-        data {
-          amount
-          status
-          walletId
-        }
+      coverImgUrl
+      name
+      description
+      wallets {
+        balance
+        numberOfTransaction
       }
+      endedAt
     }
   }
 `;
 
 export const Campaigns = () => {
   const { data, loading, error } = useQuery(AllCampaignsQuery);
-  console.log('data', data);
-  if (loading) return <Spinner />;
+
+  if (loading || !data) return <Spinner />;
   if (error) return <p>Oh no... {error.message}</p>;
 
-  const calculateTotaBalance = (data: Record<string, any>[]) => {
-    let res = 0;
-    console.log(data);
-    data.map((item: Record<string, any>) => {
-      console.log(item);
-      return (res += item.amount);
-    });
-
-    return formatBalance(res.toString());
-  };
+  const { campaigns } = data;
 
   const renderCountdown = (props: any) => {
     if (props.completed) {
@@ -82,18 +67,23 @@ export const Campaigns = () => {
 
         <div className="w-2/3 m-auto grid grid-cols-2 gap-4 mt-16">
           {/* <Link to={`/donate/${link._id}`}>{link.name}</Link> */}
-          {data?.walletFilter.map((item: Record<string, any>, index: number) => {
+          {campaigns.map((item: Record<string, any>, index: number) => {
+            const { wallets } = item;
+            const balance = wallets.reduce((pre: number, cur: any) => (pre += cur.balance), 0);
+            const numberOfTransaction = wallets.reduce(
+              (pre: number, cur: any) => (pre += cur.numberOfTransaction),
+              0
+            );
+
             return (
               <div key={index} className="w-full">
-                <Link to={`/donate/${item?.campaign?._id}`}>
+                <Link to={`/donate/${item._id}`}>
                   <div className="relative">
-                    <img src={item?.campaign?.coverImgUrl} alt="" />
+                    <img src={item.coverImgUrl} alt="" />
                     <div className="absolute bottom-0 p-5 w-full bg-black bg-opacity-25">
-                      <p className="text-white text-lg font-bold font-Merriweather">
-                        {item?.campaign?.name}
-                      </p>
+                      <p className="text-white text-lg font-bold font-Merriweather">{item.name}</p>
                       <p className="text-white font-Open text-sm whitespace-pre-wrap overflow-hidden overflow-ellipsis line-clamp-1">
-                        {item?.campaign?.description}
+                        {item.description}
                       </p>
                     </div>
                   </div>
@@ -101,17 +91,15 @@ export const Campaigns = () => {
                 <div className="shadow">
                   <div className="p-5">
                     <span className="font-bold text-xl font-Merriweather">Total raised: </span>
-                    <span>
-                      {calculateTotaBalance(item?.transaction)} {item?.currency}
-                    </span>
+                    <span>{Math.round(balance * 100000) / 100000}</span>
                   </div>
                   <div className="grid grid-cols-3 gap-4 p-5 font-Open">
                     <div className="">
-                      <p className="font-bold text-lg">{item?.transaction.length}</p>
+                      <p className="font-bold text-lg">{numberOfTransaction}</p>
                       <p>Donation</p>
                     </div>
                     <div className="h-12">
-                      <Countdown date={item?.campaign?.endedAt} renderer={renderCountdown} />
+                      <Countdown date={item.endedAt} renderer={renderCountdown} />
                     </div>
                     <div>
                       <button className="flex btn bg-button-purple w-2/3 p-2 rounded-lg m-auto">
