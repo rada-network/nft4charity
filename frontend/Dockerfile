@@ -2,15 +2,16 @@
 FROM node:14.17.0-alpine AS build
 WORKDIR /usr/src/app
 
+COPY ./src ./src
+COPY ./public ./public
+COPY ./contracts ./contracts
+
 COPY ./package.json ./yarn.lock ./
 RUN apk --no-cache add git
 RUN yarn install --slient --network-timeout 100000
 
-COPY ./src ./src
-COPY ./public ./public
-
 COPY ./.prettierrc ./.eslintrc.js ./tsconfig.json ./craco.config.js ./tsconfig.paths.json ./tailwind.config.js ./
-
+COPY ./.env ./
 RUN NODE_OPTIONS=--max-old-space-size=2048 yarn build
 
 # Run
