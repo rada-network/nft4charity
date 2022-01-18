@@ -13,6 +13,11 @@ export class User {
 
   @Column()
   @Expose()
+  @Field({ nullable: true })
+  avatar?: string;
+
+  @Column()
+  @Expose()
   @Field()
   firstName: string;
 
@@ -39,7 +44,7 @@ export class User {
   @Column()
   @Expose()
   @Field({ nullable: true })
-  tiwtterUrl?: string;
+  twitterUrl?: string;
 
   @Column()
   @Expose()

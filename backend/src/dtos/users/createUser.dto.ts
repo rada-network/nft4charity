@@ -32,6 +32,21 @@ export class ImageDto {
 }
 @InputType()
 export class CreateUserDto {
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsUrl()
+  avatar?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsUrl()
+  frontIdentifierUrl?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsUrl()
+  backIdentifierUrl?: string;
+
   @Field()
   @IsString()
   firstName: string;
