@@ -15,7 +15,7 @@ export const Landing = () => {
       <div className="">
         <div className="bg-main-pattern p-20 relative">
           <div className="w-4/5 m-auto">
-            <div className="grid-cols-2 flex justify-center ">
+            <div className="grid-cols-2 flex justify-center flex-col sm:flex-row">
               <div className="mt-16">
                 <p className="font-black text-5xl font-Merriweather leading-tight">
                   The way you can help the COVID-19 patients
@@ -46,7 +46,7 @@ export const Landing = () => {
         </div>
 
         <div className="mt-28 mb-10">
-          <p className="m-auto w-full flex justify-center flex-none font-Merriweather font-bold text-4xl md:text-xl">
+          <p className="m-auto w-full flex justify-center flex-none font-Merriweather font-bold text-4xl md:text-xl text-center">
             Why should you donate with cryptocurrency?
           </p>
           <p className="text-sm w-1/3 m-auto font-Open mt-10 text-center ">
@@ -57,7 +57,7 @@ export const Landing = () => {
 
         <div className="w-4/5 m-auto">
           <div className="flex">
-            <div className="grid grid-cols-3">
+            <div className="sm:grid grid-cols-3">
               <div className="mx-10">
                 <img src={transparentPNG} alt="" className="m-auto" />
                 <p className="my-5 w-full flex justify-center flex-none mx-auto font-bold font-Merriweather text-sm lg:text-3xl text-center">
@@ -112,8 +112,8 @@ export const Landing = () => {
 
           <LatestContributor />
 
-          <div className="flex justify-around grid-cols-2">
-            <div className="flex mt-10">
+          <div className="flex flex-col sm:flex-row justify-around grid-cols-2">
+            <div className="flex mt-10 justify-center">
               <img src={cryptoBlackSVG} alt="" />
               <div className="ml-10">
                 <p className="font-bold text-2xl font-Merriweather">By Cryptocurrency</p>
@@ -123,7 +123,7 @@ export const Landing = () => {
                 </button>
               </div>
             </div>
-            <div className="flex mt-10">
+            <div className="flex mt-10 justify-center">
               <img src={imageBlackSVG} alt="" />
               <div className="ml-10">
                 <p className="font-bold text-2xl font-Merriweather">Mint Random NFT</p>

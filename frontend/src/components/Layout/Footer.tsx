@@ -9,7 +9,7 @@ import youtubeSVG from '@/assets/icons/social/youtube.svg';
 
 export const Footer = () => {
   return (
-    <div className="h-auto px-28 pt-10 pb-20 bg-black-nft-200 mt-10">
+    <div className="h-auto px-28 pt-10 pb-20 bg-black-nft-200 mt-10 flex flex-col items-center sm:block">
       <svg
         width="40"
         height="40"
@@ -50,33 +50,33 @@ export const Footer = () => {
           fill="#FBBF24"
         />
       </svg>
-      <div className="grid grid-cols-4 gap-4">
+      <div className="sm:grid grid-cols-4 gap-4">
         <div className="">
-          <p className="font-bold text-2xl text-white">nft4charity</p>
-          <p className="text-white text-sm">
+          <p className="font-bold text-2xl text-white text-center sm:text-left">nft4charity</p>
+          <p className="text-white text-sm text-center sm:text-left mt-5 sm:mt-0">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vulputate a, ultricies sit nunc
             purus vel cras pellentesque.
           </p>
-          <ul className="pt-5 flex cursor-pointer">
-            <li className="mr-5">
+          <ul className="pt-5 flex justify-between sm:justify-start cursor-pointer">
+            <li className="sm:mr-5">
               <img className="h-5 w-auto" src={twitterSVG} alt="home icon" />
             </li>
-            <li className="mr-5">
+            <li className="sm:mr-5">
               <img className="h-5 w-auto" src={facebookSVG} alt="home icon" />
             </li>
-            <li className="mr-5">
+            <li className="sm:mr-5">
               <img className="h-5 w-auto" src={discordSVG} alt="home icon" />
             </li>
-            <li className="mr-5">
+            <li className="sm:mr-5">
               <img className="h-5 w-auto" src={telegramSVG} alt="home icon" />
             </li>
-            <li className="mr-5">
+            <li className="sm:mr-5">
               <img className="h-5 w-auto" src={youtubeSVG} alt="home icon" />
             </li>
           </ul>
         </div>
 
-        <div className="ml-auto mr-auto text-white font-bold text-sm leading-6 cursor-pointer">
+        <div className="mt-5 sm:mt-0 ml-auto mr-auto text-center sm:text-left text-white font-bold text-sm leading-6 cursor-pointer">
           <p>Home</p>
           <p>About</p>
           <p>NFT Market</p>
@@ -86,12 +86,12 @@ export const Footer = () => {
           <p>Our support</p>
         </div>
 
-        <div className="text-white font-bold text-sm leading-6 cursor-pointer">
+        <div className="text-white text-center sm:text-left font-bold text-sm leading-6 cursor-pointer">
           <p>News on Rada</p>
           <p>Media for project</p>
         </div>
 
-        <div className="text-white ">
+        <div className="text-white mt-5 sm:mt-0">
           <p className="font-bold text-2xl">Contact</p>
           <div className="flex pt-2">
             <img className="h-5 w-auto mt-1" src={locationSVG} alt="home icon" />

@@ -135,7 +135,7 @@
     "react-test-renderer": "^17.0.2",
     "serve": "^12.0.0",
     "start-server-and-test": "^1.12.5",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17",
     "tsconfig-paths-webpack-plugin": "^3.5.1"
   },
   "msw": {
