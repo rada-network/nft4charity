@@ -12,18 +12,18 @@ export const Testimonial = () => {
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
         labore et dolore magna aliqua. Ut enim ad minim veniam,...
       </p>
-      <div className="flex justify-center w-2/3 m-auto mt-10">
-        <div className="flex mr-10">
+      <div className="flex flex-col sm:flex-row justify-center w-2/3 m-auto mt-10">
+        <div className="flex sm:mr-10">
           <div>
             <img src={quotesPng} alt="" />
           </div>
-          <div className="ml-5 ">
+          <div className="sm:ml-5">
             <span className="text-sm">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sed euismod quis sit
               gravida pharetra sit. Cursus vel enim pretium vulputate semper sem elit magna neque.
               Aliquet adipisc
             </span>
-            <div className="flex shadow-xl p-5 w-max rounded-full mt-5">
+            <div className="flex shadow-xl p-5 w-max rounded-full mt-5 mx-auto sm:mx-0">
               <img src={designerAvatar} alt="" />
               <div className="ml-5 ">
                 <p className="font-bold text-sm">@chiep | rada</p>
@@ -42,7 +42,7 @@ export const Testimonial = () => {
               gravida pharetra sit. Cursus vel enim pretium vulputate semper sem elit magna neque.
               Aliquet adipisc
             </span>
-            <div className="flex shadow-xl p-5 w-max rounded-full mt-5">
+            <div className="flex shadow-xl p-5 w-max rounded-full mt-5 mx-auto sm:mx-0">
               <img src={ceoAvatar} alt="" />
               <div className="ml-5">
                 <p className="font-bold text-sm">@hung dinh | rada</p>

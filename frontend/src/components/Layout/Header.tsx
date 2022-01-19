@@ -12,8 +12,8 @@ export const Header = () => {
   return (
     <>
       <div className="max-width mx-auto">
-        <div className="row-span-3 flex pt-5 pb-5 shadow-xl px-10 justify-between">
-          <span className="flex">
+        <div className="row-span-3 flex flex-col sm:flex-row pt-5 pb-5 shadow-xl px-10 items-center sm:justify-between">
+          <span className="flex items-center">
             <svg
               width="40"
               height="40"
@@ -58,24 +58,24 @@ export const Header = () => {
               nft4charity
             </p>
           </span>
-          <ul className="flex items-center text-center justify-center cursor-pointer font-bold text-base text-black">
-            <li className="mr-10">
+          <ul className="flex items-center text-center justify-center cursor-pointer font-bold text-base text-black flex-col sm:flex-row">
+            <li className="sm:mr-10">
               <img className="h-5 w-auto" src={homeSVG} alt="home icon" />
             </li>
-            <li className="mr-10 text-sm lg:text-xl">About</li>
-            <li className="mr-10 text-sm lg:text-xl">
+            <li className="sm:mr-10 text-sm lg:text-xl">About</li>
+            <li className="sm:mr-10 text-sm lg:text-xl">
               <Link to={`/campaigns`}>Campaigns</Link>
             </li>
-            <li className="mr-10 text-sm lg:text-xl">NFTs Market</li>
-            <li className="mr-10 text-sm lg:text-xl">
+            <li className="sm:mr-10 text-sm lg:text-xl">NFTs Market</li>
+            <li className="sm:mr-10 text-sm lg:text-xl">
               <Link to={`/mint`}>Mint</Link>
             </li>
           </ul>
-          <ul className="flex items-center">
+          <ul className="flex flex-col sm:flex-row items-center">
             <li className="flex">
-              <span className="px-5 my-auto">{balance}</span>
+              <span className="sm:px-5 my-auto">{balance}</span>
               <button
-                className="btn flex bg-button-purple p-2 rounded-3xl"
+                className="btn flex bg-button-purple p-2 rounded-3xl items-center"
                 onClick={() => {
                   if (!provider) {
                     loadWeb3Modal();
@@ -90,7 +90,7 @@ export const Header = () => {
                 </p>
               </button>
             </li>
-            <li className="flex ml-5 cursor-pointer">
+            <li className="flex mt-1 sm:mt-0 sm:ml-5 cursor-pointer">
               <img className="h-6 w-auto" src={languageSVG} alt="language icon" />
               <span className="pl-2">En</span>
             </li>
