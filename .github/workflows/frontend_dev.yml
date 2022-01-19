@@ -11,6 +11,7 @@ env:
   SERVICE_NAME: "rada-charity"
   DOCKER_USERNAME: "cohostai"
   CONTAINER_SERVICE_NAME: "rada-charity"
+  WORKING_DIRECTORY: "./frontend"
 
 jobs:
   build-service:
@@ -26,7 +27,7 @@ jobs:
           echo "::set-output name=image::${{ env.DOCKER_USERNAME }}/${{ env.SERVICE_NAME }}:$GITHUB_SHA"
           echo "::set-output name=latest::${{ env.DOCKER_USERNAME }}/${{ env.SERVICE_NAME }}:latest"
       - name: Build Docker image
-        working-directory: ./backend
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         run: docker build -t ${{ steps.vars.outputs.latest }} .
       - name: Login to DockerHub
         run: |
