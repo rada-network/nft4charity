@@ -11,7 +11,6 @@ RUN apk --no-cache add git
 RUN yarn install --slient --network-timeout 100000
 
 COPY ./.prettierrc ./.eslintrc.js ./tsconfig.json ./craco.config.js ./tsconfig.paths.json ./tailwind.config.js ./
-COPY ./.env ./
 RUN NODE_OPTIONS=--max-old-space-size=2048 yarn build
 
 # Run
