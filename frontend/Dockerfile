@@ -2,6 +2,8 @@
 FROM node:14.17.0-alpine AS build
 WORKDIR /usr/src/app
 
+ARG REACT_APP_GRAPHQL_URL
+
 COPY ./src ./src
 COPY ./public ./public
 COPY ./contracts ./contracts
