@@ -28,7 +28,9 @@ jobs:
           echo "::set-output name=latest::${{ env.DOCKER_USERNAME }}/${{ env.SERVICE_NAME }}:latest"
       - name: Build Docker image
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: docker build -t ${{ steps.vars.outputs.latest }} .
+        env:
+          REACT_APP_GRAPHQL_URL: ${{ secrets.REACT_APP_GRAPHQL_URL }}
+        run: docker build -t ${{ steps.vars.outputs.latest }} --build-arg REACT_APP_GRAPHQL_URL=${{ env.REACT_APP_GRAPHQL_URL }} .
       - name: Login to DockerHub
         run: |
           echo "Authenticating docker.io"
