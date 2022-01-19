@@ -156,8 +156,6 @@ export class UserResolver {
     }
     const user = await getMongoRepository(User).findOne(wallet.userId);
 
-    return await getMongoRepository(User).save(
-      new User({ ...user, ...updateUserDto }),
-    );
+    return await getMongoRepository(User).save({ ...user, ...updateUserDto });
   }
 }
