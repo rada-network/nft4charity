@@ -1,16 +1,16 @@
-name: build_and_deploy_be_service
+name: build_and_deploy_fe_service
 
 on:
   push:
     branches: [develop]
     paths:
-      - backend/**
+      - frontend/**
       - smartcontract/**
-      - .github/workflows/backend_dev.yml
+      - .github/workflows/frontend_dev.yml
 env:
-  SERVICE_NAME: "radastaging3"
+  SERVICE_NAME: "rada-charity"
   DOCKER_USERNAME: "cohostai"
-  CONTAINER_SERVICE_NAME: "radastaging3"
+  CONTAINER_SERVICE_NAME: "rada-charity"
 
 jobs:
   build-service:
@@ -66,21 +66,8 @@ jobs:
       - name: Release to Amazon Lightsail
         env:
           CONTAINER_SERVICE_NAME: ${{ env.CONTAINER_SERVICE_NAME }}
-          MAIL_EXPIRE_TIME: ${{ secrets.MAIL_EXPIRE_TIME }}
-          AWS_S3_ACCESS_KEY_ID: ${{ secrets.AWS_S3_ACCESS_KEY_ID }}
-          MAIL_RESEND_VERIFICATION_TIME_MINUTE: ${{ secrets.MAIL_RESEND_VERIFICATION_TIME_MINUTE }}
-          MONGODB_URL: ${{ secrets.MONGODB_URL }}
-          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
-          MAIL_SENDER_EMAIL: ${{ secrets.MAIL_SENDER_EMAIL }}
-          MAIL_SENDER_NAME: ${{ secrets.MAIL_SENDER_NAME }}
-          MONGODB_SEEDING_URL: ${{ secrets.MONGODB_SEEDING_URL }}
-          MAIL_CHANGE_URL: ${{ secrets.MAIL_CHANGE_URL }}
-          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          MAIL_JWT_SECRET: ${{ secrets.MAIL_JWT_SECRET }}
-          MAIL_VERIFICATION_URL: ${{ secrets.MAIL_VERIFICATION_URL }}
-          IPFS_BASE_URL: ${{ secrets.IPFS_BASE_URL }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-          AWS_S3_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SECRET_ACCESS_KEY }}
+          SERVICE_NAME: ${{ env.SERVICE_NAME }}
+          REACT_APP_GRAPHQL_URL: ${{ secrets.REACT_APP_GRAPHQL_URL }}
         run: |
           echo "Releasing to Amazon Lightsail"
 
@@ -105,28 +92,16 @@ jobs:
                 \"image\": \"$IMAGE_TAG\",
                 \"environment\": {
                   \"NODE_ENV\": \"production\",
-                  \"MAIL_EXPIRE_TIME\": \"$MAIL_EXPIRE_TIME\",
-                  \"AWS_S3_ACCESS_KEY_ID\": \"$AWS_S3_ACCESS_KEY_ID\",
-                  \"MAIL_RESEND_VERIFICATION_TIME_MINUTE\": \"$MAIL_RESEND_VERIFICATION_TIME_MINUTE\",
-                  \"MONGODB_URL\": \"$MONGODB_URL\",
-                  \"SENDGRID_API_KEY\": \"$SENDGRID_API_KEY\",
-                  \"MAIL_SENDER_EMAIL\": \"$MAIL_SENDER_EMAIL\",
-                  \"MAIL_SENDER_NAME\": \"$MAIL_SENDER_NAME\",
-                  \"MAIL_CHANGE_URL\": \"$MAIL_CHANGE_URL\",
-                  \"AWS_S3_BUCKET\": \"$AWS_S3_BUCKET\",
-                  \"MAIL_JWT_SECRET\": \"$MAIL_JWT_SECRET\",
-                  \"MAIL_VERIFICATION_URL\": \"$MAIL_VERIFICATION_URL\",
-                  \"IPFS_BASE_URL\": \"$IPFS_BASE_URL\",
-                  \"AWS_S3_SECRET_ACCESS_KEY\": \"$AWS_S3_SECRET_ACCESS_KEY\"
+                  \"REACT_APP_GRAPHQL_URL\": \"$REACT_APP_GRAPHQL_URL\"
                 },
                 \"ports\": {
-                  \"8080\": \"HTTP\"
+                  \"80\": \"HTTP\"
                 }
               }
             }" \
             --public-endpoint "{
               \"containerName\": \"$CONTAINER_SERVICE_NAME\",
-              \"containerPort\": 8080,
+              \"containerPort\": 80,
               \"healthCheck\": {
                 \"path\": \"/\",
                 \"intervalSeconds\": 10
