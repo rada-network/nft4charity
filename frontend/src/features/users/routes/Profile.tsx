@@ -26,62 +26,65 @@ const schema = z.object({
 
 export const Profile = () => {
   const { getProfile, dataProfile } = useAuth();
-  const [createProfile, dataCreateProfile] = useMutation(CREATE_PROFILE);
-  const [updateProfile, dataUpdateProfile] = useMutation(UPDATE_PROFILE);
+  const { loading: loadingProfile, error: errorProfile, data: profile } = dataProfile;
+  const [createProfile, { loading: loadingCreate, error: errorCreate, data: dataCreate }] =
+    useMutation(CREATE_PROFILE);
+  const [updateProfile, { loading: loadingUpdate, error: errorUpdate, data: dataUpdate }] =
+    useMutation(UPDATE_PROFILE);
 
-  const [avatar, setAvatar] = useState(dataProfile.data?.me?.avatar || '');
-  const [passportMT, setPassportMT] = useState(dataProfile.data?.me?.frontIdentifierUrl || '');
-  const [passportMS, setPassportMS] = useState(dataProfile.data?.me?.backIdentifierUrl || '');
+  const [avatar, setAvatar] = useState(profile?.me?.avatar || '');
+  const [passportMT, setPassportMT] = useState(profile?.me?.frontIdentifierUrl || '');
+  const [passportMS, setPassportMS] = useState(profile?.me?.backIdentifierUrl || '');
 
   useEffect(() => {
     getProfile();
   }, []);
 
   useEffect(() => {
-    if (dataProfile.data?.me) {
-      setAvatar(dataProfile.data?.me?.avatar || '');
-      setPassportMT(dataProfile.data?.me?.frontIdentifierUrl || '');
-      setPassportMS(dataProfile.data?.me?.backIdentifierUrl || '');
+    if (profile?.me) {
+      setAvatar(profile?.me?.avatar || '');
+      setPassportMT(profile?.me?.frontIdentifierUrl || '');
+      setPassportMS(profile?.me?.backIdentifierUrl || '');
     }
-  }, [dataProfile.data?.me]);
+  }, [profile?.me]);
 
   useEffect(() => {
-    if (dataCreateProfile.data?.createUser) {
+    if (dataCreate?.createUser) {
       useNotificationStore.getState().addNotification({
         type: 'success',
         title: 'Create Success',
       });
     }
-  }, [dataCreateProfile.data?.createUser]);
+  }, [dataCreate?.createUser]);
 
   useEffect(() => {
-    if (dataUpdateProfile.data?.updateUser) {
+    if (dataUpdate?.updateUser) {
       useNotificationStore.getState().addNotification({
         type: 'success',
         title: 'Update Success',
       });
     }
-  }, [dataUpdateProfile.data?.updateUser]);
+  }, [dataUpdate?.updateUser]);
 
   useEffect(() => {
-    if (dataCreateProfile.error) {
+    if (errorCreate) {
       useNotificationStore.getState().addNotification({
         type: 'error',
         title: 'Error',
-        message: dataCreateProfile.error?.message,
+        message: errorCreate?.message,
       });
     }
-  }, [dataCreateProfile.error?.message]);
+  }, [errorCreate?.message]);
 
   useEffect(() => {
-    if (dataUpdateProfile.error) {
+    if (errorUpdate) {
       useNotificationStore.getState().addNotification({
         type: 'error',
         title: 'Error',
-        message: dataUpdateProfile.error?.message,
+        message: errorUpdate?.message,
       });
     }
-  }, [dataUpdateProfile.error?.message]);
+  }, [errorUpdate?.message]);
 
   const onSubmit = (values: any) => {
     const newValues = removeValueEmptyInObject({
@@ -90,7 +93,7 @@ export const Profile = () => {
       frontIdentifierUrl: passportMT,
       backIdentifierUrl: passportMS,
     });
-    if (dataProfile.data?.me) {
+    if (profile?.me) {
       const userObject: UpdateProfileDto = {
         ...newValues,
       };
@@ -114,7 +117,7 @@ export const Profile = () => {
     }
   };
 
-  if (dataProfile.loading) {
+  if (loadingProfile) {
     return (
       <div className="h-full w-full flex items-center justify-center">
         <Spinner size="xl" />
@@ -122,8 +125,8 @@ export const Profile = () => {
     );
   }
 
-  if (dataProfile.error) {
-    if (dataProfile?.error?.message !== 'User not register') {
+  if (errorProfile) {
+    if (errorProfile?.message !== 'User not register') {
       return <Navigate to="/" />;
     }
   }
@@ -234,11 +237,7 @@ export const Profile = () => {
               </div>
               <div className="flex flex-row flex-wrap">
                 <div className="w-1/1 px-5 pb-5">
-                  <Button
-                    type="submit"
-                    size="sm"
-                    isLoading={dataCreateProfile.loading || dataUpdateProfile.loading}
-                  >
+                  <Button type="submit" size="sm" isLoading={loadingCreate || loadingUpdate}>
                     {dataProfile?.data?.me ? 'Update Profile' : 'Create Profile'}
                   </Button>
                 </div>
