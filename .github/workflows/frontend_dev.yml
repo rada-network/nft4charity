@@ -30,7 +30,8 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         env:
           REACT_APP_GRAPHQL_URL: ${{ secrets.REACT_APP_GRAPHQL_URL }}
-        run: docker build -t ${{ steps.vars.outputs.latest }} --build-arg REACT_APP_GRAPHQL_URL=${{ env.REACT_APP_GRAPHQL_URL }} .
+          REACT_APP_REST_URL: ${{ secrets.REACT_APP_REST_URL }}
+        run: docker build -t ${{ steps.vars.outputs.latest }} --build-arg REACT_APP_GRAPHQL_URL=${{ env.REACT_APP_GRAPHQL_URL }} --build-arg REACT_APP_REST_URL=${{ env.REACT_APP_REST_URL }} .
       - name: Login to DockerHub
         run: |
           echo "Authenticating docker.io"

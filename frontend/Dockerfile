@@ -3,6 +3,7 @@ FROM node:14.17.0-alpine AS build
 WORKDIR /usr/src/app
 
 ARG REACT_APP_GRAPHQL_URL
+ARG REACT_APP_REST_URL
 
 COPY ./src ./src
 COPY ./public ./public
