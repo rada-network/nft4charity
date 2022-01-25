@@ -13,7 +13,7 @@ export const Landing = () => {
   return (
     <>
       <div className="">
-        <div className="bg-main-pattern p-20 relative">
+        <div className="bg-main-pattern md:p-20 relative">
           <div className="w-4/5 m-auto">
             <div className="grid-cols-2 flex justify-center flex-col sm:flex-row">
               <div className="mt-16">
@@ -49,7 +49,7 @@ export const Landing = () => {
           <p className="m-auto w-full flex justify-center flex-none font-Merriweather font-bold text-4xl md:text-xl text-center">
             Why should you donate with cryptocurrency?
           </p>
-          <p className="text-sm w-1/3 m-auto font-Open mt-10 text-center ">
+          <p className="text-sm w-2/3 md:w-1/3 m-auto font-Open mt-10 text-center ">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
             incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,...
           </p>
@@ -101,7 +101,7 @@ export const Landing = () => {
           </div>
 
           <div className="mt-20 mb-10">
-            <p className="m-auto w-full flex justify-center flex-none font-Merriweather font-bold text-4xl">
+            <p className="m-auto w-full flex justify-center flex-none font-Merriweather font-bold text-4xl text-center">
               What can you do?
             </p>
             <p className="text-sm w-2/3 m-auto font-Open mt-10 text-center">
@@ -113,22 +113,22 @@ export const Landing = () => {
           <LatestContributor />
 
           <div className="flex flex-col sm:flex-row justify-around grid-cols-2">
-            <div className="flex mt-10 justify-center">
-              <img src={cryptoBlackSVG} alt="" />
-              <div className="ml-10">
+            <div className="flex flex-wrap md:flex-nowrap justify-center mt-10">
+              <img className="w-20 h-20" src={cryptoBlackSVG} alt="" />
+              <div className="w-full md:ml-10 text-center md:text-left">
                 <p className="font-bold text-2xl font-Merriweather">By Cryptocurrency</p>
                 <p className="text-sm font-Open">Donate your cryptocurency to public wallet</p>
-                <button className="btn flex bg-button-purple p-2 rounded-3xl mt-5">
+                <button className="btn inline-flex bg-button-purple p-2 rounded-3xl mt-5">
                   <span className="font-bold text-xl text-white ml-1 px-5">View more</span>
                 </button>
               </div>
             </div>
-            <div className="flex mt-10 justify-center">
-              <img src={imageBlackSVG} alt="" />
-              <div className="ml-10">
+            <div className="flex flex-wrap md:flex-nowrap justify-center mt-10">
+              <img className="w-20 h-20" src={imageBlackSVG} alt="" />
+              <div className="w-full md:ml-10 text-center md:text-left">
                 <p className="font-bold text-2xl font-Merriweather">Mint Random NFT</p>
                 <p className="text-sm font-Open">Mint a random NFT to support charity</p>
-                <button className="btn flex bg-button-purple p-2 rounded-3xl mt-5">
+                <button className="btn inline-flex bg-button-purple p-2 rounded-3xl mt-5">
                   <span className="font-bold text-xl text-white ml-1 px-5">View more</span>
                 </button>
               </div>

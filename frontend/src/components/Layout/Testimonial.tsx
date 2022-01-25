@@ -8,16 +8,16 @@ export const Testimonial = () => {
       <p className="m-auto w-full flex justify-center flex-none font-Merriweather font-bold text-4xl">
         Testimonials
       </p>
-      <p className="font-Open text-sm w-2/3 m-auto mt-5 text-center">
+      <p className="font-Open text-sm w-4/5 md:w-2/3 m-auto mt-5 text-center">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
         labore et dolore magna aliqua. Ut enim ad minim veniam,...
       </p>
-      <div className="flex flex-col sm:flex-row justify-center w-2/3 m-auto mt-10">
+      <div className="flex flex-col sm:flex-row justify-center w-full md:w-2/3 m-auto mt-10">
         <div className="flex sm:mr-10">
           <div>
             <img src={quotesPng} alt="" />
           </div>
-          <div className="sm:ml-5">
+          <div className="md:ml-5">
             <span className="text-sm">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sed euismod quis sit
               gravida pharetra sit. Cursus vel enim pretium vulputate semper sem elit magna neque.
@@ -25,7 +25,7 @@ export const Testimonial = () => {
             </span>
             <div className="flex shadow-xl p-5 w-max rounded-full mt-5 mx-auto sm:mx-0">
               <img src={designerAvatar} alt="" />
-              <div className="ml-5 ">
+              <div className="md:ml-5">
                 <p className="font-bold text-sm">@chiep | rada</p>
                 <p className="italic text-sm">Contributor</p>
               </div>
@@ -36,7 +36,7 @@ export const Testimonial = () => {
           <div>
             <img src={quotesPng} alt="" />
           </div>
-          <div className="ml-5 ">
+          <div className="md:ml-5 ">
             <span className="text-sm">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sed euismod quis sit
               gravida pharetra sit. Cursus vel enim pretium vulputate semper sem elit magna neque.
