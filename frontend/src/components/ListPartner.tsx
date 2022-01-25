@@ -12,16 +12,16 @@ export const ListPartner = () => {
           <img src={radaCharityLogo} alt="Rada Charity Logo" />
           <p className="font-bold text-2xl text-yellow-nft4 m-auto">nft4charity</p>
         </li>
-        <li className="sm:mr-10 mt-2 sm:mt-0">
+        <li className="mt-10 sm:mr-10 sm:mt-0">
           <img src={fullHouseLogo} alt="Rada Charity Logo" />
         </li>
-        <li className="sm:mr-10 mt-2 sm:mt-0">
+        <li className="mt-10 sm:mr-10 sm:mt-0">
           <img src={yellowBlockLogo} alt="Yellow Block Logo" />
         </li>
-        <li className="sm:mr-10 mt-2 sm:mt-0">
+        <li className="mt-10 sm:mr-10 sm:mt-0">
           <img src={spaceShipLogo} alt="" />
         </li>
-        <li className="sm:mr-10 mt-2 sm:mt-0">
+        <li className="mt-10 sm:mr-10 sm:mt-0">
           <img src={kardiaChainLogo} alt="Kardia Chain Logo" />
         </li>
       </ul>
