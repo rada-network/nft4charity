@@ -10,11 +10,11 @@ type MainLayoutProps = {
 
 export const MainLayout = ({ children }: MainLayoutProps) => {
   return (
-    <div className="h-screen ">
+    <>
       <Head description="Welcome to RADA.Charity" />
       <Header />
-      <main>{children}</main>
+      <main className="min-h-screen">{children}</main>
       <Footer />
-    </div>
+    </>
   );
 };
