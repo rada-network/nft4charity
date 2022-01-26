@@ -150,10 +150,10 @@ export const Donate = () => {
 
   return (
     <>
-      <div className="bg-main-pattern p-20 relative">
+      <div className="bg-main-pattern relative py-16">
         <div className="w-4/5 m-auto">
           <div className="grid-cols-2 flex justify-center ">
-            <div className="mt-16">
+            <div>
               <p className="font-black text-5xl font-Merriweather leading-tight">
                 {data?.campaign?.name}
               </p>
@@ -167,20 +167,20 @@ export const Donate = () => {
           </div>
         </div>
 
-        <div className="absolute -bottom-16 transform right-2/4 w-full lg:w-2/3 translate-x-2/4 bg-white shadow-xl p-5 m-auto rounded-full">
+        <div className="w-full bg-white shadow-xl mx-auto mt-16 p-5 rounded-2xl lg:w-4/5 lg:relative lg:mt-0">
           <form onSubmit={handleSubmit(onSubmit)}>
-            <ul className="flex items-center text-center justify-center cursor-pointer font-bold text-base text-black">
-              <li className="mr-10 flex">
+            <ul className="w-full flex flex-wrap items-center text-center justify-center cursor-pointer font-bold text-base text-black">
+              <li className="hidden justify-center w-full md:flex lg:w-auto lg:mr-10">
                 <img src={cryptoYellow} alt="" />
               </li>
-              <li className="mr-10">
+              <li className="flex justify-center w-full my-10 md:mr-10 md:w-auto">
                 <img src={qrCodeSVG} alt="" />
               </li>
-              <li className="mr-10">
-                <div className="flex">
+              <li className="flex flex-wrap justify-center w-full md:w-auto">
+                <div className="flex flex-wrap justify-center w-full md:w-auto md:mr-10">
                   <SelectField
                     label="Network"
-                    className="w-52 mr-10"
+                    className="w-full md:w-52 md:mr-10"
                     options={
                       listWallet
                         ? listWallet?.walletFilter.map((item: WalletFilter) => {
@@ -191,13 +191,13 @@ export const Donate = () => {
                     registration={{ ...register('network', { required: true }) }}
                   />
                   <InputField
-                    className="w-52"
+                    className="w-full md:w-52"
                     label="Amount"
                     registration={{ name: 'amountValueDonate' }}
                     type="number"
                   />
                 </div>
-                <div className="flex mt-2">
+                <div className="w-full flex justify-center mt-2 md:w-auto lg:mr-10">
                   <span className="font-Open text-sm text-black-555 mr-5 items-center flex">
                     {walletAddress}
                   </span>
@@ -205,8 +205,11 @@ export const Donate = () => {
                   <span className="editor ml-5 text-sm italic"></span>
                 </div>
               </li>
-              <li className="mr-10">
-                <button className="btn flex bg-button-purple p-2 rounded-3xl" type="submit">
+              <li className="w-full text-center lg:w-auto lg:mr-10">
+                <button
+                  className="btn flex bg-button-purple mx-auto mt-5 p-2 rounded-3xl"
+                  type="submit"
+                >
                   <span className="font-bold text-xl text-white ml-1">Donate</span>
                 </button>
               </li>
