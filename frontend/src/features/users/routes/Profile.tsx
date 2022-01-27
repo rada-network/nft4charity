@@ -154,7 +154,7 @@ export const Profile = () => {
           {({ register, formState }) => (
             <>
               <div className="flex flex-row flex-wrap">
-                <div className="w-1/2 p-5">
+                <div className="w-full lg:w-1/2 p-5">
                   <h1 className="text-2xl font-bold uppercase mb-5">Account Info</h1>
                   <UploadImageField
                     label="Avatar"
@@ -186,7 +186,7 @@ export const Profile = () => {
                     registration={register('description')}
                   />
                 </div>
-                <div className="w-1/2 p-5">
+                <div className="w-full lg:w-1/2 p-5">
                   <h1 className="text-2xl font-bold uppercase mb-5">Your Social Media</h1>
                   <InputField
                     label="Facebook"
@@ -214,7 +214,7 @@ export const Profile = () => {
                 <h1 className="text-2xl font-bold uppercase ml-5">Upload Passport</h1>
               </div>
               <div className="flex flex-row flex-wrap">
-                <div className="w-1/2 p-5">
+                <div className="w-full lg:w-1/2 p-5">
                   <UploadImageField
                     label="Passport MT"
                     defaultValue={passportMT}
@@ -224,7 +224,7 @@ export const Profile = () => {
                     }}
                   />
                 </div>
-                <div className="w-1/2 p-5">
+                <div className="w-full lg:w-1/2 p-5">
                   <UploadImageField
                     label="Passport MS"
                     defaultValue={passportMS}

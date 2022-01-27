@@ -348,11 +348,20 @@ export const Mint = () => {
 
       <div className="transform w-full bg-white shadow-xl p-5 m-auto">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <ul className="flex items-start text-center justify-center cursor-pointer font-bold text-base text-black">
-            <li className="mr-10">
-              <div className="flex">
-                <SelectInput className="w-52 mr-10" label="Network" {...register('Network')} />
-                <Input className="w-52" label="Price" register={register} required={false} />
+          <ul className="flex items-start flex-wrap text-center justify-center cursor-pointer font-bold text-base text-black">
+            <li className="lg:mr-10">
+              <div className="flex items-center">
+                <SelectInput
+                  className="w-auto mr-10 lg:w-52"
+                  label="Network"
+                  {...register('Network')}
+                />
+                <Input
+                  className="w-auto lg:w-52"
+                  label="Price"
+                  register={register}
+                  required={false}
+                />
               </div>
             </li>
             <li className="mx-0 my-auto">
