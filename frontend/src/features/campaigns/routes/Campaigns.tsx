@@ -46,12 +46,12 @@ export const Campaigns = () => {
   return (
     <>
       <div className="">
-        <div className="w-full h-px-530 relative mb-8">
+        <div className="w-full h-px-400 relative mb-8 lg:h-px-530">
           <img
             src="https://static.devfdg.net/static/media/primary-bg.796d6fdc.png"
             className="w-full h-full bottom-0 absolute top-0 right-0 left-0 object-cover"
           />
-          <div className="absolute top-10 right-10 rounded-lg p-5 w-1/3 bg-black bg-opacity-25 backdrop-blur text-white">
+          <div className="w-4/5 mx-auto p-5 rounded-lg bg-black bg-opacity-25 backdrop-blur text-white lg:absolute lg:top-10 lg:right-10 lg:w-1/3">
             <h2 className="text-4xl font-Open font-bold">Rada NFT 4 Charity</h2>
             <span className="text-base mt-5">
               The Charity Wallet is designed for donors who do not specify the donation projects and
@@ -65,7 +65,7 @@ export const Campaigns = () => {
           </div>
         </div>
 
-        <div className="w-2/3 m-auto grid grid-cols-2 gap-4 mt-16">
+        <div className="w-4/5 m-auto grid grid-cols-1 lg:w-2/3 lg:grid-cols-2 lg:gap-4">
           {/* <Link to={`/donate/${link._id}`}>{link.name}</Link> */}
           {campaigns.map((item: Record<string, any>, index: number) => {
             const { wallets } = item;
@@ -76,7 +76,7 @@ export const Campaigns = () => {
             );
 
             return (
-              <div key={index} className="w-full">
+              <div key={index} className="w-full mt-16">
                 <Link to={`/donate/${item._id}`}>
                   <div className="relative">
                     <img src={item.coverImgUrl} alt="" />
@@ -93,7 +93,7 @@ export const Campaigns = () => {
                     <span className="font-bold text-xl font-Merriweather">Total raised: </span>
                     <span>{Math.round(balance * 100000) / 100000}</span>
                   </div>
-                  <div className="grid grid-cols-3 gap-4 p-5 font-Open">
+                  <div className="grid grid-cols-1 gap-4 p-5 font-Open md:grid-cols-3">
                     <div className="">
                       <p className="font-bold text-lg">{numberOfTransaction}</p>
                       <p>Donation</p>
