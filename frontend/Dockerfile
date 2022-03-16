@@ -1,25 +1,25 @@
+# Deps
+FROM node:14.17.0-alpine AS deps
+WORKDIR /app
+RUN apk --no-cache add git
+COPY ./package.json ./yarn.lock ./
+COPY ./contracts ./contracts
+RUN yarn install --slient --network-timeout 100000
+
 # Build
 FROM node:14.17.0-alpine AS build
-WORKDIR /usr/src/app
+WORKDIR /app
 
 ARG REACT_APP_GRAPHQL_URL
 ARG REACT_APP_REST_URL
-
-COPY ./src ./src
-COPY ./public ./public
-COPY ./contracts ./contracts
-
-COPY ./package.json ./yarn.lock ./
-RUN apk --no-cache add git
-RUN yarn install --slient --network-timeout 100000
-
-COPY ./.prettierrc ./.eslintrc.js ./tsconfig.json ./craco.config.js ./tsconfig.paths.json ./tailwind.config.js ./
+COPY . .
+COPY --from=deps /app/node_modules ./node_modules
 RUN NODE_OPTIONS=--max-old-space-size=2048 yarn build
 
 # Run
 FROM nginx:1.15.2-alpine AS run
 
-COPY --from=build /usr/src/app/build /var/www
+COPY --from=build /app/build /var/www
 COPY nginx.conf /etc/nginx/nginx.conf
 EXPOSE 80
 ENTRYPOINT ["nginx","-g","daemon off;"]

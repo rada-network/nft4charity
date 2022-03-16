@@ -3,14 +3,13 @@ LABEL maintainer="dev@rada.io"
 
 WORKDIR /app
 COPY package.json ./
-#RUN yarn install --frozen-lockfile --ignore-scripts
 RUN yarn install --ignore-scripts
 
 FROM node:14-alpine as builder
 WORKDIR /app
 COPY . .
 COPY --from=deps /app/node_modules ./node_modules
-RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
+RUN yarn build
 
 FROM node:14-alpine as runner
 WORKDIR /app
