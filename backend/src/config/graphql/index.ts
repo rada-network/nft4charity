@@ -9,7 +9,7 @@ export class GraphqlService implements GqlOptionsFactory {
       // typePaths: ["./**/*.gql"],
       //autoSchemaFile: true,
       autoSchemaFile: resolve(process.cwd(), "src/schema.gql"),
-      installSubscriptionHandlers: true,
+      //installSubscriptionHandlers: true,
       cors: {
         origin: "*",
       },
