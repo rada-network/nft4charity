@@ -1,11 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import {
-  MulterModuleOptions,
-  MulterOptionsFactory,
-} from "@webundsoehne/nest-fastify-file-upload";
+import { MulterModuleOptions } from "fastify-file-interceptor/fastify-file-interceptor/src/multer/interface/fastify-multer-module-interface";
 
 @Injectable()
-export class MulterConfigService implements MulterOptionsFactory {
+export class MulterConfigService {
   createMulterOptions(): MulterModuleOptions {
     return {
       limits: {

@@ -13,7 +13,7 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { FastifyReply } from "fastify";
 import { ApiCreatedResponse, ApiQuery } from "@nestjs/swagger";
-import { FilesInterceptor } from "@webundsoehne/nest-fastify-file-upload";
+import { FilesFastifyInterceptor as FilesInterceptor } from "fastify-file-interceptor";
 import { isEnum } from "class-validator";
 import { extname } from "path";
 import { ResponsePutPresignedUrlDto } from "src/dtos";
