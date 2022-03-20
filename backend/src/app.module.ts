@@ -4,7 +4,7 @@ import { APP_FILTER, APP_PIPE } from "@nestjs/core";
 import { GraphQLModule } from "@nestjs/graphql";
 import { JwtModule } from "@nestjs/jwt";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { MulterModule } from "@webundsoehne/nest-fastify-file-upload";
+import { FastifyMulterModule } from "fastify-file-interceptor";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AllExceptionsFilter } from "./common";
@@ -22,7 +22,7 @@ import { FileModule, MailModule } from "./services";
     JwtModule.register({ secret: MAIL_JWT_SECRET }),
     GraphQLModule.forRootAsync({ useClass: GraphqlService }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmService }),
-    MulterModule.registerAsync({ useClass: MulterConfigService }),
+    FastifyMulterModule.registerAsync({ useClass: MulterConfigService }),
   ],
   controllers: [AppController],
   providers: [

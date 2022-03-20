@@ -7,12 +7,12 @@ import {
 import { SwaggerModule } from "@nestjs/swagger";
 import { json, urlencoded } from "body-parser";
 import * as cors from "cors";
-import * as multer from "fastify-multer";
 import { OpenAPI, useSofa } from "sofa-api";
 import { AppModule } from "./app.module";
 import { authMiddleware } from "./common";
 import { consoleLogger, httpConsoleLogger, httpFileLogger } from "./config";
 import { BASE_URL, PORT, REST_BASE_ROUTE } from "./environments";
+import { contentParser } from "fastify-file-interceptor";
 
 const baseRouteRest = REST_BASE_ROUTE;
 
@@ -22,7 +22,7 @@ async function bootstrap() {
     new FastifyAdapter(),
   );
 
-  app.register(multer.contentParser);
+  app.register(contentParser);
 
   app.use(httpFileLogger);
   app.use(httpConsoleLogger);

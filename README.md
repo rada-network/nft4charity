@@ -6,48 +6,55 @@ Our immediate goal is the raise $1M for Covid campaigns in Vietnam. Our long ter
 
 Recently, we have seen inexperienced fundraisers who, despite their good intent, lose their reputation and in some case, being sued for fraud. With Blockchain & NFT, we can track all transactions and also make charitable campaigns more community-driven. We want to create an open source project that any one can run to raise money for their community in a Transparent way.
 
-# Join us by filling out this form
+## Join us by filling out this form
 
 https://bit.ly/rada-charity-team
 
-# Installation
+## Installation
 
 Go to backend folder and run
 
 ```bash
-$ yarn install
+$yarn install
 ```
 
-# Structure
+## Structure
 
 Project is structure into 2 parts, frontend (FE) and backend (BE).
 
-# Style checks
+## Style checks
 
-We use Prettier and ESLint to enforce a consistent code style across our codebase. For simply, let's use Prettier for formatting and Linter for catching bugs within the code
+We use Prettier and ESLint to enforce a consistent code style across our codebase. For simply, let's use Prettier for formatting and Linter for catching bugs within the code. Make sure to run this first from `root` folder
+
+```bash
+yarn install
+```
 
 ```bash
 # Run style check across all the source
-$ yarn format:check:all
+yarn format:check:all
 
 # Apply the rules
-$ yarn format:all
+yarn format:all
 ```
 
 ## Running by docker-compose
 
 ```bash
 # From root folder run
-$ run_local.sh
+run_local.sh
 ```
 
 ### To run local, we need to have .env file
 
-Update `.env.dev` file in `backend` folder
+Update `.env.dev` file in `backend` folder, make sure to have values for `SENDGRID_API_KEY` and `SENTRY_DSN`
 
 Setup the memory of you docker machine to 4GB (like image below).
 
-![No pic](/images/docker.png)
+![Docker](/images/docker.png)
+
+After that we should see the entired running stack as below
+![NFT4C Stack](/images/nft4charity_stack.png)
 
 ### To run smart contract tests, go to smartcontracts folder and run
 

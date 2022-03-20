@@ -18,9 +18,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
+   
     depends_on:
       - mongodb
     networks:
@@ -51,7 +49,7 @@ services:
     env_file:
       - ./frontend/.env.dev
     volumes:
-      - ./backend:/app
+      - ./frontend:/app
       - /app/node_modules
     depends_on:
       - backend
