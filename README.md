@@ -20,7 +20,12 @@ $yarn install
 
 ## Structure
 
-Project is structure into 2 parts, frontend (FE) and backend (BE).
+Project is structure into 4 parts:
+
+1. frontend (FE)
+2. backend (BE)
+3. smart contract (SC)
+4. cronjob worker (CW)
 
 ## Style checks
 
@@ -60,10 +65,10 @@ After that we should see the entired running stack as below
 
 ```sh
 # From root folder run
-$ run_test.sh
+run_test.sh
 ```
 
-# Others
+## Others
 
 ## Install metamask
 
