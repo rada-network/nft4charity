@@ -61,13 +61,6 @@ Setup the memory of you docker machine to 4GB (like image below).
 After that we should see the entired running stack as below
 ![NFT4C Stack](/images/nft4charity_stack.png)
 
-### To run smart contract tests, go to smartcontracts folder and run
-
-```sh
-# From root folder run
-run_test.sh
-```
-
 ## Others
 
 ## Install metamask
