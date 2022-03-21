@@ -7,12 +7,12 @@ import {
 import { SwaggerModule } from "@nestjs/swagger";
 import { json, urlencoded } from "body-parser";
 import * as cors from "cors";
+import { contentParser } from "fastify-file-interceptor";
 import { OpenAPI, useSofa } from "sofa-api";
 import { AppModule } from "./app.module";
 import { authMiddleware } from "./common";
 import { consoleLogger, httpConsoleLogger, httpFileLogger } from "./config";
 import { BASE_URL, PORT, REST_BASE_ROUTE } from "./environments";
-import { contentParser } from "fastify-file-interceptor";
 
 const baseRouteRest = REST_BASE_ROUTE;
 
@@ -21,8 +21,6 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
   );
-
-  app.register(contentParser);
 
   app.use(httpFileLogger);
   app.use(httpConsoleLogger);
@@ -36,6 +34,10 @@ async function bootstrap() {
       origin: true,
     }),
   );
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  app.register(contentParser);
 
   await app.init();
 

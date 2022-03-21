@@ -1,3 +1,4 @@
+import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { Module, ValidationPipe } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { APP_FILTER, APP_PIPE } from "@nestjs/core";
@@ -20,7 +21,10 @@ import { FileModule, MailModule } from "./services";
     FileModule,
     MailModule,
     JwtModule.register({ secret: MAIL_JWT_SECRET }),
-    GraphQLModule.forRootAsync({ useClass: GraphqlService }),
+    GraphQLModule.forRootAsync({
+      driver: ApolloDriver,
+      useClass: GraphqlService,
+    } as ApolloDriverConfig),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmService }),
     FastifyMulterModule.registerAsync({ useClass: MulterConfigService }),
   ],
