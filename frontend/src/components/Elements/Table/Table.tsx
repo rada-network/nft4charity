@@ -33,7 +33,7 @@ export const Table = <Entry extends { id: string }>({
   }
   return (
     <div className="flex flex-col">
-      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 mb-10">
+      <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 mb-10 border-2 border-gray-100 rounded-3xl">
         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
           <div className="overflow-hidden h-px-530">
             <table className="min-w-full divide-y divide-gray-200">
@@ -58,7 +58,7 @@ export const Table = <Entry extends { id: string }>({
                     key={entry?.id || entryIndex}
                     className={clsx(entryIndex % 2 === 0 ? 'bg-white' : 'bg-gray-100', '')}
                   >
-                    <td className="text-sm font-bold w-14 text-center"> {entryIndex}. </td>
+                    {/* <td className="text-sm font-bold w-14 text-center"> {entryIndex}. </td> */}
                     {columns.map(({ Cell, field, title }, columnIndex) => (
                       <td
                         key={title + columnIndex}
