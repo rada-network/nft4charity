@@ -20,7 +20,12 @@ $yarn install
 
 ## Structure
 
-Project is structure into 2 parts, frontend (FE) and backend (BE).
+Project is structure into 4 parts:
+
+1. frontend (FE)
+2. backend (BE)
+3. smart contract (SC)
+4. cronjob worker (CW)
 
 ## Style checks
 
@@ -56,14 +61,7 @@ Setup the memory of you docker machine to 4GB (like image below).
 After that we should see the entired running stack as below
 ![NFT4C Stack](/images/nft4charity_stack.png)
 
-### To run smart contract tests, go to smartcontracts folder and run
-
-```sh
-# From root folder run
-$ run_test.sh
-```
-
-# Others
+## Others
 
 ## Install metamask
 
